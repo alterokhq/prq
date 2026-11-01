@@ -1,0 +1,15 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-cli>",
+    "rerun",
+    "--json",
+    "--quiet",
+    "--app-url",
+    "http://127.0.0.1:4317"
+  ],
+  "exit_code": 1,
+  "stdout": "{\"summary\":{\"held\":0,\"broken\":1,\"needs_human\":0,\"unverified\":0},\"broken\":[{\"id\":\"c1\",\"claimed\":\"The existing clsx test suite completes with zero failing tests.\",\"observed\":\"npm run test exited 1\"}],\"omitted\":0,\"report\":\".pr/runs/c0f30f4-mvxva2ap-f49186f4/proof-request.json\"}\n",
+  "stderr": "",
+  "duration_ms": 1879
+}

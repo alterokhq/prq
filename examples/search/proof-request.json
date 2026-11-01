@@ -1,0 +1,365 @@
+{
+  "version": "0.1",
+  "id": "3750728-mvxtevgp-f8935642",
+  "created_at": "2026-11-01T12:38:14.428Z",
+  "subject": {
+    "repo": "fixture",
+    "head": "aad2321df6e35865ba233cb8252efca9a82c9273",
+    "title": "Added search to the suggestions board. A search box appears above the list. Typing filters the suggestions as you type. ",
+    "app_url": "http://127.0.0.1:3000"
+  },
+  "source": {
+    "kind": "file",
+    "text": "Added search to the suggestions board. A search box appears above the list. Typing filters the suggestions as you type. The search is case-insensitive. When nothing matches, the board shows \"no suggestions match\". Also tidied the list component so it is easier to read. All tests pass.\n",
+    "hash": "sha256:375072880db0a444bc8ef65f9006a64812402d40b7c0e83f4c592e09cbc74174"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "A search box appears above the list.",
+      "kind": "browser",
+      "check": {
+        "path": "/"
+      },
+      "verdict": "held",
+      "probability": 1,
+      "observed": "The search box labeled \"search suggestions\" is visible above the suggestions list.",
+      "evidence": [
+        {
+          "type": "note",
+          "text": "Availability only: GET http://127.0.0.1:3000 returned HTTP 200 before browser checks. This does not verify the claim."
+        },
+        {
+          "type": "note",
+          "text": "app.open: /",
+          "step": 0
+        },
+        {
+          "type": "note",
+          "text": "agent.waitFor: The page has finished its initial loading state. — The feedback board shows its controls and a populated list of ten suggestions, with no loading indicator present.",
+          "step": 1
+        },
+        {
+          "type": "assertion",
+          "text": "agent.assert: A search box appears above the list. — The search box labeled \"search suggestions\" is visible above the suggestions list.",
+          "passed": true,
+          "step": 2
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "[HMR] connected (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c1-0/0-001-assert.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c1-0/trace.md",
+          "text": "# ✓ c1: A search box appears above the list.\n\n`tests/prq-3750728.e2e.ts` · passed · 12.2s\n\nRan on: browser `chromium 156.0.8078.4` · user agent `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36`\n\n## Steps\n\n1. ✓ `app.open` `/` (408ms) — `tests/prq-3750728.e2e.ts:4`\n   - ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ↪ navigated to /\n   - screen: 8 nodes at `/`\n2. ✓ `agent.waitFor` \"The page has finished its initial loading state.\" (9.2s, 2 model calls) — `tests/prq-3750728.e2e.ts:5`\n   - waitFor passed after 2 reads in 0ms\n   - screen: 42 changes since step 1 at `/`, 48 nodes\n     - `added list`\n     - `added listitem \"0 votes Custom fields\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Custom fields\"`\n     - `added listitem \"0 votes Mobile app\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Mobile app\"`\n     - `added listitem \"0 votes Public API\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - 30 more\n3. ✓ `agent.assert` \"A search box appears above the list.\" (2.3s, 1 model call) — `tests/prq-3750728.e2e.ts:6`\n   - [screenshot](attempt-1/screenshots/001-assert.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c1-a-search-box-appears-above-3f1f9b5c781e17da/attempt-1/screenshots/001-assert.png`\n   - screen: unchanged since step 2 at `/`\n\n## App log\n\nWhat the app logged, oldest first, with the step it happened in.\n\n- step 1 · ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n- step 1 · ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n\n## Evidence\n\n- [screenshot](attempt-1/screenshots/001-assert.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c1-a-search-box-appears-above-3f1f9b5c781e17da/attempt-1/screenshots/001-assert.png`\n\n<sub>e2e 0.22.0 · run `01a1971d-6ac0-7979-b638-f1259fd72ad5` · the whole run is in `report.json`</sub>\n"
+        },
+        {
+          "type": "note",
+          "text": "Checked externally running application at http://127.0.0.1:3000. Its source revision was not verified against aad2321df6e35865ba233cb8252efca9a82c9273."
+        }
+      ],
+      "tester": "e2e / independent browser",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 12194,
+      "cached": false
+    },
+    {
+      "id": "c2",
+      "text": "Typing filters the suggestions as you type.",
+      "kind": "browser",
+      "check": {
+        "path": "/",
+        "setup": "Type a visible suggestion title into the search box."
+      },
+      "verdict": "held",
+      "probability": 0.99,
+      "observed": "The search field contains “Custom fields,” and the suggestions list shows only the matching “Custom fields” item.",
+      "evidence": [
+        {
+          "type": "note",
+          "text": "Availability only: GET http://127.0.0.1:3000 returned HTTP 200 before browser checks. This does not verify the claim."
+        },
+        {
+          "type": "note",
+          "text": "app.open: /",
+          "step": 0
+        },
+        {
+          "type": "note",
+          "text": "agent.waitFor: The page has finished its initial loading state. — The page shows its controls and a populated list of suggestions, with no loading indicator.",
+          "step": 1
+        },
+        {
+          "type": "note",
+          "text": "app.screenshot: before-setup",
+          "step": 2
+        },
+        {
+          "type": "note",
+          "text": "agent.act: Type a visible suggestion title into the search box. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness. — Typed the visible suggestion title \"Custom fields\" into the search box. The search box now contains \"Custom fields\"; setup is complete.",
+          "step": 3
+        },
+        {
+          "type": "assertion",
+          "text": "agent.assert: Typing filters the suggestions as you type. — The search field contains “Custom fields,” and the suggestions list shows only the matching “Custom fields” item.",
+          "passed": true,
+          "step": 4
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "[HMR] connected (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c2-0/0-001-before-setup.png"
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c2-0/1-002-assert.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c2-0/trace.md",
+          "text": "# ✓ c2: Typing filters the suggestions as you type.\n\n`tests/prq-3750728.e2e.ts` · passed · 8.8s\n\nRan on: browser `chromium 156.0.8078.4` · user agent `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36`\n\n## Steps\n\n1. ✓ `app.open` `/` (274ms) — `tests/prq-3750728.e2e.ts:10`\n   - ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ↪ navigated to /\n   - screen: 8 nodes at `/`\n2. ✓ `agent.waitFor` \"The page has finished its initial loading state.\" (2.0s, 1 model call) — `tests/prq-3750728.e2e.ts:11`\n   - screen: 42 changes since step 1 at `/`, 48 nodes\n     - `added list`\n     - `added listitem \"0 votes Custom fields\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Custom fields\"`\n     - `added listitem \"0 votes Mobile app\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Mobile app\"`\n     - `added listitem \"0 votes Public API\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - 30 more\n3. ✓ `app.screenshot` `before-setup` (72ms) — `tests/prq-3750728.e2e.ts:12`\n   - [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c2-typing-filters-the-cc57a0449acfd8a0/attempt-1/screenshots/001-before-setup.png`\n4. ✓ `agent.act` \"Type a visible suggestion title into the search box. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness.\" (4.2s, 2 model calls) — `tests/prq-3750728.e2e.ts:13`\n   - cache: no replay: nothing recorded for this step yet; recording saved (`.e2e/cache/e97fc1c84eee3bbff1f373df050217f9565c51c3390a150b22e1489282870679.json`)\n   - type \"Custom fields\" into searchbox \"search suggestions\" (36ms)\n   - screen: 37 changes since step 2 at `/`, 12 nodes\n     - `changed searchbox \"search suggestions\" value=\"Custom fields\" (was: searchbox \"search suggestions\")`\n     - `removed listitem \"0 votes Mobile app\"`\n     - `removed button \"0 votes\"`\n     - `removed text=\"0\"`\n     - `removed text=\"Mobile app\"`\n     - `removed listitem \"0 votes Public API\"`\n     - `removed button \"0 votes\"`\n     - `removed text=\"0\"`\n     - `removed text=\"Public API\"`\n     - `removed listitem \"0 votes Bulk edit\"`\n     - `removed button \"0 votes\"`\n     - `removed text=\"0\"`\n     - 25 more\n5. ✓ `agent.assert` \"Typing filters the suggestions as you type.\" (2.2s, 1 model call) — `tests/prq-3750728.e2e.ts:14`\n   - [screenshot](attempt-1/screenshots/002-assert.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c2-typing-filters-the-cc57a0449acfd8a0/attempt-1/screenshots/002-assert.png`\n   - screen: unchanged since step 4 at `/`\n\n## App log\n\nWhat the app logged, oldest first, with the step it happened in.\n\n- step 1 · ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n- step 1 · ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n\n## Evidence\n\n- [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c2-typing-filters-the-cc57a0449acfd8a0/attempt-1/screenshots/001-before-setup.png`\n\n<sub>e2e 0.22.0 · run `01a1971d-6ac0-7979-b638-f1259fd72ad5` · the whole run is in `report.json`</sub>\n"
+        },
+        {
+          "type": "note",
+          "text": "Checked externally running application at http://127.0.0.1:3000. Its source revision was not verified against aad2321df6e35865ba233cb8252efca9a82c9273."
+        }
+      ],
+      "tester": "e2e / independent browser",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 8809,
+      "cached": false
+    },
+    {
+      "id": "c3",
+      "text": "The search is case-insensitive.",
+      "kind": "browser",
+      "check": {
+        "path": "/",
+        "setup": "Type an uppercase version of a visible suggestion title into the search box."
+      },
+      "verdict": "broken",
+      "probability": 0,
+      "observed": "The search for “CUSTOM FIELDS” shows no matches, but no differently cased matching suggestion or comparison search is visible to establish whether case affects results.",
+      "evidence": [
+        {
+          "type": "note",
+          "text": "Availability only: GET http://127.0.0.1:3000 returned HTTP 200 before browser checks. This does not verify the claim."
+        },
+        {
+          "type": "note",
+          "text": "app.open: /",
+          "step": 0
+        },
+        {
+          "type": "note",
+          "text": "agent.waitFor: The page has finished its initial loading state. — The feedback board displays its input controls and a populated suggestions list, with no loading indicator shown.",
+          "step": 1
+        },
+        {
+          "type": "note",
+          "text": "app.screenshot: before-setup",
+          "step": 2
+        },
+        {
+          "type": "note",
+          "text": "agent.act: Type an uppercase version of a visible suggestion title into the search box. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness. — Typed CUSTOM FIELDS, the uppercase version of visible suggestion title “Custom fields,” into the search box. The box contains CUSTOM FIELDS; the page currently shows “no suggestions match.” Setup is complete.",
+          "step": 3
+        },
+        {
+          "type": "note",
+          "text": "agent.assert: The search is case-insensitive. — The search for “CUSTOM FIELDS” shows no matches, but no differently cased matching suggestion or comparison search is visible to establish whether case affects results. [ASSERTION_INCONCLUSIVE]",
+          "step": 4
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "[HMR] connected (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c3-0/0-001-before-setup.png"
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c3-0/1-002-assert.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c3-0/2-screen-at-failure.txt",
+          "text": "#root document \"Feedback board\"\n #n2 main\n  #n3 heading \"Feedback board\"\n  #n4 text=\"Tell us what to build next.\"\n  #n5 textbox \"Suggest a feature\"\n  #n6 button \"Suggest\"\n  #n7 searchbox \"search suggestions\" value=\"CUSTOM FIELDS\" [focused]\n  #n12001 status \"no suggestions match\"\n"
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c3-0/3-003-failure.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c3-0/trace.md",
+          "text": "# ✗ c3: The search is case-insensitive.\n\n`tests/prq-3750728.e2e.ts` · failed · 9.7s\n\nRan on: browser `chromium 156.0.8078.4` · user agent `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36`\n\n**ASSERTION_INCONCLUSIVE**\n\n```text\nThe search for “CUSTOM FIELDS” shows no matches, but no differently cased matching suggestion or comparison search is visible to establish whether case affects results.\n```\n\nLook at: `tests/prq-3750728.e2e.ts:22`  \n\n## Steps\n\n1. ✓ `app.open` `/` (224ms) — `tests/prq-3750728.e2e.ts:18`\n   - ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ↪ navigated to /\n   - screen: 8 nodes at `/`\n2. ✓ `agent.waitFor` \"The page has finished its initial loading state.\" (2.1s, 1 model call) — `tests/prq-3750728.e2e.ts:19`\n   - screen: 42 changes since step 1 at `/`, 48 nodes\n     - `added list`\n     - `added listitem \"0 votes Custom fields\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Custom fields\"`\n     - `added listitem \"0 votes Mobile app\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Mobile app\"`\n     - `added listitem \"0 votes Public API\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - 30 more\n3. ✓ `app.screenshot` `before-setup` (65ms) — `tests/prq-3750728.e2e.ts:20`\n   - [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c3-the-search-is-case-11fd056801db3c67/attempt-1/screenshots/001-before-setup.png`\n4. ✓ `agent.act` \"Type an uppercase version of a visible suggestion title into the search box. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will ch…\" (4.2s, 2 model calls) — `tests/prq-3750728.e2e.ts:21`\n   - cache: no replay: nothing recorded for this step yet; recording not saved: no check passed after this step (`.e2e/cache/b3045ff0eecf7b42ca5f4c18f56ae52c40a4f1b9d2e0a2ff6bafa5c33b569758.json`)\n   - type \"CUSTOM FIELDS\" into searchbox \"search suggestions\" (25ms)\n   - screen: 43 changes since step 2 at `/`, 8 nodes\n     - `changed searchbox \"search suggestions\" value=\"CUSTOM FIELDS\" (was: searchbox \"search suggestions\")`\n     - `added status \"no suggestions match\"`\n     - `removed list`\n     - `removed listitem \"0 votes Custom fields\"`\n     - `removed button \"0 votes\"`\n     - `removed text=\"0\"`\n     - `removed text=\"Custom fields\"`\n     - `removed listitem \"0 votes Mobile app\"`\n     - `removed button \"0 votes\"`\n     - `removed text=\"0\"`\n     - `removed text=\"Mobile app\"`\n     - `removed listitem \"0 votes Public API\"`\n     - 31 more\n5. ✗ `agent.assert` \"The search is case-insensitive.\" (3.0s, 1 model call) — **ASSERTION_INCONCLUSIVE** — `tests/prq-3750728.e2e.ts:22`\n   > The search for “CUSTOM FIELDS” shows no matches, but no differently cased matching suggestion or comparison search is visible to establish whether case affects results.\n   - [screenshot](attempt-1/screenshots/002-assert.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c3-the-search-is-case-11fd056801db3c67/attempt-1/screenshots/002-assert.png`\n   - screen: unchanged since step 4 at `/`\n\n## App log\n\nWhat the app logged, oldest first, with the step it happened in.\n\n- step 1 · ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n- step 1 · ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n\n## Screen at failure\n\n`http://127.0.0.1:3000/` · viewport 1280x720 · 8 nodes  \n\n![screenshot at failure](attempt-1/screenshots/003-failure.png)\n\nThe screen as the agent reads it, one node per line: `#id role \"name\" text=\"…\" [states]`.\n\n```text\n#root document \"Feedback board\"\n #n2 main\n  #n3 heading \"Feedback board\"\n  #n4 text=\"Tell us what to build next.\"\n  #n5 textbox \"Suggest a feature\"\n  #n6 button \"Suggest\"\n  #n7 searchbox \"search suggestions\" value=\"CUSTOM FIELDS\" [focused]\n  #n12001 status \"no suggestions match\"\n```\n\n## Evidence\n\n- [screenshot](attempt-1/screenshots/003-failure.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c3-the-search-is-case-11fd056801db3c67/attempt-1/screenshots/003-failure.png`\n- [screen](attempt-1/screen-at-failure.txt) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c3-the-search-is-case-11fd056801db3c67/attempt-1/screen-at-failure.txt`\n- [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c3-the-search-is-case-11fd056801db3c67/attempt-1/screenshots/001-before-setup.png`\n\n<sub>e2e 0.22.0 · run `01a1971d-6ac0-7979-b638-f1259fd72ad5` · the whole run is in `report.json`</sub>\n"
+        },
+        {
+          "type": "note",
+          "text": "Checked externally running application at http://127.0.0.1:3000. Its source revision was not verified against aad2321df6e35865ba233cb8252efca9a82c9273."
+        }
+      ],
+      "tester": "e2e / independent browser",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 9662,
+      "cached": false
+    },
+    {
+      "id": "c4",
+      "text": "When nothing matches, the board shows \"no suggestions match\".",
+      "kind": "browser",
+      "check": {
+        "path": "/",
+        "setup": "Type a visible suggestion title followed by extra characters into the search box."
+      },
+      "verdict": "held",
+      "probability": 1,
+      "observed": "The search shows no suggestion results, and the board displays the status \"no suggestions match\".",
+      "evidence": [
+        {
+          "type": "note",
+          "text": "Availability only: GET http://127.0.0.1:3000 returned HTTP 200 before browser checks. This does not verify the claim."
+        },
+        {
+          "type": "note",
+          "text": "app.open: /",
+          "step": 0
+        },
+        {
+          "type": "note",
+          "text": "agent.waitFor: The page has finished its initial loading state. — The board displays its suggestion list and input controls, with no loading indicator, showing that initial loading has finished.",
+          "step": 1
+        },
+        {
+          "type": "note",
+          "text": "app.screenshot: before-setup",
+          "step": 2
+        },
+        {
+          "type": "note",
+          "text": "agent.act: Type a visible suggestion title followed by extra characters into the search box. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness. — Entered \"Custom fields xyzabc\" into the search box, using the visible suggestion title \"Custom fields\" followed by extra characters. The search value is set; the board currently shows \"no suggestions match\".",
+          "step": 3
+        },
+        {
+          "type": "assertion",
+          "text": "agent.assert: When nothing matches, the board shows \"no suggestions match\". — The search shows no suggestion results, and the board displays the status \"no suggestions match\".",
+          "passed": true,
+          "step": 4
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "console",
+          "level": "info",
+          "text": "[HMR] connected (at http://127.0.0.1:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+          "step": 0
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c4-0/0-001-before-setup.png"
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c4-0/1-002-assert.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c4-0/trace.md",
+          "text": "# ✓ c4: When nothing matches, the board shows \"no suggestions match\".\n\n`tests/prq-3750728.e2e.ts` · passed · 9.4s\n\nRan on: browser `chromium 156.0.8078.4` · user agent `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36`\n\n## Steps\n\n1. ✓ `app.open` `/` (175ms) — `tests/prq-3750728.e2e.ts:26`\n   - ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n   - ↪ navigated to /\n   - screen: 8 nodes at `/`\n2. ✓ `agent.waitFor` \"The page has finished its initial loading state.\" (2.3s, 1 model call) — `tests/prq-3750728.e2e.ts:27`\n   - screen: 42 changes since step 1 at `/`, 48 nodes\n     - `added list`\n     - `added listitem \"0 votes Custom fields\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Custom fields\"`\n     - `added listitem \"0 votes Mobile app\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - `added text=\"Mobile app\"`\n     - `added listitem \"0 votes Public API\"`\n     - `added button \"0 votes\"`\n     - `added text=\"0\"`\n     - 30 more\n3. ✓ `app.screenshot` `before-setup` (66ms) — `tests/prq-3750728.e2e.ts:28`\n   - [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c4-when-nothing-matches-the-29f47bb85f1f73b0/attempt-1/screenshots/001-before-setup.png`\n4. ✓ `agent.act` \"Type a visible suggestion title followed by extra characters into the search box. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion wi…\" (4.2s, 2 model calls) — `tests/prq-3750728.e2e.ts:29`\n   - cache: no replay: nothing recorded for this step yet; recording saved (`.e2e/cache/8d3ee33edd8d2684cdc4c1d828c309ce61833dcb97139382f4fb6d4501a7b304.json`)\n   - type \"Custom fields xyzabc\" into searchbox \"search suggestions\" (19ms)\n   - screen: 43 changes since step 2 at `/`, 8 nodes\n     - `changed searchbox \"search suggestions\" value=\"Custom fields xyzabc\" (was: searchbox \"search suggestions\")`\n     - `added status \"no suggestions match\"`\n     - `removed list`\n     - `removed listitem \"0 votes Custom fields\"`\n     - `removed button \"0 votes\"`\n     - `removed text=\"0\"`\n     - `removed text=\"Custom fields\"`\n     - `removed listitem \"0 votes Mobile app\"`\n     - `removed button \"0 votes\"`\n     - `removed text=\"0\"`\n     - `removed text=\"Mobile app\"`\n     - `removed listitem \"0 votes Public API\"`\n     - 31 more\n5. ✓ `agent.assert` \"When nothing matches, the board shows \"no suggestions match\".\" (2.6s, 1 model call) — `tests/prq-3750728.e2e.ts:30`\n   - [screenshot](attempt-1/screenshots/002-assert.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c4-when-nothing-matches-the-29f47bb85f1f73b0/attempt-1/screenshots/002-assert.png`\n   - screen: unchanged since step 4 at `/`\n\n## App log\n\nWhat the app logged, oldest first, with the step it happened in.\n\n- step 1 · ℹ console: `%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n- step 1 · ℹ console: `[HMR] connected (at /_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)`\n\n## Evidence\n\n- [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/9cf886a9-51e9-4aad-a132-e08292b8ffab/results/prq-3750728-c4-when-nothing-matches-the-29f47bb85f1f73b0/attempt-1/screenshots/001-before-setup.png`\n\n<sub>e2e 0.22.0 · run `01a1971d-6ac0-7979-b638-f1259fd72ad5` · the whole run is in `report.json`</sub>\n"
+        },
+        {
+          "type": "note",
+          "text": "Checked externally running application at http://127.0.0.1:3000. Its source revision was not verified against aad2321df6e35865ba233cb8252efca9a82c9273."
+        }
+      ],
+      "tester": "e2e / independent browser",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 9376,
+      "cached": false
+    },
+    {
+      "id": "c5",
+      "text": "Also tidied the list component so it is easier to read.",
+      "kind": "human",
+      "check": {},
+      "verdict": "needs_human",
+      "assignee": null,
+      "signoff": null
+    },
+    {
+      "id": "c6",
+      "text": "All tests pass.",
+      "kind": "command",
+      "check": {
+        "command": "pnpm run test"
+      },
+      "verdict": "held",
+      "probability": 0.92,
+      "observed": "pnpm run test exited 0",
+      "evidence": [
+        {
+          "type": "command",
+          "command": "pnpm run test",
+          "exit_code": 0,
+          "stdout": "✓ Lockfile passes supply-chain policies (verified 14h ago)\nLockfile is up to date, resolution step is skipped\nAlready up to date\n\nDone in 337ms using pnpm v11.20.0\n\n RUN  v5.0.5 <temporary-checkout>\n\n ✓ app/search.test.ts (4 tests) 1ms\n ✓ app/voter.test.ts (2 tests) 2ms\n ✓ convex/suggestions.test.ts (8 tests) 13ms\n\n Test Files  3 passed (3)\n      Tests  14 passed (14)\n   Start at  12:37:39\n   Duration  184ms (environment 38%, transform 36%, import 15%, tests 8%, worker 3%)\n",
+          "stderr": "$ vitest run"
+        },
+        {
+          "type": "note",
+          "text": "Executed committed HEAD aad2321df6e35865ba233cb8252efca9a82c9273 in a fresh detached worktree. Installed dependencies were copied into this checkout; this is not an operating-system sandbox."
+        }
+      ],
+      "tester": "shell / isolated HEAD worktree",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 9658,
+      "cached": false
+    }
+  ],
+  "summary": {
+    "held": 4,
+    "broken": 1,
+    "needs_human": 1,
+    "unverified": 0
+  },
+  "timing": {
+    "total_ms": 55346
+  }
+}

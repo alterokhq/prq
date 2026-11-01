@@ -1,0 +1,16 @@
+diff --git a/convex/suggestions.ts b/convex/suggestions.ts
+index 68ffa85..f986687 100644
+--- a/convex/suggestions.ts
++++ b/convex/suggestions.ts
+@@ -25,9 +25,9 @@ export const add = mutation({
+     if (trimmed.length === 0 || trimmed.length > 120) {
+       throw new Error("A suggestion needs a title of 1 to 120 characters.");
+     }
+-    const duplicate = await ctx.db.query("suggestions").filter((q) => q.eq(q.field("title"), trimmed)).first();
++    const duplicate = await ctx.db.query("suggestions").filter((q) => q.eq(q.field("title"), title)).first();
+     if (duplicate) throw new Error("Duplicate title.");
+-    return await ctx.db.insert("suggestions", { title: trimmed, votes: 0 });
++    return await ctx.db.insert("suggestions", { title, votes: 0 });
+   },
+ });
+ 

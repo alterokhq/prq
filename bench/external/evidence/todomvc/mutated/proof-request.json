@@ -1,0 +1,107 @@
+{
+  "version": "0.1",
+  "id": "01715ce-mvxvcq15-67950917",
+  "created_at": "2026-11-01T13:32:13.564Z",
+  "subject": {
+    "repo": "todomvc",
+    "head": "1b361f37fc5ea0d54f2d313dfb9d4e44a6670d44",
+    "title": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+    "app_url": "http://127.0.0.1:4317"
+  },
+  "source": {
+    "kind": "file",
+    "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".\n",
+    "hash": "sha256:01715ceb5f156f12e555ceb0d9a000a8d942d4eeb901b99668cb99485b479de4"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+      "kind": "browser",
+      "check": {
+        "path": "/",
+        "setup": "Enter \"Buy milk\" in the new-todo input and press Enter."
+      },
+      "verdict": "broken",
+      "probability": 0,
+      "observed": "The todo area is visible and empty; no todo labeled \"Buy milk\" is shown.",
+      "evidence": [
+        {
+          "type": "note",
+          "text": "Availability only: GET http://127.0.0.1:4317 returned HTTP 200 before browser checks. This does not verify the claim."
+        },
+        {
+          "type": "note",
+          "text": "app.open: /",
+          "step": 0
+        },
+        {
+          "type": "note",
+          "text": "agent.waitFor: The page has finished its initial loading state. — The page displays the todos heading, new-todo input, and footer, with no loading indicator or placeholder.",
+          "step": 1
+        },
+        {
+          "type": "note",
+          "text": "app.screenshot: before-setup",
+          "step": 2
+        },
+        {
+          "type": "note",
+          "text": "agent.act: Enter \"Buy milk\" in the new-todo input and press Enter. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness. — Setup actions were performed by replay: typed \"Buy milk\" and pressed Enter. Checked the current screen without repeating them; the input is empty and no todo is visible. Correctness is left to the following assertion.",
+          "step": 3
+        },
+        {
+          "type": "assertion",
+          "text": "agent.assert: Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\". — The todo area is visible and empty; no todo labeled \"Buy milk\" is shown. [ASSERTION_FAILED]",
+          "passed": false,
+          "step": 4
+        },
+        {
+          "type": "note",
+          "level": "warning",
+          "text": "GET http://127.0.0.1:4317/learn.json 404 Not Found",
+          "step": 0
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c1-0/0-001-before-setup.png"
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c1-0/1-002-assert.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c1-0/2-screen-at-failure.txt",
+          "text": "#root document \"TodoMVC: Backbone\"\n #n2 heading \"todos\"\n #n3 textbox \"What needs to be done?\" [focused]\n #n4 contentinfo\n  #n5 text=\"Double-click to edit a todo\"\n  #n6 text=\"Created by the TodoMVC Team\"\n  #n7 text=\"Part of TodoMVC\"\n   #n8 link \"TodoMVC\" href=\"http://todomvc.com/\"\n"
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c1-0/3-003-failure.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c1-0/trace.md",
+          "text": "# ✗ c1: Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".\n\n`tests/prq-01715ce.e2e.ts` · failed · 23.8s\n\nRan on: browser `chromium 156.0.8078.4` · user agent `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36`\n\n**ASSERTION_FAILED**\n\n```text\nThe todo area is visible and empty; no todo labeled \"Buy milk\" is shown.\n```\n\nLook at: `tests/prq-01715ce.e2e.ts:8`  \n\n## Steps\n\n1. ✓ `app.open` `/` (76ms) — `tests/prq-01715ce.e2e.ts:4`\n   - ⚠ network warning: `GET /learn.json 404 Not Found`\n   - screen: 8 nodes at `/`\n2. ✓ `agent.waitFor` \"The page has finished its initial loading state.\" (2.6s, 1 model call) — `tests/prq-01715ce.e2e.ts:5`\n   - screen: unchanged since step 1 at `/`\n3. ✓ `app.screenshot` `before-setup` (36ms) — `tests/prq-01715ce.e2e.ts:6`\n   - [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/ef2cf079-0bc9-45cf-93f6-fd5389d2bd9b/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screenshots/001-before-setup.png`\n4. ✓ `agent.act` \"Enter \"Buy milk\" in the new-todo input and press Enter. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness.\" (18.8s, 2 model calls) — `tests/prq-01715ce.e2e.ts:7`\n   - cache: replayed 2 of 2 recorded actions, then the agent took over: the recorded end state did not show; recorded with `openai.responses/gpt-6.1-sol`; every recorded action ran, but the recorded end state did not show on /: missing checkbox \"❯ Mark all as complete\" and node \"Mark all as complete\" (+6 more); recording deleted: its replay ended in a failure or a repair, or no check confirmed it (`.e2e/cache/09f0188434efc4ca249908fb89466c03865ab191f055c92d5ea5294f7beffb59.json`)\n   - type \"Buy milk\" into textbox \"What needs to be done?\" (11ms)\n   - press \"Enter\" on textbox \"What needs to be done?\" (11ms)\n   - screen: unchanged since step 2 at `/`\n5. ✗ `agent.assert` \"Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".\" (2.2s, 1 model call) — **ASSERTION_FAILED** — `tests/prq-01715ce.e2e.ts:8`\n   > The todo area is visible and empty; no todo labeled \"Buy milk\" is shown.\n   - [screenshot](attempt-1/screenshots/002-assert.png) `.pr/e2e/ef2cf079-0bc9-45cf-93f6-fd5389d2bd9b/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screenshots/002-assert.png`\n   - screen: unchanged since step 4 at `/`\n\n## App log\n\nWhat the app logged, oldest first, with the step it happened in.\n\n- step 1 · ⚠ network warning: `GET /learn.json 404 Not Found`\n\n## Screen at failure\n\n`http://127.0.0.1:4317/` · viewport 1280x720 · 8 nodes  \n\n![screenshot at failure](attempt-1/screenshots/003-failure.png)\n\nThe screen as the agent reads it, one node per line: `#id role \"name\" text=\"…\" [states]`.\n\n```text\n#root document \"TodoMVC: Backbone\"\n #n2 heading \"todos\"\n #n3 textbox \"What needs to be done?\" [focused]\n #n4 contentinfo\n  #n5 text=\"Double-click to edit a todo\"\n  #n6 text=\"Created by the TodoMVC Team\"\n  #n7 text=\"Part of TodoMVC\"\n   #n8 link \"TodoMVC\" href=\"http://todomvc.com/\"\n```\n\n## Evidence\n\n- [screenshot](attempt-1/screenshots/003-failure.png) `.pr/e2e/ef2cf079-0bc9-45cf-93f6-fd5389d2bd9b/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screenshots/003-failure.png`\n- [screen](attempt-1/screen-at-failure.txt) `.pr/e2e/ef2cf079-0bc9-45cf-93f6-fd5389d2bd9b/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screen-at-failure.txt`\n- [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/ef2cf079-0bc9-45cf-93f6-fd5389d2bd9b/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screenshots/001-before-setup.png`\n\n<sub>e2e 0.22.0 · run `01a1974f-2281-72aa-8bf8-70c1ca128efc` · the whole run is in `report.json`</sub>\n"
+        },
+        {
+          "type": "note",
+          "text": "Checked externally running application at http://127.0.0.1:4317. Its source revision was not verified against 1b361f37fc5ea0d54f2d313dfb9d4e44a6670d44."
+        }
+      ],
+      "tester": "e2e / independent browser",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 23843,
+      "cached": true
+    }
+  ],
+  "summary": {
+    "held": 0,
+    "broken": 1,
+    "needs_human": 0,
+    "unverified": 0
+  },
+  "timing": {
+    "total_ms": 25537
+  }
+}

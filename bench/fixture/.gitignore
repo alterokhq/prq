@@ -1,0 +1,9 @@
+node_modules
+.next
+.env*
+.convex
+.e2e
+.pr
+next-env.d.ts
+*.tsbuildinfo
+bench/runtime

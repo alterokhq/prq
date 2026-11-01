@@ -1,0 +1,13 @@
+diff --git a/convex/suggestions.ts b/convex/suggestions.ts
+index 39edf2c..c3aa80c 100644
+--- a/convex/suggestions.ts
++++ b/convex/suggestions.ts
+@@ -14,7 +14,7 @@ export const list = query({
+   args: {},
+   handler: async (ctx) => {
+     const suggestions = await ctx.db.query("suggestions").order("desc").take(100);
+-    return suggestions.map((s) => ({ ...s, votes: s.votes ?? 0 })).sort((a, b) => b.votes - a.votes);
++    return suggestions.map((s) => ({ ...s, votes: s.votes ?? 0 })).sort((a, b) => a.votes - b.votes);
+   },
+ });
+ 

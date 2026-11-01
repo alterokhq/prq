@@ -1,0 +1,1 @@
+duplicate titles are rejected

@@ -1,0 +1,1 @@
+votes persist across reloads

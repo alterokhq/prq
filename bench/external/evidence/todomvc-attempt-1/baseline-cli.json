@@ -1,0 +1,16 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-cli>",
+    "--claims",
+    "<prq-source>/bench/external/claims/todomvc.md",
+    "--json",
+    "--quiet",
+    "--app-url",
+    "http://127.0.0.1:4317"
+  ],
+  "exit_code": 2,
+  "stdout": "{\"summary\":{\"held\":0,\"broken\":0,\"needs_human\":0,\"unverified\":1},\"broken\":[],\"omitted\":0,\"report\":\".pr/runs/01715ce-mvxvav8n-c4938beb/proof-request.json\"}\n",
+  "stderr": "",
+  "duration_ms": 4196
+}

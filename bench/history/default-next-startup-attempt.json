@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "method": "Seeded defects on a single application. Authored tests, existing tests and independent oracles are reported separately.",
+  "cases": [
+    {
+      "id": "01",
+      "slug": "vote-toggle",
+      "claim": "clicking upvote again removes the vote",
+      "setup": "The existing toggle behavior is the correct baseline.",
+      "mutation": "Remove the existing-vote removal branch.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1460,
+          "log": "01-vote-toggle/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 268,
+          "log": "01-vote-toggle/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Toggle a new vote twice; the count returns to zero.",
+          "duration_ms": 1937,
+          "screenshot": "01-vote-toggle/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 289,
+          "log": "01-vote-toggle/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 265,
+          "log": "01-vote-toggle/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "17c8187dff76919f2acd83e4f44c7a1fd811326a",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "3cbab4a08056dd57f3cda13ed02ea88a34a3a029",
+      "seeded_commit": "c97b519a167fe2828a8125913beefb472217cafd",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": false,
+      "note": "Isolated Next application did not become ready."
+    }
+  ],
+  "updated_at": "2026-11-01T12:58:36.794Z",
+  "artifacts_root": "bench-public-retry",
+  "note": "Preserved startup attempts. Cases without a confirmed seeded browser contradiction did not run prq. Runtime dependencies were corrected afterward; no blocked setup is counted as detection."
+}

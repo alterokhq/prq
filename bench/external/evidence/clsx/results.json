@@ -1,0 +1,96 @@
+{
+  "scope": "Small seeded cross-repository validation. Not an estimate of benchmark accuracy.",
+  "repository": {
+    "url": "https://github.com/lukeed/clsx.git",
+    "commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+    "license": "MIT",
+    "license_path": "license",
+    "framework": "JavaScript library, no application framework",
+    "track": "command",
+    "mutation_file": "src/index.js",
+    "before": "\treturn str;\n}\n\nexport default clsx;",
+    "after": "\treturn '';\n}\n\nexport default clsx;"
+  },
+  "tool_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+  "frozen_tool_matches_manifest": true,
+  "models": {
+    "extract": "gpt-6.1-sol",
+    "classify": "gpt-6-luna",
+    "judge": "gpt-6-luna",
+    "browser": "gpt-6.1-sol"
+  },
+  "node_prq": "v24.11.0",
+  "test_runtime": "Node 18.20.8, upstream legacy esm loader",
+  "setup": [],
+  "records": [
+    {
+      "state": "baseline",
+      "upstream_commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "tested_commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "claim_lock": "sha256:c0f30f47c42e5d7d50cb4a237b88fe8fb9558c7572db4f1c97d5a7f1254e49c1",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 1,
+        "broken": 0,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "The existing clsx test suite completes with zero failing tests.",
+          "verdict": "held",
+          "probability": 0.92,
+          "tester": "shell / isolated HEAD worktree",
+          "observed": "npm run test exited 0"
+        }
+      ],
+      "oracle_exit_code": 0,
+      "oracle_duration_ms": 331,
+      "prq_duration_ms": 5348,
+      "wall_duration_ms": 5501,
+      "cost_usd": null,
+      "proof": "baseline/proof-request.json"
+    },
+    {
+      "state": "mutated",
+      "upstream_commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "tested_commit": "45b89a84050a6aa598f8a78b928a2fa4d398112b",
+      "claim_lock": "sha256:c0f30f47c42e5d7d50cb4a237b88fe8fb9558c7572db4f1c97d5a7f1254e49c1",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 0,
+        "broken": 1,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "The existing clsx test suite completes with zero failing tests.",
+          "verdict": "broken",
+          "probability": 0,
+          "tester": "shell / isolated HEAD worktree",
+          "observed": "npm run test exited 1"
+        }
+      ],
+      "oracle_exit_code": 1,
+      "oracle_duration_ms": 185,
+      "prq_duration_ms": 1206,
+      "wall_duration_ms": 1879,
+      "cost_usd": null,
+      "proof": "mutated/proof-request.json"
+    }
+  ],
+  "cleanup": {
+    "service_stopped": true,
+    "source_restored": true
+  },
+  "created_at": "2026-11-01T13:29:45.711Z",
+  "cost_usd": null,
+  "upstream_tests_tree": {
+    "baseline": "8e588c755874d0ae66d7da2fbd17b23df33cc033",
+    "mutated": "8e588c755874d0ae66d7da2fbd17b23df33cc033",
+    "unchanged": true
+  }
+}

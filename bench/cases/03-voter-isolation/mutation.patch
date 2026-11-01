@@ -1,0 +1,13 @@
+diff --git a/convex/suggestions.ts b/convex/suggestions.ts
+index 9435d94..1734fc5 100644
+--- a/convex/suggestions.ts
++++ b/convex/suggestions.ts
+@@ -36,7 +36,7 @@ export const myVotes = query({
+     checkVoterId(voterId);
+     const votes = await ctx.db
+       .query("votes")
+-      .withIndex("by_voter_and_suggestion", (q) => q.eq("voterId", voterId))
++      .filter((q) => q.neq(q.field("suggestionId"), voterId))
+       .take(1000);
+     return votes.map((vote) => vote.suggestionId);
+   },

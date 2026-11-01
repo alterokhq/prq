@@ -1,0 +1,13 @@
+diff --git a/convex/suggestions.ts b/convex/suggestions.ts
+index 9435d94..3a91262 100644
+--- a/convex/suggestions.ts
++++ b/convex/suggestions.ts
+@@ -13,7 +13,7 @@ function checkVoterId(id: string) {
+ export const list = query({
+   args: {},
+   handler: async (ctx) => {
+-    const suggestions = await ctx.db.query("suggestions").order("desc").take(100);
++    const suggestions = await ctx.db.query("suggestions").order("desc").take(10);
+     return suggestions.map((s) => ({ ...s, votes: s.votes ?? 0 }));
+   },
+ });

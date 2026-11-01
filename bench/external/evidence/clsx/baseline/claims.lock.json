@@ -1,0 +1,13 @@
+{
+  "hash": "sha256:c0f30f47c42e5d7d50cb4a237b88fe8fb9558c7572db4f1c97d5a7f1254e49c1",
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The existing clsx test suite completes with zero failing tests.",
+      "kind": "command",
+      "check": {
+        "command": "npm run test"
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "version": "0.1",
+  "id": "01715ce-mvxvcddy-bcc98952",
+  "created_at": "2026-11-01T13:31:47.464Z",
+  "subject": {
+    "repo": "todomvc",
+    "head": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+    "title": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+    "app_url": "http://127.0.0.1:4317"
+  },
+  "source": {
+    "kind": "file",
+    "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".\n",
+    "hash": "sha256:01715ceb5f156f12e555ceb0d9a000a8d942d4eeb901b99668cb99485b479de4"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+      "kind": "browser",
+      "check": {
+        "path": "/",
+        "setup": "Enter \"Buy milk\" in the new-todo input and press Enter."
+      },
+      "verdict": "held",
+      "probability": 1,
+      "observed": "The todo list shows a visible item labeled \"Buy milk\", and the new-todo input is empty.",
+      "evidence": [
+        {
+          "type": "note",
+          "text": "Availability only: GET http://127.0.0.1:4317 returned HTTP 200 before browser checks. This does not verify the claim."
+        },
+        {
+          "type": "note",
+          "text": "app.open: /",
+          "step": 0
+        },
+        {
+          "type": "note",
+          "text": "agent.waitFor: The page has finished its initial loading state. — The page shows the todos heading, an enabled new-todo textbox, and footer content, with no loading indicator.",
+          "step": 1
+        },
+        {
+          "type": "note",
+          "text": "app.screenshot: before-setup",
+          "step": 2
+        },
+        {
+          "type": "note",
+          "text": "agent.act: Enter \"Buy milk\" in the new-todo input and press Enter. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness. — Entered \"Buy milk\" in the new-todo input and pressed Enter. The input cleared and a visible \"Buy milk\" todo appeared.",
+          "step": 3
+        },
+        {
+          "type": "assertion",
+          "text": "agent.assert: Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\". — The todo list shows a visible item labeled \"Buy milk\", and the new-todo input is empty.",
+          "passed": true,
+          "step": 4
+        },
+        {
+          "type": "note",
+          "level": "warning",
+          "text": "GET http://127.0.0.1:4317/learn.json 404 Not Found",
+          "step": 0
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c1-0/0-001-before-setup.png"
+        },
+        {
+          "type": "screenshot",
+          "path": "evidence/c1-0/1-002-assert.png"
+        },
+        {
+          "type": "note",
+          "path": "evidence/c1-0/trace.md",
+          "text": "# ✓ c1: Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".\n\n`tests/prq-01715ce.e2e.ts` · passed · 12.5s\n\nRan on: browser `chromium 156.0.8078.4` · user agent `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36`\n\n## Steps\n\n1. ✓ `app.open` `/` (84ms) — `tests/prq-01715ce.e2e.ts:4`\n   - ⚠ network warning: `GET /learn.json 404 Not Found`\n   - screen: 8 nodes at `/`\n2. ✓ `agent.waitFor` \"The page has finished its initial loading state.\" (2.8s, 1 model call) — `tests/prq-01715ce.e2e.ts:5`\n   - screen: unchanged since step 1 at `/`\n3. ✓ `app.screenshot` `before-setup` (60ms) — `tests/prq-01715ce.e2e.ts:6`\n   - [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/5189c3e6-dc57-47c7-92d1-3d62cf219f4f/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screenshots/001-before-setup.png`\n4. ✓ `agent.act` \"Enter \"Buy milk\" in the new-todo input and press Enter. This is setup only: complete this step once the requested actions are performed, regardless of the resulting application behavior. The following assertion will check correctness.\" (6.1s, 3 model calls) — `tests/prq-01715ce.e2e.ts:7`\n   - cache: no replay: nothing recorded for this step yet; recording saved (`.e2e/cache/09f0188434efc4ca249908fb89466c03865ab191f055c92d5ea5294f7beffb59.json`)\n   - type \"Buy milk\" into textbox \"What needs to be done?\" (24ms)\n   - press \"Enter\" on textbox \"What needs to be done?\" (33ms)\n   - screen: 15 changes since step 2 at `/`, 23 nodes\n     - `added main`\n     - `added checkbox \"❯ Mark all as complete\"`\n     - `added text=\"Mark all as complete\"`\n     - `added list`\n     - `added listitem \"Buy milk\"`\n     - `added checkbox`\n     - `added text=\"Buy milk\"`\n     - `added text=\"1 item left\"`\n     - `added list`\n     - `added listitem \"All\"`\n     - `added link \"All\" href=\"/#…\"`\n     - `added listitem \"Active\"`\n     - 3 more\n5. ✓ `agent.assert` \"Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".\" (3.4s, 1 model call) — `tests/prq-01715ce.e2e.ts:8`\n   - [screenshot](attempt-1/screenshots/002-assert.png) `.pr/e2e/5189c3e6-dc57-47c7-92d1-3d62cf219f4f/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screenshots/002-assert.png`\n   - screen: unchanged since step 4 at `/`\n\n## App log\n\nWhat the app logged, oldest first, with the step it happened in.\n\n- step 1 · ⚠ network warning: `GET /learn.json 404 Not Found`\n\n## Evidence\n\n- [screenshot](attempt-1/screenshots/001-before-setup.png) `.pr/e2e/5189c3e6-dc57-47c7-92d1-3d62cf219f4f/results/prq-01715ce-c1-entering-buy-milk-in-the-new-054b66b802ff11f8/attempt-1/screenshots/001-before-setup.png`\n\n<sub>e2e 0.22.0 · run `01a1974e-e51f-7296-a1a6-5e58b61db11c` · the whole run is in `report.json`</sub>\n"
+        },
+        {
+          "type": "note",
+          "text": "Checked externally running application at http://127.0.0.1:4317. Its source revision was not verified against ff43b02e59dfa604386bb382034b2cd07c2bcd8a."
+        }
+      ],
+      "tester": "e2e / independent browser",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 12490,
+      "cached": false
+    }
+  ],
+  "summary": {
+    "held": 1,
+    "broken": 0,
+    "needs_human": 0,
+    "unverified": 0
+  },
+  "timing": {
+    "total_ms": 18597
+  }
+}

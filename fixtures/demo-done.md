@@ -1,0 +1,1 @@
+Added search to the suggestions board. A search box appears above the list. Typing filters the suggestions as you type. The search is case-insensitive. When nothing matches, the board shows "no suggestions match". Also tidied the list component so it is easier to read. All tests pass.

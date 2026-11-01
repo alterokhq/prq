@@ -1,0 +1,2 @@
+# Unified patch context preserves whitespace from the fixture source.
+cases/*/mutation.patch -whitespace

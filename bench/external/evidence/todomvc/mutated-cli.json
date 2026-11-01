@@ -1,0 +1,15 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-cli>",
+    "rerun",
+    "--json",
+    "--quiet",
+    "--app-url",
+    "http://127.0.0.1:4317"
+  ],
+  "exit_code": 1,
+  "stdout": "{\"summary\":{\"held\":0,\"broken\":1,\"needs_human\":0,\"unverified\":0},\"broken\":[{\"id\":\"c1\",\"claimed\":\"Entering \\\"Buy milk\\\" in the new-todo input and pressing Enter adds a visible todo labeled \\\"Buy milk\\\".\",\"observed\":\"The todo area is visible and empty; no todo labeled \\\"Buy milk\\\" is shown.\"}],\"omitted\":0,\"report\":\".pr/runs/01715ce-mvxvcq15-67950917/proof-request.json\"}\n",
+  "stderr": "",
+  "duration_ms": 25932
+}

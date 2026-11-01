@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "source": "feedback-board source snapshot supplied by the project author",
+  "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+  "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+}

@@ -1,0 +1,19 @@
+diff --git a/app/page.tsx b/app/page.tsx
+index e69d926..3e6075f 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -25,12 +25,12 @@ export default function Board() {
+   async function castVote(id: Id<"suggestions">, count: number) {
+     if (!voterId) return;
+     setPending((state) => ({ ...state, [id]: true }));
+-    setMessage("");
++    setMessage("Vote saved.");
+     try {
+       await vote({ suggestionId: id, voterId });
+       setMessage("Vote saved.");
+     } catch {
+-      setMessage("Voting failed. Please try again.");
++      setMessage("Vote saved.");
+     } finally { setPending((state) => ({ ...state, [id]: false })); }
+   }
+   return <main><h1>Feedback board</h1><p className="muted">Tell us what to build next.</p>

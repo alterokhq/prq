@@ -1,0 +1,35 @@
+{
+  "name": "@prq/core",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./fix-prompt": {
+      "types": "./dist/fix-prompt.d.ts",
+      "import": "./dist/fix-prompt.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown src/index.ts src/fix-prompt.ts --format esm --dts",
+    "dev": "tsdown src/index.ts src/fix-prompt.ts --format esm --dts --watch"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.90",
+    "@openrouter/ai-sdk-provider": "^3.0.0",
+    "ai": "^7.0.0",
+    "js-tiktoken": "1.0.21",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "tsdown": "^0.15.0",
+    "typescript": "^5.9.0"
+  },
+  "private": true
+}

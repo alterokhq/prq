@@ -1,0 +1,13 @@
+diff --git a/convex/suggestions.ts b/convex/suggestions.ts
+index 61c05e4..c5181b2 100644
+--- a/convex/suggestions.ts
++++ b/convex/suggestions.ts
+@@ -54,7 +54,7 @@ export const toggleVote = mutation({
+     const existing = await ctx.db
+       .query("votes")
+       .withIndex("by_voter_and_suggestion", (q) =>
+-        q.eq("voterId", voterId).eq("suggestionId", suggestionId),
++        q.eq("voterId", suggestionId).eq("suggestionId", suggestionId),
+       )
+       .unique();
+     const votes = suggestion.votes ?? 0;

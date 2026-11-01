@@ -1,0 +1,8 @@
+{
+  "node": "v24.11.0",
+  "command": "npm test",
+  "exit_code": 1,
+  "stdout": "\n> clsx@2.1.1 test\n> uvu -r esm test\n\n",
+  "stderr": "(node:39719) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n<target-root>/clsx/test/classnames.js:5\nimport { test } from 'uvu';\n^^^^^^\n\nSyntaxError: Cannot use import statement outside a module\n    at makeContextifyScript (node:internal/vm:194:14)\n    at wrapSafe (node:internal/modules/cjs/loader:1655:20)\n    at Module._compile (node:internal/modules/cjs/loader:1734:20)\n    at Object..js (node:internal/modules/cjs/loader:1893:10)\n    at Module.load (node:internal/modules/cjs/loader:1480:32)\n    at Module._load (node:internal/modules/cjs/loader:1299:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:244:24)\n    at Module.require (node:internal/modules/cjs/loader:1503:12)\n    at require (node:internal/modules/helpers:152:16)\n",
+  "note": "Initial runtime check. This legacy esm-loader issue also reproduced on Node 22.23.2; Node 18.20.8 executes all original tests."
+}

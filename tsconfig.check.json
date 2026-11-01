@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@prq/core": [
+        "packages/core/src/index.ts"
+      ],
+      "@prq/runner-e2e": [
+        "packages/runner-e2e/src/index.ts"
+      ],
+      "@prq/runner-shell": [
+        "packages/runner-shell/src/index.ts"
+      ],
+      "@prq/render": [
+        "packages/render/src/index.ts"
+      ],
+      "@prq/core/fix-prompt": [
+        "packages/core/src/fix-prompt.ts"
+      ]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*.ts",
+    "packages/*/tsdown.config.ts"
+  ]
+}

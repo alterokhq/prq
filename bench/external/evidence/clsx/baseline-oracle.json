@@ -1,0 +1,10 @@
+{
+  "command": "npm",
+  "args": [
+    "test"
+  ],
+  "exit_code": 0,
+  "stdout": "\n> clsx@2.1.1 test\n> uvu -r esm test\n\nclassnames.js\n• • • • • • • • • • • • • • •   (15 / 15)\n\nindex.js\n• • • • • • • • • • • •   (12 / 12)\n\nlite.js\n• • • • •   (5 / 5)\n\n  Total:     32\n  Passed:    32\n  Skipped:   0\n  Duration:  0.64ms\n\n",
+  "stderr": "npm warn cli npm v11.6.1 does not support Node.js v18.20.8. This version of npm supports the following node versions: `^20.17.0 || >=22.9.0`. You can find the latest version at https://nodejs.org/.\n",
+  "duration_ms": 331
+}

@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "method": "Seeded defects on a single application. Authored tests, existing tests and independent oracles are reported separately.",
+  "cases": [
+    {
+      "id": "07",
+      "slug": "zero-votes",
+      "claim": "suggestions start at zero votes",
+      "setup": "Seed suggestions without a votes field, as the original application does.",
+      "mutation": "Read missing legacy vote counts as one instead of zero.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1779,
+          "log": "07-zero-votes/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 279,
+          "log": "07-zero-votes/bench/runtime/baseline-author.log"
+        },
+        "oracle": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 301,
+          "log": "07-zero-votes/bench/runtime/baseline-oracle.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Dark mode displays zero votes; a unit oracle checks the same query result.",
+          "duration_ms": 2233,
+          "screenshot": "07-zero-votes/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 379,
+          "log": "07-zero-votes/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 295,
+          "log": "07-zero-votes/bench/runtime/seeded-author.log"
+        },
+        "oracle": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 300,
+          "log": "07-zero-votes/bench/runtime/seeded-oracle.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "suggestions without votes must display zero",
+          "duration_ms": 6769,
+          "screenshot": "07-zero-votes/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 2,
+        "duration_ms": 7777,
+        "log": "07-zero-votes/bench/runtime/prq.log",
+        "verdict": "unverified",
+        "report": "07-zero-votes/.pr/runs/f649eea-mvxtt622-c92a5efd/proof-request.json",
+        "claim_text": "suggestions start at zero votes",
+        "lock": "sha256:f649eea64b1677f36ec3f5dd9196ba11e6873f2ce5bd1c5fd3cfc7e3dc27590d"
+      },
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "44d713071cee65d9a9f0cdd600e1c16468d116bc",
+      "seeded_commit": "f11ec7fee38a1c6b3c3ac8db52cf71de2cb99c1e",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true
+    }
+  ],
+  "updated_at": "2026-11-01T12:48:40.261Z",
+  "note": "Initial live attempt: decision executor text model gpt-6-luna-fast was unavailable. Target remained unverified. Subsequent runs use the verified gpt-6.1-sol LLM executor; this attempt is preserved, not counted as detection."
+}

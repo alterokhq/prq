@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "scope": "Small seeded cross-repository validation. Not an estimate of benchmark accuracy.",
+  "repositories": {
+    "clsx": {
+      "url": "https://github.com/lukeed/clsx.git",
+      "commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "license": "MIT",
+      "license_path": "license",
+      "framework": "JavaScript library, no application framework",
+      "track": "command",
+      "mutation_file": "src/index.js",
+      "before": "\treturn str;\n}\n\nexport default clsx;",
+      "after": "\treturn '';\n}\n\nexport default clsx;"
+    },
+    "todomvc": {
+      "url": "https://github.com/tastejs/todomvc.git",
+      "commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+      "license": "MIT",
+      "license_path": "license.md",
+      "framework": "Backbone with jQuery and Underscore",
+      "track": "browser",
+      "serve_directory": "examples/backbone/dist",
+      "mutation_file": "examples/backbone/dist/views/app-view.js",
+      "before": "                app.todos.create(this.newAttributes());",
+      "after": "                // Seeded defect: creating the todo is omitted."
+    }
+  },
+  "models": { "extract": "gpt-6.1-sol", "classify": "gpt-6-luna", "judge": "gpt-6-luna", "browser": "gpt-6.1-sol" },
+  "tool_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+  "cost_usd": null
+}

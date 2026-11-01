@@ -1,0 +1,55 @@
+{
+  "version": "0.1",
+  "id": "c0f30f4-mvxv6g6q-dde6d7bf",
+  "created_at": "2026-11-01T13:26:56.984Z",
+  "subject": {
+    "repo": "clsx",
+    "head": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+    "title": "The existing clsx test suite completes with zero failing tests.",
+    "app_url": "http://localhost:3000"
+  },
+  "source": {
+    "kind": "file",
+    "text": "The existing clsx test suite completes with zero failing tests.\n",
+    "hash": "sha256:c0f30f47c42e5d7d50cb4a237b88fe8fb9558c7572db4f1c97d5a7f1254e49c1"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The existing clsx test suite completes with zero failing tests.",
+      "kind": "command",
+      "check": {
+        "command": "npm run test"
+      },
+      "verdict": "held",
+      "probability": 0.92,
+      "observed": "npm run test exited 0",
+      "evidence": [
+        {
+          "type": "command",
+          "command": "npm run test",
+          "exit_code": 0,
+          "stdout": "\n> clsx@2.1.1 test\n> uvu -r esm test\n\nclassnames.js\n• • • • • • • • • • • • • • •   (15 / 15)\n\nindex.js\n• • • • • • • • • • • •   (12 / 12)\n\nlite.js\n• • • • •   (5 / 5)\n\n  Total:     32\n  Passed:    32\n  Skipped:   0\n  Duration:  0.94ms\n",
+          "stderr": "npm warn cli npm v11.6.1 does not support Node.js v18.20.8. This version of npm supports the following node versions: `^20.17.0 || >=22.9.0`. You can find the latest version at https://nodejs.org/."
+        },
+        {
+          "type": "note",
+          "text": "Executed committed HEAD 925494cf31bcd97d3337aacd34e659e80cae7fe2 in a fresh detached worktree. Installed dependencies were copied into this checkout; this is not an operating-system sandbox."
+        }
+      ],
+      "tester": "shell / isolated HEAD worktree",
+      "judge": "decisions gpt-6-luna",
+      "duration_ms": 566,
+      "cached": false
+    }
+  ],
+  "summary": {
+    "held": 1,
+    "broken": 0,
+    "needs_human": 0,
+    "unverified": 0
+  },
+  "timing": {
+    "total_ms": 4771
+  }
+}

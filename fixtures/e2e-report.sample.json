@@ -1,0 +1,530 @@
+{
+  "schemaVersion": "report-1",
+  "run": {
+    "id": "01a193f1-8e17-7070-a58b-203bfecb5025",
+    "specVersion": "0.1",
+    "runner": {
+      "name": "e2e",
+      "version": "0.22.0"
+    },
+    "status": "failed",
+    "exitCode": 1,
+    "startedAt": "2026-10-31T21:50:51.777Z",
+    "finishedAt": "2026-10-31T21:50:55.440Z",
+    "project": {
+      "id": "feedback",
+      "configDigest": "6ae0042d1f3d01fbf8ff34655ba5cb61e92d3d59763522195cdef9cf1d3f0028"
+    },
+    "environment": {
+      "ci": false,
+      "trustNoticeShown": false,
+      "os": "darwin 25.6.0",
+      "arch": "arm64",
+      "runtime": "node v24.11.0"
+    },
+    "vcs": {
+      "commit": "da5f74bd7e1d7b50f3c5ea337b7f1f27cc42f988",
+      "branch": "feat/search",
+      "dirty": true
+    },
+    "targets": [
+      {
+        "id": "web",
+        "index": 0,
+        "platform": "web",
+        "baseOrigin": "http://localhost:3000",
+        "environment": "test",
+        "engine": {
+          "name": "web",
+          "version": "0.15.4",
+          "spiVersion": 1
+        },
+        "capabilities": [
+          "actions",
+          "artifacts",
+          "browser",
+          "keyboard",
+          "location",
+          "observation",
+          "pointer",
+          "state"
+        ],
+        "artifactCapabilities": [
+          "screenshot",
+          "video"
+        ],
+        "stateCapability": true
+      }
+    ],
+    "serialGroups": [],
+    "results": [
+      {
+        "id": "cb43efad4810750f40e7fe62cb0e38435b4ede95e4603d7f7b8670cf6084113b",
+        "testId": "tests/prq-smoke.e2e.ts::c1%3A%20the%20board%20lists%20suggestions%20with%20vote%20counts",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "c1: the board lists suggestions with vote counts"
+        ],
+        "file": "tests/prq-smoke.e2e.ts",
+        "source": {
+          "file": "tests/prq-smoke.e2e.ts",
+          "line": 4,
+          "column": 1
+        },
+        "targetId": "web",
+        "platform": "web",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [],
+        "selected": true,
+        "status": "passed",
+        "attempts": [
+          {
+            "id": "01a193f1-aee6-7be3-b4f2-22ca563170d9",
+            "index": 0,
+            "status": "passed",
+            "startedAt": "2026-10-31T21:50:52.134Z",
+            "durationMs": 2499,
+            "artifacts": [
+              {
+                "id": "01a193f1-aee6-7be3-b4f2-22ca563170d9:artifact:0",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a193f1-aee6-7be3-b4f2-22ca563170d9:1"
+                },
+                "path": "prq-smoke-c1-the-board-lists-suggestions-cb43efad4810750f/attempt-1/screenshots/001-assert.png",
+                "size": 38044,
+                "sha256": "e112fe28ab713b2b7f4e0a4d4c02b7e6f481a7b3dd07d03859ffe506766490e0"
+              }
+            ],
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "browser": "chromium 156.0.8078.4",
+              "user agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+            },
+            "steps": [
+              {
+                "id": "01a193f1-aee6-7be3-b4f2-22ca563170d9:0",
+                "index": 0,
+                "kind": "app",
+                "api": "app.open",
+                "label": "/",
+                "status": "passed",
+                "startedAt": "2026-10-31T21:50:53.473Z",
+                "durationMs": 230,
+                "events": [
+                  {
+                    "kind": "navigation",
+                    "startedAt": "2026-10-31T21:50:53.691Z",
+                    "durationMs": 0,
+                    "status": "passed",
+                    "detail": "navigated to http://localhost:3000/"
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "http://localhost:3000/",
+                  "nodes": 7,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/prq-smoke.e2e.ts",
+                  "line": 5,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a193f1-aee6-7be3-b4f2-22ca563170d9:1",
+                "index": 1,
+                "kind": "agent",
+                "api": "agent.assert",
+                "label": "a list of feature suggestions is visible and each shows a vote count",
+                "status": "passed",
+                "startedAt": "2026-10-31T21:50:53.704Z",
+                "durationMs": 918,
+                "events": [
+                  {
+                    "kind": "observation",
+                    "startedAt": "2026-10-31T21:50:53.705Z",
+                    "durationMs": 417,
+                    "status": "passed",
+                    "bytes": 1456,
+                    "count": 47
+                  },
+                  {
+                    "kind": "policy",
+                    "startedAt": "2026-10-31T21:50:54.185Z",
+                    "durationMs": 0,
+                    "status": "passed",
+                    "name": "vision.pixels",
+                    "decision": "allowed"
+                  },
+                  {
+                    "kind": "model",
+                    "startedAt": "2026-10-31T21:50:54.187Z",
+                    "durationMs": 383,
+                    "status": "passed",
+                    "name": "executor",
+                    "count": 2059,
+                    "inputTokens": 2059,
+                    "outputTokens": 0
+                  }
+                ],
+                "agent": "default",
+                "artifacts": [
+                  "01a193f1-aee6-7be3-b4f2-22ca563170d9:artifact:0"
+                ],
+                "metrics": {
+                  "modelCalls": 1,
+                  "actionSteps": 0,
+                  "observationBytes": 1456,
+                  "contextBytes": 0,
+                  "ledgerBytes": 23,
+                  "pixelBytes": 20553
+                },
+                "model": {
+                  "provider": "openai.decision",
+                  "model": "gpt-6-luna",
+                  "endpoint": "provider-default",
+                  "adapterVersion": "executor/decision@2",
+                  "policyVersion": "decision/2",
+                  "calls": 1,
+                  "tokenAccounting": "provider",
+                  "inputTokens": 2059,
+                  "outputTokens": 0,
+                  "peakTokensPerCall": 2059
+                },
+                "observationRevision": "b3",
+                "explanation": "The screen shows the assertion holds (p=0.930, confidence 0.890).",
+                "visionInput": true,
+                "screen": {
+                  "location": "http://localhost:3000/",
+                  "nodes": 47,
+                  "since": 0,
+                  "changes": [
+                    "added list",
+                    "added listitem \"0 votes Custom fields\"",
+                    "added button \"0 votes\"",
+                    "added text=\"0\"",
+                    "added text=\"Custom fields\"",
+                    "added listitem \"0 votes Mobile app\"",
+                    "added button \"0 votes\"",
+                    "added text=\"0\"",
+                    "added text=\"Mobile app\"",
+                    "added listitem \"0 votes Public API\"",
+                    "added button \"0 votes\"",
+                    "added text=\"0\""
+                  ],
+                  "more": 30
+                },
+                "source": {
+                  "file": "tests/prq-smoke.e2e.ts",
+                  "line": 6,
+                  "column": 15
+                }
+              }
+            ],
+            "appLog": [
+              {
+                "source": "console",
+                "level": "info",
+                "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at http://localhost:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+                "at": "2026-10-31T21:50:53.639Z",
+                "step": 0
+              },
+              {
+                "source": "console",
+                "level": "info",
+                "text": "[HMR] connected (at http://localhost:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+                "at": "2026-10-31T21:50:53.668Z",
+                "step": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "65ae98605b5e39700f544d79846ddc53110a91db8a0b46e94226298750a6fbb8",
+        "testId": "tests/prq-smoke.e2e.ts::c3%3A%20a%20search%20box%20appears%20above%20the%20list",
+        "kind": "test",
+        "declarationIndex": 1,
+        "titlePath": [
+          "c3: a search box appears above the list"
+        ],
+        "file": "tests/prq-smoke.e2e.ts",
+        "source": {
+          "file": "tests/prq-smoke.e2e.ts",
+          "line": 9,
+          "column": 1
+        },
+        "targetId": "web",
+        "platform": "web",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [],
+        "selected": true,
+        "status": "failed",
+        "attempts": [
+          {
+            "id": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c",
+            "index": 0,
+            "status": "failed",
+            "startedAt": "2026-10-31T21:50:54.634Z",
+            "durationMs": 777,
+            "artifacts": [
+              {
+                "id": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:artifact:0",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:1"
+                },
+                "path": "prq-smoke-c3-a-search-box-appears-above-65ae98605b5e3970/attempt-1/screenshots/001-assert.png",
+                "size": 38044,
+                "sha256": "e112fe28ab713b2b7f4e0a4d4c02b7e6f481a7b3dd07d03859ffe506766490e0"
+              },
+              {
+                "id": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:artifact:1",
+                "kind": "log",
+                "mediaType": "text/plain",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "attempt"
+                },
+                "path": "prq-smoke-c3-a-search-box-appears-above-65ae98605b5e3970/attempt-1/screen-at-failure.txt",
+                "size": 1457,
+                "sha256": "f6a12aba0e8b265d709b11eca19f14bf69d215fc5d5a6a595d1c2e07be2176f1"
+              },
+              {
+                "id": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:artifact:2",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "attempt"
+                },
+                "path": "prq-smoke-c3-a-search-box-appears-above-65ae98605b5e3970/attempt-1/screenshots/002-failure.png",
+                "size": 38044,
+                "sha256": "e112fe28ab713b2b7f4e0a4d4c02b7e6f481a7b3dd07d03859ffe506766490e0"
+              }
+            ],
+            "error": {
+              "category": "test",
+              "code": "ASSERTION_FAILED",
+              "message": "agent.assert failed: The screen contradicts the assertion (p=0.900, confidence 0.850).",
+              "retryable": false,
+              "phase": "body",
+              "source": {
+                "file": "tests/prq-smoke.e2e.ts",
+                "line": 11,
+                "column": 3
+              }
+            },
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "browser": "chromium 156.0.8078.4",
+              "user agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+            },
+            "failure": {
+              "url": "http://localhost:3000/",
+              "viewport": {
+                "width": 1280,
+                "height": 720
+              },
+              "nodes": 47,
+              "screen": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:artifact:1",
+              "screenshot": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:artifact:2"
+            },
+            "steps": [
+              {
+                "id": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:0",
+                "index": 0,
+                "kind": "app",
+                "api": "app.open",
+                "label": "/",
+                "status": "passed",
+                "startedAt": "2026-10-31T21:50:54.637Z",
+                "durationMs": 158,
+                "events": [
+                  {
+                    "kind": "navigation",
+                    "startedAt": "2026-10-31T21:50:54.784Z",
+                    "durationMs": 0,
+                    "status": "passed",
+                    "detail": "navigated to http://localhost:3000/"
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "http://localhost:3000/",
+                  "nodes": 7,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/prq-smoke.e2e.ts",
+                  "line": 10,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:1",
+                "index": 1,
+                "kind": "agent",
+                "api": "agent.assert",
+                "label": "a search input is visible above the suggestions",
+                "status": "failed",
+                "startedAt": "2026-10-31T21:50:54.795Z",
+                "durationMs": 561,
+                "events": [
+                  {
+                    "kind": "observation",
+                    "startedAt": "2026-10-31T21:50:54.795Z",
+                    "durationMs": 158,
+                    "status": "passed",
+                    "bytes": 1456,
+                    "count": 47
+                  },
+                  {
+                    "kind": "policy",
+                    "startedAt": "2026-10-31T21:50:55.005Z",
+                    "durationMs": 0,
+                    "status": "passed",
+                    "name": "vision.pixels",
+                    "decision": "allowed"
+                  },
+                  {
+                    "kind": "model",
+                    "startedAt": "2026-10-31T21:50:55.006Z",
+                    "durationMs": 324,
+                    "status": "passed",
+                    "name": "executor",
+                    "count": 2049,
+                    "inputTokens": 2049,
+                    "outputTokens": 0
+                  }
+                ],
+                "agent": "default",
+                "artifacts": [
+                  "01a193f1-b8a9-7846-bb9e-8bcedd2b394c:artifact:0"
+                ],
+                "metrics": {
+                  "modelCalls": 1,
+                  "actionSteps": 0,
+                  "observationBytes": 1456,
+                  "contextBytes": 0,
+                  "ledgerBytes": 23,
+                  "pixelBytes": 20553
+                },
+                "model": {
+                  "provider": "openai.decision",
+                  "model": "gpt-6-luna",
+                  "endpoint": "provider-default",
+                  "adapterVersion": "executor/decision@2",
+                  "policyVersion": "decision/2",
+                  "calls": 1,
+                  "tokenAccounting": "provider",
+                  "inputTokens": 2049,
+                  "outputTokens": 0,
+                  "peakTokensPerCall": 2049
+                },
+                "observationRevision": "b2",
+                "explanation": "The screen contradicts the assertion (p=0.900, confidence 0.850).",
+                "visionInput": true,
+                "screen": {
+                  "location": "http://localhost:3000/",
+                  "nodes": 47,
+                  "since": 0,
+                  "changes": [
+                    "added list",
+                    "added listitem \"0 votes Custom fields\"",
+                    "added button \"0 votes\"",
+                    "added text=\"0\"",
+                    "added text=\"Custom fields\"",
+                    "added listitem \"0 votes Mobile app\"",
+                    "added button \"0 votes\"",
+                    "added text=\"0\"",
+                    "added text=\"Mobile app\"",
+                    "added listitem \"0 votes Public API\"",
+                    "added button \"0 votes\"",
+                    "added text=\"0\""
+                  ],
+                  "more": 30
+                },
+                "source": {
+                  "file": "tests/prq-smoke.e2e.ts",
+                  "line": 11,
+                  "column": 15
+                },
+                "error": {
+                  "category": "test",
+                  "code": "ASSERTION_FAILED",
+                  "message": "agent.assert failed: The screen contradicts the assertion (p=0.900, confidence 0.850).",
+                  "retryable": false,
+                  "source": {
+                    "file": "tests/prq-smoke.e2e.ts",
+                    "line": 11,
+                    "column": 3
+                  }
+                }
+              }
+            ],
+            "appLog": [
+              {
+                "source": "console",
+                "level": "info",
+                "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (at http://localhost:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+                "at": "2026-10-31T21:50:54.732Z",
+                "step": 0
+              },
+              {
+                "source": "console",
+                "level": "info",
+                "text": "[HMR] connected (at http://localhost:3000/_next/static/chunks/0-c6_next_dist_1ao04tiemnj5_._.js:720)",
+                "at": "2026-10-31T21:50:54.761Z",
+                "step": 0
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [],
+    "summary": {
+      "discovered": 2,
+      "selected": 2,
+      "executed": 2,
+      "passed": 1,
+      "failed": 1,
+      "interrupted": 0,
+      "flaky": 0,
+      "skipped": 0
+    },
+    "limits": {
+      "maxAgentContextBytes": 16384,
+      "maxLedgerBytes": 8192,
+      "maxObservationBytes": 262144,
+      "maxEventsPerStep": 1000,
+      "maxModelTokensPerCall": 64000
+    },
+    "usage": {
+      "discoveredResults": 2,
+      "maxAgentContextBytes": 0,
+      "maxLedgerBytes": 23,
+      "maxObservationBytes": 1456,
+      "artifactBytes": 115589,
+      "downloads": 0,
+      "events": 8,
+      "modelTokens": 4108,
+      "maxModelCallsInStep": 1,
+      "maxActionStepsInStep": 0
+    }
+  }
+}

@@ -1,0 +1,8 @@
+#root document "Feedback board"
+ #n2 main
+  #n3 heading "Feedback board"
+  #n4 text="Tell us what to build next."
+  #n5 textbox "Suggest a feature"
+  #n6 button "Suggest"
+  #n7 searchbox "search suggestions" value="CUSTOM FIELDS" [focused]
+  #n12001 status "no suggestions match"

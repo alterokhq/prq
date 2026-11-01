@@ -1,0 +1,12 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-source>/bench/external/oracle.mjs",
+    "<target-root>/todomvc",
+    "<prq-source>/bench/external/evidence/todomvc/mutated-oracle.png"
+  ],
+  "exit_code": 1,
+  "stdout": "{\"http_status\":200,\"labels\":[],\"held\":false}\n",
+  "stderr": "",
+  "duration_ms": 325
+}

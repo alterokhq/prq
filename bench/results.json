@@ -1,0 +1,902 @@
+{
+  "version": 1,
+  "method": "Seeded defects on a single application. Authored tests, existing tests and independent oracles are reported separately.",
+  "cases": [
+    {
+      "id": "01",
+      "slug": "vote-toggle",
+      "claim": "clicking upvote again removes the vote",
+      "setup": "The existing toggle behavior is the correct baseline.",
+      "mutation": "Remove the existing-vote removal branch.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 919,
+          "log": "01-vote-toggle/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 305,
+          "log": "01-vote-toggle/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": null,
+      "prq": null,
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "7a9e4d1abaa510e011f08d1bf99ac77ca217f177",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "278c09609966c2f28d9eb287e505192a35698524",
+      "note": "Isolated local Convex backend did not become ready. No shared deployment was used."
+    },
+    {
+      "id": "02",
+      "slug": "optimistic-rejection",
+      "claim": "the count only changes after the server confirms",
+      "setup": "The Rejected vote item always rejects requests; the baseline changes no count.",
+      "mutation": "Keep an optimistic count after a rejected vote request.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 990,
+          "log": "02-optimistic-rejection/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 301,
+          "log": "02-optimistic-rejection/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": null,
+      "prq": null,
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "aa3d270c5468b19b9bff7cc56caa0dea88d3e9c6",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "61f33e963d36372110f11ebfab35f85afef59431",
+      "note": "Isolated local Convex backend did not become ready. No shared deployment was used."
+    },
+    {
+      "id": "03",
+      "slug": "voter-isolation",
+      "claim": "a browser sees only its own votes on the next visit",
+      "setup": "A vote belonging to a different browser is seeded before the visit.",
+      "mutation": "Filter vote rows by the wrong field, returning another browser's vote.",
+      "phase": "prq_unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 871,
+          "log": "03-voter-isolation/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 269,
+          "log": "03-voter-isolation/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "A fresh browser sees Dark mode as not voted.",
+          "duration_ms": 2173,
+          "screenshot": "03-voter-isolation/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 339,
+          "log": "03-voter-isolation/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 265,
+          "log": "03-voter-isolation/bench/runtime/seeded-author.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "a fresh browser must not inherit another browser vote\n\n'true' !== 'false'\n",
+          "duration_ms": 1364,
+          "screenshot": "03-voter-isolation/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 2,
+        "duration_ms": 22710,
+        "log": "03-voter-isolation/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "note": "The CLI returned generic unverified JSON without saving a full Proof Request. No target verdict was recorded."
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "48c70aefa04e370770885eb4f7ef2a5670e8153f",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "9406c221eb1c83f0d8e8da4184a21fe22912f0d3",
+      "seeded_commit": "db90c57667a0be1eec6016a67de2851fa503d78d",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "04",
+      "slug": "duplicate-vote-rejection",
+      "claim": "a second upvote from the same browser is rejected",
+      "setup": "This case explicitly replaces toggle-off with rejection of duplicate votes. Existing toggle tests may reject this feature baseline; report that separately.",
+      "mutation": "Use a suggestion ID as the voter lookup value, missing the existing vote.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 6916,
+          "log": "04-duplicate-vote-rejection/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 293,
+          "log": "04-duplicate-vote-rejection/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": null,
+      "prq": null,
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "20a1559e380583e512ca7ef4e320983c28929435",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "6dd032d4d7312f4bc5895e2f065e4c4d6e31c84b",
+      "note": "Isolated local Convex backend did not become ready. No shared deployment was used."
+    },
+    {
+      "id": "05",
+      "slug": "empty-suggestion",
+      "claim": "empty suggestions are rejected with a message",
+      "setup": "The form submits empty input and displays the backend rejection.",
+      "mutation": "Remove the backend empty-title guard.",
+      "phase": "prq_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 8568,
+          "log": "05-empty-suggestion/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 279,
+          "log": "05-empty-suggestion/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Submit an empty suggestion; a validation message is visible.",
+          "duration_ms": 1824,
+          "screenshot": "05-empty-suggestion/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 379,
+          "log": "05-empty-suggestion/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 301,
+          "log": "05-empty-suggestion/bench/runtime/seeded-author.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "empty title must produce a rejection message",
+          "duration_ms": 6464,
+          "screenshot": "05-empty-suggestion/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 1,
+        "duration_ms": 102973,
+        "log": "05-empty-suggestion/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "verdict": "broken",
+        "observed": "The board shows an empty suggestion entry with 0 votes and the status “Suggestion saved.”, indicating acceptance rather than rejection.",
+        "judge": "decisions gpt-6-luna",
+        "tester": "e2e / independent browser",
+        "report": "05-empty-suggestion/.pr/runs/bd56cf1-mvxuhrqd-e23e7990/proof-request.json",
+        "claim_text": "empty suggestions are rejected with a message",
+        "lock": "sha256:bd56cf1220fe70d6dca2f5309778666623601255b0de20e61e85dcdc7710c6c5"
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "b129b7919facc44a69958de5b434ceb9272608d2",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "8489e925d71b4f05ba1caa02d99285101ffedacf",
+      "seeded_commit": "27ba20ab1976dc2a585b2a60e2c550e1e9ce51f0",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "06",
+      "slug": "vote-order",
+      "claim": "the board is sorted by most votes first",
+      "setup": "Add correct descending sort and a dataset with distinct vote counts.",
+      "mutation": "Sort counts in ascending order.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 3893,
+          "log": "06-vote-order/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 271,
+          "log": "06-vote-order/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": null,
+      "prq": null,
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "293a12a6679571dc6aa637952b237414915ef91c",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "6d49831187255eb396332387f3f563be0a7eafff",
+      "note": "Isolated local Convex backend did not become ready. No shared deployment was used."
+    },
+    {
+      "id": "07",
+      "slug": "zero-votes",
+      "claim": "suggestions start at zero votes",
+      "setup": "Seed suggestions without a votes field, as the original application does.",
+      "mutation": "Read missing legacy vote counts as one instead of zero.",
+      "phase": "prq_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 3917,
+          "log": "07-zero-votes/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 272,
+          "log": "07-zero-votes/bench/runtime/baseline-author.log"
+        },
+        "oracle": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 297,
+          "log": "07-zero-votes/bench/runtime/baseline-oracle.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Dark mode displays zero votes; a unit oracle checks the same query result.",
+          "duration_ms": 3358,
+          "screenshot": "07-zero-votes/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 353,
+          "log": "07-zero-votes/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 268,
+          "log": "07-zero-votes/bench/runtime/seeded-author.log"
+        },
+        "oracle": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 272,
+          "log": "07-zero-votes/bench/runtime/seeded-oracle.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "suggestions without votes must display zero",
+          "duration_ms": 6403,
+          "screenshot": "07-zero-votes/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 1,
+        "duration_ms": 20340,
+        "log": "07-zero-votes/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "verdict": "broken",
+        "observed": "All 12 listed suggestions show 1 vote, not zero votes.",
+        "judge": "decisions gpt-6-luna",
+        "tester": "e2e / independent browser",
+        "report": "07-zero-votes/.pr/runs/f649eea-mvxukwhz-708900ae/proof-request.json",
+        "claim_text": "suggestions start at zero votes",
+        "lock": "sha256:f649eea64b1677f36ec3f5dd9196ba11e6873f2ce5bd1c5fd3cfc7e3dc27590d"
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "12e7e05cf1c738ac1f4999ab33add1b94c1a70bd",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "387c936b84a86e529a38e33659edcee103cefde4",
+      "seeded_commit": "fd91aa4ec60c719dcb4c591a98a315cb1f0c851f",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "08",
+      "slug": "persistent-voter",
+      "claim": "votes persist across reloads",
+      "setup": "The baseline retains its voter ID in local storage.",
+      "mutation": "Always regenerate the browser voter ID.",
+      "phase": "prq_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1301,
+          "log": "08-persistent-voter/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 242,
+          "log": "08-persistent-voter/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Vote for Dark mode, reload, and find the same vote still selected.",
+          "duration_ms": 2670,
+          "screenshot": "08-persistent-voter/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 292,
+          "log": "08-persistent-voter/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 193,
+          "log": "08-persistent-voter/bench/runtime/seeded-author.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "the same browser vote must remain selected after reload\n\n'false' !== 'true'\n",
+          "duration_ms": 2373,
+          "screenshot": "08-persistent-voter/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 1,
+        "duration_ms": 40890,
+        "log": "08-persistent-voter/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "verdict": "broken",
+        "observed": "The observation shows current vote counts of 0, but no before-and-after reload evidence to establish whether votes persist.",
+        "judge": "decisions gpt-6-luna",
+        "tester": "e2e / independent browser",
+        "report": "08-persistent-voter/.pr/runs/3957696-mvxulomj-25c3ae23/proof-request.json",
+        "claim_text": "votes persist across reloads",
+        "lock": "sha256:3957696603398213ed5102c98b52927103499e234ead92d2f1c4d6310983d6da"
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "994f2246382516579b1a0866bb3434d8b09ce807",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "88ac706f9b017444e87b0b49ae34020d196f2cca",
+      "seeded_commit": "717c89bb944b5b9fbe7b3bf47729ea6322e3cee2",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "09",
+      "slug": "rejection-message",
+      "claim": "an error is shown when voting fails",
+      "setup": "The Rejected vote item always rejects requests; baseline displays Voting failed.",
+      "mutation": "Show the saved message before a request and retain it on rejection.",
+      "phase": "prq_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1970,
+          "log": "09-rejection-message/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 277,
+          "log": "09-rejection-message/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Vote for Rejected vote and observe Voting failed.",
+          "duration_ms": 1740,
+          "screenshot": "09-rejection-message/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 266,
+          "log": "09-rejection-message/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 262,
+          "log": "09-rejection-message/bench/runtime/seeded-author.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "request rejection must produce an error message",
+          "duration_ms": 6363,
+          "screenshot": "09-rejection-message/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 1,
+        "duration_ms": 171044,
+        "log": "09-rejection-message/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "verdict": "broken",
+        "observed": "The board shows “Vote saved.” rather than a voting error; no voting failure error message is displayed.",
+        "tester": "e2e / independent browser",
+        "report": "09-rejection-message/.pr/runs/d901845-mvxumzwi-e8a6f842/proof-request.json",
+        "claim_text": "an error is shown when voting fails",
+        "lock": "sha256:d90184576c0f3a662fad462ed3094d15e3a661af845b219ff3ace2da13980bbc"
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "90ac2a27224e853d2444560606c9e57280d8a4e5",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "4237854a41ce2d4647a314609132ae33fa0fba1c",
+      "seeded_commit": "c8e2b65ce89f47a1c8adacb43d444f94fa6d2d12",
+      "existing_detected": false,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "10",
+      "slug": "duplicate-title",
+      "claim": "duplicate titles are rejected",
+      "setup": "Add a correct normalized duplicate-title guard. Existing tests that intentionally add duplicates may reject this feature baseline.",
+      "mutation": "Compare and save the untrimmed title while displaying a trimmed title.",
+      "phase": "prq_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 1667,
+          "log": "10-duplicate-title/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 261,
+          "log": "10-duplicate-title/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Submit whitespace-padded Dark mode; observe duplicate rejection.",
+          "duration_ms": 2025,
+          "screenshot": "10-duplicate-title/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 294,
+          "log": "10-duplicate-title/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 270,
+          "log": "10-duplicate-title/bench/runtime/seeded-author.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "normalized duplicate title must be rejected",
+          "duration_ms": 6469,
+          "screenshot": "10-duplicate-title/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 0,
+        "duration_ms": 66158,
+        "log": "10-duplicate-title/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "verdict": "needs_human",
+        "observed": "The board shows existing suggestions, but no duplicate-title submission or rejection message is shown, so duplicate rejection cannot be verified.",
+        "judge": "decisions gpt-6-luna",
+        "tester": "e2e / independent browser",
+        "report": "10-duplicate-title/.pr/runs/ff1037c-mvxur3wo-51dc2bb1/proof-request.json",
+        "claim_text": "duplicate titles are rejected",
+        "lock": "sha256:ff1037ca55656ca9b1b029923c6b3258faeddfdb5abbb6f0ca4c49dd4ebcc7f0"
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "6df1a8d502db8d2ad9c7550aa245c4a39bad383b",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "be39ca2998b6f779e4c81ec5eee4d35b81e1612e",
+      "seeded_commit": "5351132678a771589a581c97c01416a57538f40a",
+      "existing_detected": null,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "11",
+      "slug": "truncated-list",
+      "claim": "all suggestions appear on the board",
+      "setup": "Seed twelve suggestions, under the original one-hundred limit.",
+      "mutation": "Cap the list at ten suggestions.",
+      "phase": "prq_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1105,
+          "log": "11-truncated-list/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 289,
+          "log": "11-truncated-list/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "The board contains all twelve seeded suggestions.",
+          "duration_ms": 2156,
+          "screenshot": "11-truncated-list/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 321,
+          "log": "11-truncated-list/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 271,
+          "log": "11-truncated-list/bench/runtime/seeded-author.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "all seeded suggestions must be visible\n\n10 !== 12\n",
+          "duration_ms": 31471,
+          "screenshot": "11-truncated-list/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 1,
+        "duration_ms": 15469,
+        "log": "11-truncated-list/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "verdict": "broken",
+        "observed": "The board states there are 12 seeded suggestions, but its suggestion list contains only 10 items.",
+        "judge": "decisions gpt-6-luna",
+        "tester": "e2e / independent browser",
+        "report": "11-truncated-list/.pr/runs/8db24d3-mvxutk5e-344d1e15/proof-request.json",
+        "claim_text": "all suggestions appear on the board",
+        "lock": "sha256:8db24d34e16ef7096e4ed1100cf836dd1955211c3e28da7fd100e443d0d8898e"
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "b77ffc23a04c6af8d8a1a9657a137a3d03a20644",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "93663264ee9f84c222bcb232f4afa46c5f794a78",
+      "seeded_commit": "27aaed98de34576aa23641eb0a58a80ef84bc0a2",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "12",
+      "slug": "pending-vote",
+      "claim": "the button is disabled while the vote is saving",
+      "setup": "Slow vote waits 1.5 seconds; baseline disables its button while saving.",
+      "mutation": "Omit pending-request state from the disabled condition.",
+      "phase": "prq_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1248,
+          "log": "12-pending-vote/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 272,
+          "log": "12-pending-vote/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Click Slow vote and inspect its disabled state before the request resolves.",
+          "duration_ms": 1721,
+          "screenshot": "12-pending-vote/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 289,
+          "log": "12-pending-vote/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 278,
+          "log": "12-pending-vote/bench/runtime/seeded-author.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "vote button must be disabled during request",
+          "duration_ms": 1351,
+          "screenshot": "12-pending-vote/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 2,
+        "duration_ms": 39104,
+        "log": "12-pending-vote/bench/runtime/prq.log",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+        "verdict": "unverified",
+        "observed": "The status says “Vote saved.” No save is currently in progress, so the button’s disabled state while saving cannot be determined.",
+        "tester": "e2e / independent browser",
+        "report": "12-pending-vote/.pr/runs/d676d7b-mvxuu87h-16714efc/proof-request.json",
+        "claim_text": "the button is disabled while the vote is saving",
+        "lock": "sha256:d676d7b38764ae64c331c4b2b448512a1207ca86b68c67d07299cee9e97e4a33"
+      },
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300,
+        "convex_backend_requested": "precompiled-2026-10-22-1447815"
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "76908bcbcc64775801e812be12c7937249d40983",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "df0ed577aa24859ab0f4a1e99b0eed85cf4a772b",
+      "seeded_commit": "ff98758d7da6a7dee46332fc1b3e36327e1d8e96",
+      "existing_detected": false,
+      "author_detected": false,
+      "mutation_confirmed": true
+    }
+  ],
+  "updated_at": "2026-11-01T13:18:00.584Z",
+  "artifacts_root": "bench-final",
+  "scope": "One bounded live batch. Earlier setup attempts and the complete separate unit-control experiment are preserved in history/. No blocked case is filled from an earlier favorable result.",
+  "unit_controls": {
+    "file": "history/unit-control-pairs.json",
+    "artifacts_root": "bench-fixtures",
+    "cases": 12,
+    "existing_comparable": 10,
+    "existing_detected": 6,
+    "author_comparable": 12,
+    "author_detected": 0
+  },
+  "limitations": [
+    "Four local-backend initialization blockers prevented live baseline establishment.",
+    "One confirmed seeded case produced generic unverified CLI output without a full report.",
+    "Broken is the recorded target verdict, not an assertion that every case had equally strong evidence. Case 08 tester observation notes absent before/after evidence. Case 09 has no independent judge metadata.",
+    "Browser timing case 12 remained unverified; case 10 needs a human.",
+    "Model cost was not reported.",
+    "This is a single application with deliberately authored mutations and happy-path checks."
+  ]
+}

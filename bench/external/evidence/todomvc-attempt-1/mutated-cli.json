@@ -1,0 +1,15 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-cli>",
+    "rerun",
+    "--json",
+    "--quiet",
+    "--app-url",
+    "http://127.0.0.1:4317"
+  ],
+  "exit_code": 2,
+  "stdout": "{\"summary\":{\"held\":0,\"broken\":0,\"needs_human\":0,\"unverified\":1},\"broken\":[],\"omitted\":0,\"report\":\".pr/runs/01715ce-mvxvavwu-4b6b4c81/proof-request.json\"}\n",
+  "stderr": "",
+  "duration_ms": 133
+}

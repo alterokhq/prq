@@ -1,0 +1,12 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-source>/bench/external/oracle.mjs",
+    "<target-root>/todomvc",
+    "<prq-source>/bench/external/evidence/todomvc/mutated-oracle.png"
+  ],
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\npage.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4317/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:4317/\", waiting until \"load\"\u001b[22m\n\n    at <prq-source>/bench/external/oracle.mjs:8:31 {\n  log: [\n    '  - navigating to \"http://127.0.0.1:4317/\", waiting until \"load\"'\n  ],\n  name: 'Error'\n}\n\nNode.js v24.11.0\n",
+  "duration_ms": 246
+}

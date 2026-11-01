@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "method": "Seeded defects on a single application. Authored tests, existing tests and independent oracles are reported separately.",
+  "cases": [
+    {
+      "id": "01",
+      "slug": "vote-toggle",
+      "claim": "clicking upvote again removes the vote",
+      "setup": "The existing toggle behavior is the correct baseline.",
+      "mutation": "Remove the existing-vote removal branch.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 3908,
+          "log": "01-vote-toggle/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 337,
+          "log": "01-vote-toggle/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": null,
+      "prq": null,
+      "cost_usd": null,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (Turbopack)",
+        "port_base": 24300
+      },
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "24923c33cf090b72db2dab9dbfecea92c6914513",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "28bfb46b539a166140f149cb8c459041dcd0f737",
+      "note": "Isolated local Convex backend did not become ready. No shared deployment was used."
+    }
+  ],
+  "updated_at": "2026-11-01T13:02:09.794Z"
+}

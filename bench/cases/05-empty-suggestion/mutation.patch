@@ -1,0 +1,13 @@
+diff --git a/convex/suggestions.ts b/convex/suggestions.ts
+index 9435d94..e35e126 100644
+--- a/convex/suggestions.ts
++++ b/convex/suggestions.ts
+@@ -22,7 +22,7 @@ export const add = mutation({
+   args: { title: v.string() },
+   handler: async (ctx, { title }) => {
+     const trimmed = title.trim();
+-    if (trimmed.length === 0 || trimmed.length > 120) {
++    if (trimmed.length > 120) {
+       throw new Error("A suggestion needs a title of 1 to 120 characters.");
+     }
+     return await ctx.db.insert("suggestions", { title: trimmed, votes: 0 });

@@ -1,0 +1,13 @@
+diff --git a/convex/suggestions.ts b/convex/suggestions.ts
+index 9435d94..a6ead66 100644
+--- a/convex/suggestions.ts
++++ b/convex/suggestions.ts
+@@ -59,7 +59,7 @@ export const toggleVote = mutation({
+       .unique();
+     const votes = suggestion.votes ?? 0;
+ 
+-    if (existing) {
++    if (false && existing) {
+       await ctx.db.delete(existing._id);
+       await ctx.db.patch(suggestionId, { votes: Math.max(0, votes - 1) });
+       return false;

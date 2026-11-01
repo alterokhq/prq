@@ -1,0 +1,144 @@
+{
+  "scope": "Small seeded cross-repository validation. Not an estimate of benchmark accuracy.",
+  "created_at": "2026-11-01T13:33:03.954Z",
+  "repositories": 2,
+  "primary_rows": [
+    {
+      "repository": "lukeed/clsx",
+      "state": "baseline",
+      "upstream_commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "tested_commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "claim_lock": "sha256:c0f30f47c42e5d7d50cb4a237b88fe8fb9558c7572db4f1c97d5a7f1254e49c1",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 1,
+        "broken": 0,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "The existing clsx test suite completes with zero failing tests.",
+          "verdict": "held",
+          "probability": 0.92,
+          "tester": "shell / isolated HEAD worktree",
+          "observed": "npm run test exited 0"
+        }
+      ],
+      "oracle_exit_code": 0,
+      "oracle_duration_ms": 331,
+      "prq_duration_ms": 5348,
+      "wall_duration_ms": 5501,
+      "cost_usd": null,
+      "proof": "evidence/clsx/baseline/proof-request.json"
+    },
+    {
+      "repository": "lukeed/clsx",
+      "state": "mutated",
+      "upstream_commit": "925494cf31bcd97d3337aacd34e659e80cae7fe2",
+      "tested_commit": "45b89a84050a6aa598f8a78b928a2fa4d398112b",
+      "claim_lock": "sha256:c0f30f47c42e5d7d50cb4a237b88fe8fb9558c7572db4f1c97d5a7f1254e49c1",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 0,
+        "broken": 1,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "The existing clsx test suite completes with zero failing tests.",
+          "verdict": "broken",
+          "probability": 0,
+          "tester": "shell / isolated HEAD worktree",
+          "observed": "npm run test exited 1"
+        }
+      ],
+      "oracle_exit_code": 1,
+      "oracle_duration_ms": 185,
+      "prq_duration_ms": 1206,
+      "wall_duration_ms": 1879,
+      "cost_usd": null,
+      "proof": "evidence/clsx/mutated/proof-request.json"
+    },
+    {
+      "repository": "tastejs/todomvc Backbone",
+      "state": "baseline",
+      "upstream_commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+      "tested_commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+      "claim_lock": "sha256:01715ceb5f156f12e555ceb0d9a000a8d942d4eeb901b99668cb99485b479de4",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 1,
+        "broken": 0,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+          "verdict": "held",
+          "probability": 1,
+          "tester": "e2e / independent browser",
+          "observed": "The todo list shows a visible item labeled \"Buy milk\", and the new-todo input is empty."
+        }
+      ],
+      "oracle_exit_code": 0,
+      "oracle_duration_ms": 596,
+      "prq_duration_ms": 18597,
+      "wall_duration_ms": 18748,
+      "cost_usd": null,
+      "proof": "evidence/todomvc/baseline/proof-request.json"
+    },
+    {
+      "repository": "tastejs/todomvc Backbone",
+      "state": "mutated",
+      "upstream_commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+      "tested_commit": "1b361f37fc5ea0d54f2d313dfb9d4e44a6670d44",
+      "claim_lock": "sha256:01715ceb5f156f12e555ceb0d9a000a8d942d4eeb901b99668cb99485b479de4",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 0,
+        "broken": 1,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+          "verdict": "broken",
+          "probability": 0,
+          "tester": "e2e / independent browser",
+          "observed": "The todo area is visible and empty; no todo labeled \"Buy milk\" is shown."
+        }
+      ],
+      "oracle_exit_code": 1,
+      "oracle_duration_ms": 325,
+      "prq_duration_ms": 25537,
+      "wall_duration_ms": 25932,
+      "cost_usd": null,
+      "proof": "evidence/todomvc/mutated/proof-request.json"
+    }
+  ],
+  "summary": {
+    "held": 2,
+    "broken": 2,
+    "needs_human": 0,
+    "unverified": 0
+  },
+  "prior_attempts": {
+    "clsx_additional_baseline": {
+      "held": 1,
+      "path": "evidence/clsx/initial-baseline-proof.json"
+    },
+    "todomvc_server_setup": {
+      "unverified": 2,
+      "path": "evidence/todomvc-attempt-1"
+    }
+  },
+  "cost_usd": null
+}

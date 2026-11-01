@@ -1,0 +1,3 @@
+{ "files": [], "references": [
+  { "path": "packages/core" }, { "path": "packages/runner-e2e" }, { "path": "packages/runner-shell" },
+  { "path": "packages/render" }, { "path": "packages/cli" } ] }

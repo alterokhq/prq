@@ -1,0 +1,16 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-cli>",
+    "--claims",
+    "<prq-source>/bench/external/claims/clsx.md",
+    "--json",
+    "--quiet",
+    "--app-url",
+    "http://127.0.0.1:4317"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"summary\":{\"held\":1,\"broken\":0,\"needs_human\":0,\"unverified\":0},\"broken\":[],\"omitted\":0,\"report\":\".pr/runs/c0f30f4-mvxva0nf-d1f030bf/proof-request.json\"}\n",
+  "stderr": "",
+  "duration_ms": 5501
+}

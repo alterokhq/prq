@@ -1,0 +1,92 @@
+{
+  "scope": "Small seeded cross-repository validation. Not an estimate of benchmark accuracy.",
+  "repository": {
+    "url": "https://github.com/tastejs/todomvc.git",
+    "commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+    "license": "MIT",
+    "license_path": "license.md",
+    "framework": "Backbone with jQuery and Underscore",
+    "track": "browser",
+    "serve_directory": "examples/backbone/dist",
+    "mutation_file": "examples/backbone/dist/views/app-view.js",
+    "before": "                app.todos.create(this.newAttributes());",
+    "after": "                // Seeded defect: creating the todo is omitted."
+  },
+  "tool_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227",
+  "frozen_tool_matches_manifest": true,
+  "models": {
+    "extract": "gpt-6.1-sol",
+    "classify": "gpt-6-luna",
+    "judge": "gpt-6-luna",
+    "browser": "gpt-6.1-sol"
+  },
+  "node_prq": "v24.11.0",
+  "test_runtime": "v24.11.0",
+  "setup": [],
+  "records": [
+    {
+      "state": "baseline",
+      "upstream_commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+      "tested_commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+      "claim_lock": "sha256:01715ceb5f156f12e555ceb0d9a000a8d942d4eeb901b99668cb99485b479de4",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 1,
+        "broken": 0,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+          "verdict": "held",
+          "probability": 1,
+          "tester": "e2e / independent browser",
+          "observed": "The todo list shows a visible item labeled \"Buy milk\", and the new-todo input is empty."
+        }
+      ],
+      "oracle_exit_code": 0,
+      "oracle_duration_ms": 596,
+      "prq_duration_ms": 18597,
+      "wall_duration_ms": 18748,
+      "cost_usd": null,
+      "proof": "baseline/proof-request.json"
+    },
+    {
+      "state": "mutated",
+      "upstream_commit": "ff43b02e59dfa604386bb382034b2cd07c2bcd8a",
+      "tested_commit": "1b361f37fc5ea0d54f2d313dfb9d4e44a6670d44",
+      "claim_lock": "sha256:01715ceb5f156f12e555ceb0d9a000a8d942d4eeb901b99668cb99485b479de4",
+      "claims_verbatim": true,
+      "summary": {
+        "held": 0,
+        "broken": 1,
+        "needs_human": 0,
+        "unverified": 0
+      },
+      "claims": [
+        {
+          "id": "c1",
+          "text": "Entering \"Buy milk\" in the new-todo input and pressing Enter adds a visible todo labeled \"Buy milk\".",
+          "verdict": "broken",
+          "probability": 0,
+          "tester": "e2e / independent browser",
+          "observed": "The todo area is visible and empty; no todo labeled \"Buy milk\" is shown."
+        }
+      ],
+      "oracle_exit_code": 1,
+      "oracle_duration_ms": 325,
+      "prq_duration_ms": 25537,
+      "wall_duration_ms": 25932,
+      "cost_usd": null,
+      "proof": "mutated/proof-request.json"
+    }
+  ],
+  "cleanup": {
+    "service_stopped": true,
+    "source_restored": true
+  },
+  "created_at": "2026-11-01T13:32:13.859Z",
+  "cost_usd": null
+}

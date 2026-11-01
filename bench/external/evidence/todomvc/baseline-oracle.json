@@ -1,0 +1,12 @@
+{
+  "command": "<node-24.11.0>",
+  "args": [
+    "<prq-source>/bench/external/oracle.mjs",
+    "<target-root>/todomvc",
+    "<prq-source>/bench/external/evidence/todomvc/baseline-oracle.png"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"http_status\":200,\"labels\":[\"Buy milk\"],\"held\":true}\n",
+  "stderr": "",
+  "duration_ms": 596
+}

@@ -1,0 +1,8 @@
+#root document "TodoMVC: Backbone"
+ #n2 heading "todos"
+ #n3 textbox "What needs to be done?" [focused]
+ #n4 contentinfo
+  #n5 text="Double-click to edit a todo"
+  #n6 text="Created by the TodoMVC Team"
+  #n7 text="Part of TodoMVC"
+   #n8 link "TodoMVC" href="http://todomvc.com/"

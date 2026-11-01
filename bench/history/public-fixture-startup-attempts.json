@@ -1,0 +1,240 @@
+{
+  "version": 1,
+  "method": "Seeded defects on a single application. Authored tests, existing tests and independent oracles are reported separately.",
+  "cases": [
+    {
+      "id": "01",
+      "slug": "vote-toggle",
+      "claim": "clicking upvote again removes the vote",
+      "setup": "The existing toggle behavior is the correct baseline.",
+      "mutation": "Remove the existing-vote removal branch.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1652,
+          "log": "01-vote-toggle/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 274,
+          "log": "01-vote-toggle/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": null,
+      "prq": null,
+      "cost_usd": null,
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "6529d2b190cfc5a7acec7a999dc034a4f810b6a9",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "89d0234e5cdcf48ee4adf7ddac045af2ea0c584f",
+      "note": "Isolated Next application did not become ready."
+    },
+    {
+      "id": "02",
+      "slug": "optimistic-rejection",
+      "claim": "the count only changes after the server confirms",
+      "setup": "The Rejected vote item always rejects requests; the baseline changes no count.",
+      "mutation": "Keep an optimistic count after a rejected vote request.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 3992,
+          "log": "02-optimistic-rejection/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 296,
+          "log": "02-optimistic-rejection/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": null,
+      "prq": null,
+      "cost_usd": null,
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "54bb2b0165b414d893c076539e31d6230fc4c340",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "c4e170ff72f30c2b4972998639e59a728c0c05cc",
+      "note": "Isolated local Convex backend did not become ready. No shared deployment was used."
+    },
+    {
+      "id": "03",
+      "slug": "voter-isolation",
+      "claim": "a browser sees only its own votes on the next visit",
+      "setup": "A vote belonging to a different browser is seeded before the visit.",
+      "mutation": "Filter vote rows by the wrong field, returning another browser's vote.",
+      "phase": "unverified",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 7486,
+          "log": "03-voter-isolation/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 346,
+          "log": "03-voter-isolation/bench/runtime/baseline-author.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "A fresh browser sees Dark mode as not voted.",
+          "duration_ms": 2439,
+          "screenshot": "03-voter-isolation/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 347,
+          "log": "03-voter-isolation/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 273,
+          "log": "03-voter-isolation/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "740ad6c78ae4943fc9f5fd2d6873477d8db9d706",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "4950e2cd6d760d5c280cf80596c0cfeaeb1eb73b",
+      "seeded_commit": "c05fcc5b1e79d57b4a0a1645caab3ced0cd2fa3d",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": false,
+      "note": "Isolated Next application did not become ready."
+    },
+    {
+      "id": "07",
+      "slug": "zero-votes",
+      "claim": "suggestions start at zero votes",
+      "setup": "Seed suggestions without a votes field, as the original application does.",
+      "mutation": "Read missing legacy vote counts as one instead of zero.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1947,
+          "log": "07-zero-votes/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 265,
+          "log": "07-zero-votes/bench/runtime/baseline-author.log"
+        },
+        "oracle": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 262,
+          "log": "07-zero-votes/bench/runtime/baseline-oracle.log"
+        },
+        "browser": {
+          "outcome": "held",
+          "observation": "Dark mode displays zero votes; a unit oracle checks the same query result.",
+          "duration_ms": 3496,
+          "screenshot": "07-zero-votes/bench/runtime/baseline-oracle.png"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 400,
+          "log": "07-zero-votes/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 330,
+          "log": "07-zero-votes/bench/runtime/seeded-author.log"
+        },
+        "oracle": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 285,
+          "log": "07-zero-votes/bench/runtime/seeded-oracle.log"
+        },
+        "browser": {
+          "outcome": "broken",
+          "observation": "suggestions without votes must display zero",
+          "duration_ms": 6763,
+          "screenshot": "07-zero-votes/bench/runtime/seeded-oracle.png"
+        }
+      },
+      "prq": {
+        "exit_code": 1,
+        "duration_ms": 14665,
+        "log": "07-zero-votes/bench/runtime/prq.log",
+        "verdict": "broken",
+        "report": "07-zero-votes/.pr/runs/f649eea-mvxtvdii-261cf3ef/proof-request.json",
+        "claim_text": "suggestions start at zero votes",
+        "lock": "sha256:f649eea64b1677f36ec3f5dd9196ba11e6873f2ce5bd1c5fd3cfc7e3dc27590d",
+        "cli_sha256": "47baca0ecf371f8f945f53c9567af133405dba5b68f99c42abf8e14e75e0d227"
+      },
+      "cost_usd": null,
+      "source_snapshot": {
+        "version": 1,
+        "source": "feedback-board source snapshot supplied by the project author",
+        "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+        "purpose": "Public reproducible baseline for seeded prq experiments; no deployment state included."
+      },
+      "source_commit": "c215d25cf5807ebbffbf55f730ad916ed5caa7c3",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "2359515cf5573484362c220a6ee4eb0e99b4d6d6",
+      "seeded_commit": "9c0f0b3be7a3a22efa2442de911bde5ea1e2b485",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true,
+      "protocol": {
+        "node": "v24.11.0",
+        "browser_executor": "e2e LLM",
+        "browser_model": "gpt-6.1-sol",
+        "frontend": "Next dev (webpack)",
+        "port_base": 4300
+      }
+    }
+  ],
+  "updated_at": "2026-11-01T12:56:56.359Z",
+  "artifacts_root": "bench-public-live",
+  "note": "Preserved startup attempts. Cases without a confirmed seeded browser contradiction did not run prq. Runtime dependencies were corrected afterward; no blocked setup is counted as detection."
+}

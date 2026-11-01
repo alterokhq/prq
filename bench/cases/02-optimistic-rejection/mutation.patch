@@ -1,0 +1,12 @@
+diff --git a/app/page.tsx b/app/page.tsx
+index e69d926..7b69501 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -25,6 +25,7 @@ export default function Board() {
+   async function castVote(id: Id<"suggestions">, count: number) {
+     if (!voterId) return;
+     setPending((state) => ({ ...state, [id]: true }));
++    setCounts((state) => ({ ...state, [id]: count + 1 }));
+     setMessage("");
+     try {
+       await vote({ suggestionId: id, voterId });

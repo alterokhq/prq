@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@ai-sdk/openai": "4.0.106",
+    "@e2e-dev/decision": "0.3.0",
+    "@e2e-dev/web": "0.15.0",
+    "ai": "7.0.158",
+    "e2e": "0.22.0"
+  }
+}

@@ -1,0 +1,595 @@
+{
+  "version": 1,
+  "method": "Seeded defects on a single application. Authored tests, existing tests and independent oracles are reported separately.",
+  "cases": [
+    {
+      "id": "01",
+      "slug": "vote-toggle",
+      "claim": "clicking upvote again removes the vote",
+      "setup": "The existing toggle behavior is the correct baseline.",
+      "mutation": "Remove the existing-vote removal branch.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1303,
+          "log": "01-vote-toggle/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 263,
+          "log": "01-vote-toggle/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 289,
+          "log": "01-vote-toggle/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 267,
+          "log": "01-vote-toggle/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "b7d253b1df527434e7ce7947b032b79fa17a8bc4",
+      "seeded_commit": "eba14d313402560b9e51da5a98ea889a86c31591",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "02",
+      "slug": "optimistic-rejection",
+      "claim": "the count only changes after the server confirms",
+      "setup": "The Rejected vote item always rejects requests; the baseline changes no count.",
+      "mutation": "Keep an optimistic count after a rejected vote request.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1250,
+          "log": "02-optimistic-rejection/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 270,
+          "log": "02-optimistic-rejection/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 273,
+          "log": "02-optimistic-rejection/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 269,
+          "log": "02-optimistic-rejection/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "0fb424ffa0132bd91306d1bdcb0353b8d4daa8ce",
+      "seeded_commit": "10d1ea9527d5991cedf4e13220882e9ec7a14b63",
+      "existing_detected": false,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "03",
+      "slug": "voter-isolation",
+      "claim": "a browser sees only its own votes on the next visit",
+      "setup": "A vote belonging to a different browser is seeded before the visit.",
+      "mutation": "Filter vote rows by the wrong field, returning another browser's vote.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1270,
+          "log": "03-voter-isolation/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 275,
+          "log": "03-voter-isolation/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 299,
+          "log": "03-voter-isolation/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 266,
+          "log": "03-voter-isolation/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "5f5c9b5fb9893725b23ccab57d00c03f77d209fd",
+      "seeded_commit": "1462d925ea48a117a4748813d3d07e5c4a3fb26d",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "04",
+      "slug": "duplicate-vote-rejection",
+      "claim": "a second upvote from the same browser is rejected",
+      "setup": "This case explicitly replaces toggle-off with rejection of duplicate votes. Existing toggle tests may reject this feature baseline; report that separately.",
+      "mutation": "Use a suggestion ID as the voter lookup value, missing the existing vote.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 1226,
+          "log": "04-duplicate-vote-rejection/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 268,
+          "log": "04-duplicate-vote-rejection/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 289,
+          "log": "04-duplicate-vote-rejection/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 264,
+          "log": "04-duplicate-vote-rejection/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "7cfd405fec7fd8dfa9f704bb108ffdadbf2d3b31",
+      "seeded_commit": "c2afeefa2734da16a43ddebd863550c36f2d8c6e",
+      "existing_detected": null,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "05",
+      "slug": "empty-suggestion",
+      "claim": "empty suggestions are rejected with a message",
+      "setup": "The form submits empty input and displays the backend rejection.",
+      "mutation": "Remove the backend empty-title guard.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1262,
+          "log": "05-empty-suggestion/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 265,
+          "log": "05-empty-suggestion/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 292,
+          "log": "05-empty-suggestion/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 265,
+          "log": "05-empty-suggestion/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "3b022c239196efb7ce292d4cbf199affd96576a4",
+      "seeded_commit": "00a778e7f24e3ca675f757ae14eee384bf82a756",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "06",
+      "slug": "vote-order",
+      "claim": "the board is sorted by most votes first",
+      "setup": "Add correct descending sort and a dataset with distinct vote counts.",
+      "mutation": "Sort counts in ascending order.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1465,
+          "log": "06-vote-order/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 272,
+          "log": "06-vote-order/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 300,
+          "log": "06-vote-order/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 266,
+          "log": "06-vote-order/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "cc5168c3e4bbf141ed51beb2c72917b45bafe974",
+      "seeded_commit": "e5613a4a72a235424a2a97d63f5747d9d9a77641",
+      "existing_detected": false,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "07",
+      "slug": "zero-votes",
+      "claim": "suggestions start at zero votes",
+      "setup": "Seed suggestions without a votes field, as the original application does.",
+      "mutation": "Read missing legacy vote counts as one instead of zero.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 2150,
+          "log": "07-zero-votes/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 281,
+          "log": "07-zero-votes/bench/runtime/baseline-author.log"
+        },
+        "oracle": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 282,
+          "log": "07-zero-votes/bench/runtime/baseline-oracle.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 319,
+          "log": "07-zero-votes/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 271,
+          "log": "07-zero-votes/bench/runtime/seeded-author.log"
+        },
+        "oracle": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 270,
+          "log": "07-zero-votes/bench/runtime/seeded-oracle.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "43f75b4395386128aa545aa20135d5ae474fbd2d",
+      "seeded_commit": "be40d95d21eba8b9318d1d0f70b50b43024c5556",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": true
+    },
+    {
+      "id": "08",
+      "slug": "persistent-voter",
+      "claim": "votes persist across reloads",
+      "setup": "The baseline retains its voter ID in local storage.",
+      "mutation": "Always regenerate the browser voter ID.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1246,
+          "log": "08-persistent-voter/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 239,
+          "log": "08-persistent-voter/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 272,
+          "log": "08-persistent-voter/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 190,
+          "log": "08-persistent-voter/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "f83936d0112b0f04ca51793ef771ff4202fc56b4",
+      "seeded_commit": "b80ef1e8d1ed1b41003907db402026206351490a",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "09",
+      "slug": "rejection-message",
+      "claim": "an error is shown when voting fails",
+      "setup": "The Rejected vote item always rejects requests; baseline displays Voting failed.",
+      "mutation": "Show the saved message before a request and retain it on rejection.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1211,
+          "log": "09-rejection-message/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 271,
+          "log": "09-rejection-message/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 277,
+          "log": "09-rejection-message/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 269,
+          "log": "09-rejection-message/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "77d88e57349e761cd0233ebe83ccab3838e5ef5d",
+      "seeded_commit": "605d3153a534af5f85b0594c0c4d50cdccff3e09",
+      "existing_detected": false,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "10",
+      "slug": "duplicate-title",
+      "claim": "duplicate titles are rejected",
+      "setup": "Add a correct normalized duplicate-title guard. Existing tests that intentionally add duplicates may reject this feature baseline.",
+      "mutation": "Compare and save the untrimmed title while displaying a trimmed title.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 1360,
+          "log": "10-duplicate-title/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 296,
+          "log": "10-duplicate-title/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 316,
+          "log": "10-duplicate-title/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 386,
+          "log": "10-duplicate-title/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "f7d445589b9bd61eb5b65be6d969633038235e57",
+      "seeded_commit": "2eea2193817cd778172b634e85de16bf2b20af51",
+      "existing_detected": null,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "11",
+      "slug": "truncated-list",
+      "claim": "all suggestions appear on the board",
+      "setup": "Seed twelve suggestions, under the original one-hundred limit.",
+      "mutation": "Cap the list at ten suggestions.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1260,
+          "log": "11-truncated-list/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 292,
+          "log": "11-truncated-list/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "broken",
+          "exit_code": 1,
+          "duration_ms": 302,
+          "log": "11-truncated-list/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 267,
+          "log": "11-truncated-list/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "bbaedeb8d86267d667344ed60332c600bf84828b",
+      "seeded_commit": "a0ee884bb008de05769c3816cbaac14a10f6f31e",
+      "existing_detected": true,
+      "author_detected": false,
+      "mutation_confirmed": false
+    },
+    {
+      "id": "12",
+      "slug": "pending-vote",
+      "claim": "the button is disabled while the vote is saving",
+      "setup": "Slow vote waits 1.5 seconds; baseline disables its button while saving.",
+      "mutation": "Omit pending-request state from the disabled condition.",
+      "phase": "controls_recorded",
+      "baseline": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 1228,
+          "log": "12-pending-vote/bench/runtime/baseline-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 315,
+          "log": "12-pending-vote/bench/runtime/baseline-author.log"
+        }
+      },
+      "seeded": {
+        "existing": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 302,
+          "log": "12-pending-vote/bench/runtime/seeded-existing.log"
+        },
+        "author": {
+          "outcome": "held",
+          "exit_code": 0,
+          "duration_ms": 302,
+          "log": "12-pending-vote/bench/runtime/seeded-author.log"
+        }
+      },
+      "prq": null,
+      "cost_usd": null,
+      "source_commit": "22dd61eb5a3b822e25c18742df1d1b06ac3eacbb",
+      "existing_test_files": [
+        "app/voter.test.ts",
+        "convex/suggestions.test.ts"
+      ],
+      "baseline_commit": "62d5c3ceda8f34ec6519eecb673ea3d5c6164ba1",
+      "seeded_commit": "96d6814113982a08d03bd26f1c1ce303ac388845",
+      "existing_detected": false,
+      "author_detected": false,
+      "mutation_confirmed": false
+    }
+  ],
+  "updated_at": "2026-11-01T12:44:12.110Z"
+}

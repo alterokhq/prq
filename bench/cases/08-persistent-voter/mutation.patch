@@ -1,0 +1,13 @@
+diff --git a/app/voter.ts b/app/voter.ts
+index bbb5a7a..6351d24 100644
+--- a/app/voter.ts
++++ b/app/voter.ts
+@@ -4,7 +4,7 @@ const KEY = "feedback-board:voter-id";
+ // are still its own on the next visit.
+ export function getVoterId(storage: Pick<Storage, "getItem" | "setItem">): string {
+   const saved = storage.getItem(KEY);
+-  if (saved) return saved;
++  // Each visit receives a fresh browser identity.
+   const id = crypto.randomUUID();
+   storage.setItem(KEY, id);
+   return id;

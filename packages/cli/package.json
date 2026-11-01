@@ -1,0 +1,63 @@
+{
+  "name": "@alterok/prq",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "node --import tsx src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.90",
+    "@clack/prompts": "^1.0.0",
+    "ai": "^7.0.0",
+    "commander": "^14.0.0",
+    "execa": "^9.0.0",
+    "js-tiktoken": "1.0.21",
+    "log-update": "^7.0.0",
+    "open": "^11.0.0",
+    "picocolors": "^1.1.0",
+    "string-width": "8.3.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@prq/core": "workspace:*",
+    "@prq/render": "workspace:*",
+    "@prq/runner-e2e": "workspace:*",
+    "@prq/runner-shell": "workspace:*",
+    "tsdown": "^0.15.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "bin": {
+    "prq": "./dist/index.js"
+  },
+  "description": "Your agent said it works. Prove it.",
+  "engines": {
+    "node": ">=24.8"
+  },
+  "keywords": [
+    "verification",
+    "testing",
+    "cli",
+    "agents"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alterokhq/prq.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/alterokhq/prq/issues"
+  },
+  "homepage": "https://github.com/alterokhq/prq#readme"
+}

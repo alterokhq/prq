@@ -1,0 +1,13 @@
+diff --git a/app/page.tsx b/app/page.tsx
+index e69d926..4cf274b 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -38,7 +38,7 @@ export default function Board() {
+     <form onSubmit={submit}><input aria-label="Suggest a feature" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Suggest a feature" maxLength={120}/><button type="submit">Suggest</button></form>
+     <p role="status">{message}</p>
+     {suggestions === undefined ? <p>Loading…</p> : <ul>{suggestions.map((suggestion) => <li key={suggestion._id} data-title={suggestion.title.trim()}>
+-      <button type="button" className="vote" aria-pressed={voted.has(suggestion._id)} aria-label={String(counts[suggestion._id] ?? suggestion.votes) + " votes"} disabled={!voterId || pending[suggestion._id] === true} onClick={() => castVote(suggestion._id, suggestion.votes)}><span aria-hidden="true">▲</span><span>{counts[suggestion._id] ?? suggestion.votes}</span></button><span>{suggestion.title.trim()}</span>
++      <button type="button" className="vote" aria-pressed={voted.has(suggestion._id)} aria-label={String(counts[suggestion._id] ?? suggestion.votes) + " votes"} disabled={!voterId} onClick={() => castVote(suggestion._id, suggestion.votes)}><span aria-hidden="true">▲</span><span>{counts[suggestion._id] ?? suggestion.votes}</span></button><span>{suggestion.title.trim()}</span>
+     </li>)}</ul>}
+   </main>;
+ }

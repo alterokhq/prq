@@ -1,0 +1,13 @@
+diff --git a/examples/backbone/dist/views/app-view.js b/examples/backbone/dist/views/app-view.js
+index c3d0b63..9d86d89 100644
+--- a/examples/backbone/dist/views/app-view.js
++++ b/examples/backbone/dist/views/app-view.js
+@@ -114,7 +114,7 @@ var app = app || {};
+         // persisting it to *memory*.
+         createOnEnter: function (e) {
+             if (e.which === ENTER_KEY && this.$input.val().trim()) {
+-                app.todos.create(this.newAttributes());
++                // Seeded defect: creating the todo is omitted.
+                 this.$input.val("");
+             }
+         },
