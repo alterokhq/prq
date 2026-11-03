@@ -24,7 +24,8 @@ jobs:
             node: '24.8.0'
           - os: ubuntu-latest
             node: '24'
-          - os: macos-latest
+          # ARM-hosted capacity prevented jobs from starting; keep macOS checks on Intel.
+          - os: macos-15-intel
             node: '24'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
