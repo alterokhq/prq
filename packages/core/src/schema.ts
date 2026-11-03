@@ -3,6 +3,17 @@ import { z } from "zod";
 export const ClaimKind = z.enum(["browser", "command", "human"]);
 export const Verdict = z.enum(["held", "broken", "needs_human", "unverified"]);
 
+export const ModelUsage = z.object({
+  stage: z.enum(["extraction", "classification", "judge", "browser"]),
+  provider: z.enum(["openai", "openrouter"]),
+  model: z.string(),
+  status: z.enum(["completed", "unavailable", "external"]),
+  input_tokens: z.number().int().nonnegative().nullable(),
+  output_tokens: z.number().int().nonnegative().nullable(),
+  cost_usd: z.number().finite().nonnegative().nullable(),
+});
+export type ModelUsage = z.infer<typeof ModelUsage>;
+
 export const Evidence = z.object({
   type: z.enum(["screenshot", "assertion", "http", "console", "command", "note"]),
   path: z.string().optional(),
@@ -53,7 +64,7 @@ export const Claim = z.object({
 });
 
 export const ProofRequest = z.object({
-  version: z.literal("0.1"),
+  version: z.enum(["0.1", "0.2"]),
   id: z
     .string()
     .max(80)
@@ -79,8 +90,21 @@ export const ProofRequest = z.object({
     unverified: z.number().int(),
   }),
   code: z.object({ diff_url: z.string().optional() }).optional(),
+  configuration: z
+    .object({
+      provider: z.enum(["openai", "openrouter"]),
+      model: z.string(),
+      judge_model: z.string(),
+    })
+    .optional(),
+  model_usage: z.array(ModelUsage).optional(),
   timing: z
-    .object({ total_ms: z.number().int().optional(), cost_usd: z.number().optional() })
+    .object({
+      total_ms: z.number().int().optional(),
+      cost_usd: z.number().finite().nonnegative().nullable().optional(),
+      reported_cost_usd: z.number().finite().nonnegative().nullable().optional(),
+      cost_complete: z.boolean().optional(),
+    })
     .optional(),
 });
 

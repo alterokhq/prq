@@ -49,7 +49,7 @@ describe("terminal presentation", () => {
       stream: { isTTY: true, columns: 80, rows: 100, write: (text) => writes.push(text) },
     });
     view.start({ subject: source.subject, claims: source.claims, hash: source.source.hash });
-    view.finish(source, { reportPath: "report.html" });
+    view.finish(source, { reportPath: "proof-request.json" });
     const output = stripVTControlCharacters(writes.join(""));
     expect(output).toContain("tester inconclusive · judge assessed recorded evidence");
     expect(output).toContain(row.observed);
@@ -112,7 +112,7 @@ describe("terminal presentation", () => {
     });
     view.start({ subject: source.subject, claims, hash: source.source.hash });
     for (const row of claims) view.resolve(row);
-    view.finish(source, { reportPath: "report.html" });
+    view.finish(source, { reportPath: "proof-request.json" });
     const output = writes.join("");
     // biome-ignore lint/suspicious/noControlCharactersInRegex: verify terminal cursor control is absent.
     expect(output).not.toMatch(/\u001b\[\d+A/);
@@ -132,7 +132,7 @@ describe("terminal presentation", () => {
     view.prepare();
     view.progress("c1", "checking");
     view.resolve(claim);
-    view.finish(source, { reportPath: "report.html" });
+    view.finish(source, { reportPath: "proof-request.json" });
     view.stop();
     expect(writes).toEqual([]);
   });
@@ -154,9 +154,9 @@ describe("terminal presentation", () => {
     });
     view.start({ subject: source.subject, claims: source.claims, hash: source.source.hash });
     view.resolve(row);
-    view.finish(source, { reportPath: "report.html" });
+    view.finish(source, { reportPath: "proof-request.json" });
     expect(writes.join("")).toBe(
-      "\n  prq  proof request  #aaaaaaa\n       fixture · abc1234\n       1 claims locked before checking\n\n  ? The helper is readable.\n    needs human\n\n  held 0 · broken 0 · needs a human 1\n  2.5s · locked #aaaaaaa\n\n  → report.html\n\n",
+      "\n  prq  proof request  #aaaaaaa\n       fixture · abc1234\n       1 claims locked before checking\n\n  ? The helper is readable.\n    needs human\n\n  cost unavailable\n  held 0 · broken 0 · needs a human 1\n  2.5s · locked #aaaaaaa\n\n  → proof-request.json\n\n",
     );
   });
 
@@ -168,7 +168,7 @@ describe("terminal presentation", () => {
       stream: { isTTY: true, columns: 80, rows: 100, write: (text) => writes.push(text) },
     });
     view.start({ subject: source.subject, claims: source.claims, hash: source.source.hash });
-    view.finish(source, { reportPath: "report.html" });
+    view.finish(source, { reportPath: "proof-request.json" });
     const output = writes.join("");
     expect(output).not.toContain("\u001b[2J");
     // biome-ignore lint/suspicious/noControlCharactersInRegex: verify ANSI color controls are absent.

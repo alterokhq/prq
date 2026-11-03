@@ -2,7 +2,7 @@
 
 - [Quickstart](../README.md#try-it)
 - [User guide: setup, commands, automation and privacy](user-guide.md)
-- [Proof Request 0.1 spec](../SPEC.md)
+- [Proof Request format spec](../SPEC.md)
 - [Report files and JSON format](report-format.md)
 - [Architecture and evidence boundaries](architecture.md)
 - [Contributing and local checks](contributing.md)

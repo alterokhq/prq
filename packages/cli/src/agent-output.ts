@@ -12,6 +12,9 @@ export function clip(value: string, maxBytes: number): string {
 type CompactRow =
   | { id: string; claimed: string; observed: string }
   | { id: string; claimed_excerpt: string; observed_excerpt: string; truncated: true };
+export function fullJson(pr: ProofRequest, reportPath: string): string {
+  return JSON.stringify({ ...pr, report: reportPath });
+}
 export function agentJson(pr: ProofRequest, reportPath: string): string {
   const broken = pr.claims.filter((c) => c.verdict === "broken");
   const output: {

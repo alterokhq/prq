@@ -4,23 +4,21 @@
 
 [![npm](https://img.shields.io/npm/v/@alterok/prq?color=121110&labelColor=2B2927)](https://www.npmjs.com/package/@alterok/prq)
 [![license](https://img.shields.io/badge/license-Apache--2.0-121110?labelColor=2B2927)](LICENSE)
-[![spec](https://img.shields.io/badge/Proof%20Request-0.1-121110?labelColor=2B2927)](SPEC.md)
+[![spec](https://img.shields.io/badge/Proof%20Request-0.2-121110?labelColor=2B2927)](SPEC.md)
 
-<img src="docs/images/prq-run.png" alt="CLI output from a recorded six-claim run: four held, one broken, one needs a human." width="100%">
-
-`prq` checks what a coding agent says it finished. It locks the claims in the agent's own words, runs independent browser or command checks, and opens a report with evidence behind each verdict. The tester never sees the author's reasoning. A separate judge reviews the evidence without source files.
-
-CLI output replayed from a deliberately seeded demo. [Evidence and limitations](examples/search/README.md).
+`prq` checks what a coding agent says it finished. It locks the claims in the agent's own words, runs independent browser or command checks, and reports evidence behind each verdict in the terminal and JSON. The tester never sees the author's reasoning. A separate judge reviews the evidence without source files.
 
 ## Try it
 
-Use Node.js 24.8+, npm, Git, and an OpenAI API key with [required model access](docs/user-guide.md#requirements). Work inside your app's Git repository with a committed `HEAD` and installed dependencies.
+Use Node.js 24.8+, npm, Git, and an OpenAI or OpenRouter API key with [required model access](docs/user-guide.md#providers-and-models). Work inside your app's Git repository with a committed `HEAD` and installed dependencies.
 
 Install the CLI once in your project:
 
 ```sh
 npm install --save-dev @alterok/prq
 ```
+
+Choose direct OpenAI with `OPENAI_API_KEY`, or set `PRQ_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, and `PRQ_MODEL` to your chosen OpenRouter model. Provider and model flags override environment settings. Models must support structured output; browser testing and screenshot judgment also need image input.
 
 For browser checks, also prepare the project:
 
@@ -41,7 +39,13 @@ npx prq --claims done.md --app-url http://localhost:3000
 
 ## What you get
 
-Results appear in the terminal. A local HTML report lets you inspect screenshots, steps and command output.
+Results appear in the terminal. Use `--json` for the complete report or `--summary` for a compact agent summary. No report server, generated HTML or automatic browser opening is needed.
+
+```sh
+npx prq --claims done.md --json
+npx prq show
+npx prq show --json
+```
 
 Reports stay in `.pr/runs/<run-id>/`. Models receive the completion message and selected evidence. See [privacy and execution boundaries](docs/user-guide.md#privacy-and-execution-boundaries) before sharing application data.
 
@@ -51,10 +55,12 @@ Reports stay in `.pr/runs/<run-id>/`. Models receive the completion message and 
 npx prq fix       # broken claims as a prompt for your agent
 # Apply the fix. Commit it before command checks.
 npx prq rerun     # same locked claims, fresh evidence
-npx prq open      # reopen the latest report
+npx prq show      # inspect the latest report in the terminal
 ```
 
 Browser setup actions may replay from cache. Assertions run live.
+
+Version 0.2 changes `--json` from a compact summary to the full report; use `--summary` for the former view. Historical 0.1 reports remain readable. See the [migration notes](docs/user-guide.md#migrating-from-01).
 
 | Verdict | Meaning |
 | --- | --- |

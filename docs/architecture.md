@@ -9,7 +9,7 @@ completion message
   → classify browser / command / human
   → run browser and command checks
   → judge recorded evidence
-  → save JSON, report, card, Markdown
+  → save JSON and evidence
   → fix prompt → fresh rerun with the same claim lock
 ```
 
@@ -17,10 +17,10 @@ completion message
 
 | Package | Responsibility | Boundary |
 | --- | --- | --- |
-| `@prq/core` | Schema, extraction, lock, classification, Decisions client, judgment, fix prompt, Runner/Store contracts | No filesystem access, process spawning, or browser tooling |
+| `@prq/core` | Schema, extraction, lock, provider adapters, classification, judgment, fix prompt, Runner/Store contracts | No filesystem access, process spawning, or browser tooling |
 | `@prq/runner-e2e` | Generated browser assertions, e2e execution, report parsing, evidence collection | Uses the target project's e2e installation and running application |
 | `@prq/runner-shell` | Command checks and recorded exit/output | Fresh worktree of committed HEAD; copied installed dependencies |
-| `@prq/render` | Static HTML report, 1200 × 630 card HTML, Markdown | Reads a Proof Request value; no network, models, or file access |
+| `@prq/render` | Legacy rendering for historical consumers; not bundled into the CLI | Reads a Proof Request value; no network, models, or file access |
 | `prq` | Input selection, orchestration, filesystem storage, terminal, commands | Connects the packages and writes `.pr/` |
 
 The `@prq/*` packages are private workspaces bundled into the public `prq` CLI. They do not require separate package publication.
@@ -29,11 +29,11 @@ The `@prq/*` packages are private workspaces bundled into the public `prq` CLI. 
 
 The canonical lock is SHA-256 over the ordered claim IDs and exact text. Capitalization, punctuation, whitespace, and ordering matter. The lock is saved before execution. Routing and setup can be refined without changing what the agent claimed.
 
-A run ID is distinct from the claim lock. `.pr/runs/<run-id>/` contains its lock file, complete Proof Request, report, card, Markdown summary, and copied evidence. `.pr/last.json` stores the latest complete Proof Request.
+A run ID is distinct from the claim lock. `.pr/runs/<run-id>/` contains its lock file, complete Proof Request JSON and copied evidence. `.pr/last.json` stores the latest complete Proof Request.
 
 `rerun` validates the previous lock, keeps its claim IDs and text, and writes a separate run. Browser assertions execute again. e2e may replay verified setup actions; the stored `cached` field describes setup replay, never permission to reuse an old verdict.
 
-Named signoff updates the selected latest run and its rendered artifacts. It records the person, decision, optional reason, and timestamp while preserving the claim text and its human classification.
+Named signoff updates the selected latest run and latest-report alias. It records the person, decision, optional reason, and timestamp while preserving the claim text and its human classification.
 
 ## Execution contexts
 
@@ -43,7 +43,7 @@ Browser checks operate on an already running HTTP(S) URL. The report records tha
 
 Command checks use a disposable detached worktree of committed HEAD. Installed dependencies are copied from the original checkout into the disposable worktree. The runner limits inherited environment variables and captures bounded output, but a worktree is not a security sandbox. Command results do not cover uncommitted edits.
 
-Human claims have no machine check. A person can sign off through the CLI. Static report controls prepare that command; they do not mutate files.
+Human claims have no machine check. A person can sign off through the CLI. Use the CLI to record the named decision.
 
 ## Verdicts
 
@@ -56,10 +56,10 @@ Human claims have no machine check. A person can sign off through the CLI. Stati
 
 A recorded contradiction can remain broken when the judge is unavailable. Missing or refused model responses never become a low probability by default. Screenshots and output are evidence; a model assertion without relevant observations is insufficient.
 
-## Artifact and rendering
+## Artifact and terminal output
 
-`packages/core/src/schema.ts` is the zod source of truth. Keep `proof-request.schema.json` synchronized. The full artifact retains claim text and evidence. Agent-facing output is a compact view, so it can shorten or omit rows and point to the full file.
+`packages/core/src/schema.ts` is the zod source of truth. Keep `proof-request.schema.json` synchronized. New artifacts use format 0.2; the reader also accepts historical 0.1 files. The full JSON output retains every claim and evidence field. `--summary` is the optional bounded view, with explicit omissions and a full artifact path. `show` inspects a saved report without a provider key. New runs generate no HTML and open no browser.
 
-The report escapes source, claims, and evidence as untrusted text. Embedded JSON cannot close its script element. Screenshot references must be relative to the run. The renderer does not fetch fonts or remote images. Keep the evidence directory with the report when copying it elsewhere.
+Provider selection is independent of the runner and consumer application. Extraction, classification and judgment use separate AI SDK calls with structured outputs. The browser runner creates a temporary configuration beside the target configuration, preserving app setup but supplying an independent agent and the selected model. It never writes credentials into that file. The legacy Decisions API client remains an internal compatibility path; the new CLI uses provider-independent structured calls. Recorded judge probabilities are model assessments, not calibrated accuracy estimates.
 
-The report's copy and download controls operate locally. A clipboard fallback exposes selectable text when browser permissions are unavailable. Signoff commands quote names and reasons for the shell. No browser action starts a verifier or records a decision.
+Report accounting contains only allowlisted metadata. OpenRouter's returned costs are retained; missing cost, failed requests and unmeasured browser costs remain unknown. A known subtotal cannot become a complete total. Retries are disabled for extraction and independent decision calls. See [report format](report-format.md) for the output and accounting contracts.

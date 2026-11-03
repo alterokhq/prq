@@ -3,13 +3,43 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fixPrompt, ProofRequest, summarize, tokenCount } from "@prq/core";
 import { describe, expect, it } from "vitest";
-import { agentJson } from "./agent-output.js";
+import { agentJson, fullJson } from "./agent-output.js";
 import { initProject } from "./init.js";
+import { readProof, saveProof } from "./storage.js";
 
 const fixture = ProofRequest.parse(
   JSON.parse(await readFile(new URL("../../../fixtures/example.json", import.meta.url), "utf8")),
 );
 describe("agent output", () => {
+  it("exports every claim and evidence field in full JSON", () => {
+    const source = structuredClone(fixture);
+    const row = source.claims[0];
+    if (!row) throw new Error("missing fixture row");
+    source.claims = Array.from({ length: 100 }, (_, i) => ({
+      ...row,
+      id: `c${i}`,
+      text: `Claim ${i}: ${"complete text ".repeat(50)}`,
+      evidence: [{ type: "note", text: "Full observation" }],
+    }));
+    source.summary = summarize(source.claims);
+    const output = JSON.parse(fullJson(source, "report.json"));
+    expect(output.claims).toEqual(source.claims);
+    expect(output.source).toEqual(source.source);
+    expect(output.report).toBe("report.json");
+    expect(output.omitted).toBeUndefined();
+  });
+  it("saves an inspectable JSON report without generated pages", async () => {
+    const root = await mkdtemp(join(tmpdir(), "prq-json-storage-"));
+    try {
+      const path = await saveProof(root, fixture);
+      expect(path).toBe(join(root, ".pr", "runs", fixture.id, "proof-request.json"));
+      expect(await readProof(path)).toEqual(fixture);
+      await expect(readFile(join(root, ".pr", "runs", fixture.id, "index.html"))).rejects.toThrow();
+      await expect(readFile(join(root, ".pr", "runs", fixture.id, "card.html"))).rejects.toThrow();
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
   it("keeps compact output bounded and full artifact unchanged", () => {
     const source = structuredClone(fixture);
     const row = fixture.claims.find((c) => c.verdict === "broken");

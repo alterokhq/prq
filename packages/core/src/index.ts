@@ -4,6 +4,7 @@ export * from "./extract.js";
 export * from "./fix-prompt.js";
 export * from "./judge.js";
 export * from "./lock.js";
+export * from "./provider.js";
 export * from "./runner.js";
 export * from "./schema.js";
 export * from "./tokens.js";

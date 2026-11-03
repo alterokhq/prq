@@ -1,3 +1,4 @@
+import type { ProviderName } from "./provider.js";
 import type { DraftClaim, Evidence } from "./schema.js";
 
 export interface RunContext {
@@ -12,6 +13,8 @@ export interface RunContext {
   /** Caller checkout for resolving installed browser tooling. */
   projectDir?: string;
   onProgress?: (claimId: string, message: string) => void;
+  /** Browser subprocess configuration. Contains no credentials. */
+  browserModel?: { provider: ProviderName; model: string; modulePath: string };
 }
 
 export interface RunResult {

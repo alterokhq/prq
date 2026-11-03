@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 import { existsSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
-import { ClaimExtractionIssue, fixPrompt, lockClaims, summarize } from "@prq/core";
-import { renderPage } from "@prq/render";
-import { Command, InvalidArgumentError } from "commander";
+import {
+  ClaimExtractionIssue,
+  fixPrompt,
+  lockClaims,
+  ProviderConfigurationIssue,
+  summarize,
+} from "@prq/core";
+import { Command, InvalidArgumentError, Option } from "commander";
 import { execa } from "execa";
-import open from "open";
-import { agentJson, clip } from "./agent-output.js";
+import { agentJson, clip, fullJson } from "./agent-output.js";
 import { initProject } from "./init.js";
 import { readProof, saveProof } from "./storage.js";
+import { createTerminalView } from "./terminal.js";
 import { type RunOptions, repoRoot, runProof, UsageIssue } from "./workflow.js";
 
 if (existsSync(".env")) {
@@ -18,7 +23,7 @@ if (existsSync(".env")) {
 }
 const program = new Command("prq")
   .description("Your agent said it works. Prove it.")
-  .version("0.1.0");
+  .version("0.2.0");
 function timeout(value: string): number {
   const number = Number(value);
   if (!Number.isSafeInteger(number) || number < 100 || number > 3_600_000)
@@ -27,20 +32,27 @@ function timeout(value: string): number {
 }
 function flags(command: Command): Command {
   return command
-    .option("--json", "compact summary and broken rows")
+    .option("--json", "complete machine-readable report")
+    .option("--summary", "compact agent summary with the full report path")
     .option("--quiet", "hide live terminal output")
-    .option("--no-open", "save the page without opening a browser")
+    .addOption(
+      new Option("--no-open", "accepted for compatibility; prq never opens a browser").hideHelp(),
+    )
+    .option("--provider <provider>", "openai or openrouter (or PRQ_PROVIDER)")
+    .option("--model <model>", "extraction, classification and browser model (or PRQ_MODEL)")
+    .option("--judge-model <model>", "independent judge model (or PRQ_JUDGE_MODEL)")
     .option("--app-url <url>", "URL of the already running application")
     .option("--timeout <ms>", "time limit per check", timeout);
 }
 async function execute(options: RunOptions, rerun = false) {
+  if (options.json && options.summary)
+    throw new UsageIssue("Choose --json or --summary, not both.");
   const root = await repoRoot();
   const previous = rerun ? await readProof(join(root, ".pr", "last.json")) : undefined;
-  const { pr, reportPath } = await runProof(root, options, previous);
+  const { pr } = await runProof(root, options, previous);
   const jsonPath = relative(root, join(root, ".pr", "runs", pr.id, "proof-request.json"));
-  if (options.json) process.stdout.write(`${agentJson(pr, jsonPath)}\n`);
-  if (options.open !== false && !options.json && !options.quiet)
-    await open(reportPath).catch(() => process.stderr.write(`Open ${reportPath}\n`));
+  if (options.json) process.stdout.write(`${fullJson(pr, jsonPath)}\n`);
+  else if (options.summary) process.stdout.write(`${agentJson(pr, jsonPath)}\n`);
   process.exitCode = pr.summary.broken > 0 ? 1 : pr.summary.unverified > 0 ? 2 : 0;
 }
 flags(program)
@@ -54,12 +66,6 @@ flags(
 ).action((_options: RunOptions, command: Command) =>
   execute(command.optsWithGlobals<RunOptions>(), true),
 );
-program
-  .command("render <json>")
-  .description("render saved JSON as HTML on stdout")
-  .action(async (path: string) => {
-    process.stdout.write(renderPage(await readProof(path)));
-  });
 program
   .command("fix")
   .description("print a short prompt for the broken claims")
@@ -127,12 +133,34 @@ program
     },
   );
 program
-  .command("open")
-  .description("open the last saved Proof Request")
-  .action(async () => {
-    const root = await repoRoot();
-    const pr = await readProof(join(root, ".pr", "last.json"));
-    await open(join(root, ".pr", "runs", pr.id, "index.html"));
+  .command("show [json]")
+  .description("inspect a saved report in the terminal")
+  .option("--json", "complete machine-readable report")
+  .option("--summary", "compact agent summary")
+  .action(async (path: string | undefined, _options: unknown, command: Command) => {
+    const options = command.optsWithGlobals<RunOptions>();
+    if (options.json && options.summary)
+      throw new UsageIssue("Choose --json or --summary, not both.");
+    const report = path ? resolve(path) : join(await repoRoot(), ".pr", "last.json");
+    const pr = await readProof(report);
+    // Evidence paths are relative to the run directory, never the latest-report alias.
+    const artifact = path
+      ? report
+      : join(await repoRoot(), ".pr", "runs", pr.id, "proof-request.json");
+    if (options.json || options.summary) {
+      process.stdout.write(
+        `${options.summary ? agentJson(pr, artifact) : fullJson(pr, artifact)}\n`,
+      );
+      return;
+    }
+    const view = createTerminalView({});
+    try {
+      view.start({ subject: pr.subject, claims: pr.claims, hash: pr.source.hash });
+      for (const claim of pr.claims) view.resolve(claim);
+      view.finish(pr, { reportPath: artifact });
+    } finally {
+      view.stop();
+    }
   });
 program
   .command("init")
@@ -148,14 +176,16 @@ program.parseAsync().catch((issue: unknown) => {
       ? issue.statusCode
       : undefined;
   const message =
-    issue instanceof UsageIssue || issue instanceof ClaimExtractionIssue
+    issue instanceof UsageIssue ||
+    issue instanceof ClaimExtractionIssue ||
+    issue instanceof ProviderConfigurationIssue
       ? issue.message
       : status
         ? `Claim extraction unavailable (HTTP ${status}). Check model access and configuration.`
         : "Verification unavailable. Check your source file, application, dependencies, and API key.";
-  if (process.argv.includes("--json"))
+  if (process.argv.includes("--json") || process.argv.includes("--summary"))
     process.stdout.write(
-      `${JSON.stringify({ status: "unverified", reason: clip(message, 220) })}\n`,
+      `${JSON.stringify({ format: "prq-error/v1", status: "unverified", reason: message })}\n`,
     );
   else process.stderr.write(`prq: ${message}\n`);
   process.exitCode = 2;

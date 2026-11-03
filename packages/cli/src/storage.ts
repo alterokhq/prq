@@ -1,7 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ProofRequest } from "@prq/core";
-import { renderCard, renderMarkdown, renderPage } from "@prq/render";
 export async function readProof(path: string): Promise<ProofRequest> {
   return ProofRequest.parse(JSON.parse(await readFile(path, "utf8")));
 }
@@ -15,9 +14,6 @@ export async function saveProof(root: string, pr: ProofRequest): Promise<string>
   await mkdir(runDir, { recursive: true });
   const json = `${JSON.stringify(pr, null, 2)}\n`;
   await atomic(join(runDir, "proof-request.json"), json);
-  await atomic(join(runDir, "index.html"), renderPage(pr));
-  await atomic(join(runDir, "card.html"), renderCard(pr));
-  await atomic(join(runDir, "summary.md"), renderMarkdown(pr));
   await atomic(join(root, ".pr", "last.json"), json);
-  return join(runDir, "index.html");
+  return join(runDir, "proof-request.json");
 }
