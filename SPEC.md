@@ -58,7 +58,7 @@ Required fields are marked with `*`. The schema is the authority where this tabl
 | `summary`* | object | Counts: `held`*, `broken`*, `needs_human`*, `unverified`*. |
 | `code` | object | `diff_url`, if the reader wants the code. It is an appendix. |
 | `timing` | object | Optional integer `total_ms`; `cost_usd` is a complete total or null; `reported_cost_usd` is a known subtotal or null; `cost_complete` says whether every recorded stage has a cost. |
-| `configuration` | object | Selected `provider`, `model` and `judge_model`, without credentials. |
+| `configuration` | object | Selected `provider`, `model`, `judge_model` and optional `decision_mode`, without credentials. |
 | `model_usage` | array | Per-stage provider/model, status, available token counts and reported dollar cost. See [accounting fields](docs/report-format.md#models-and-cost). |
 
 Each claim:

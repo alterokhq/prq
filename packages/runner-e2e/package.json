@@ -22,6 +22,8 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "ai": "7.0.158",
+    "e2e": "0.22.0",
     "tsdown": "^0.15.0",
     "typescript": "^5.9.0"
   },

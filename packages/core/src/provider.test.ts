@@ -20,11 +20,29 @@ describe("provider selection", () => {
       apiKey: "test-router",
       model: "other/model",
       judgeModel: "judge/model",
+      decisionMode: "structured",
     });
     expect(
       resolveProvider({}, { OPENROUTER_API_KEY: "test-router", PRQ_MODEL: "example/model" })
         .provider,
     ).toBe("openrouter");
+  });
+  it("preserves Decisions for OpenAI and requires an explicit structured opt-in", () => {
+    const env = { OPENAI_API_KEY: "test-direct" };
+    expect(resolveProvider({}, env)).toMatchObject({
+      decisionMode: "decisions",
+      judgeModel: "gpt-6-luna",
+    });
+    expect(resolveProvider({ decisionMode: "structured" }, env)).toMatchObject({
+      decisionMode: "structured",
+      judgeModel: "gpt-6.1-sol",
+    });
+    expect(() =>
+      resolveProvider(
+        { provider: "openrouter", model: "fixture", decisionMode: "decisions" },
+        { OPENROUTER_API_KEY: "test-router" },
+      ),
+    ).toThrow("structured");
   });
   it("does not silently switch providers when a selected key is missing", () => {
     expect(() =>

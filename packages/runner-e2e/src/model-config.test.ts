@@ -2,6 +2,7 @@ import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { execa } from "execa";
 import { describe, expect, it } from "vitest";
 import { withModelConfig } from "./model-config.js";
 
@@ -11,6 +12,7 @@ describe("independent browser model configuration", () => {
     async (provider) => {
       const root = await mkdtemp(join(tmpdir(), "prq-model-config-"));
       try {
+        await execa("git", ["init"], { cwd: root });
         const original =
           'export default { targets: [{ app: { url: "http://original", identity: "fixture" }, engine: "fixture" }], agents: { default: { context: "author context", model: "old" } }, workers: 2 };';
         await writeFile(join(root, "e2e.config.mjs"), original);
@@ -32,6 +34,8 @@ describe("independent browser model configuration", () => {
               const path = args[1];
               if (!path) throw new Error("missing configuration");
               expect(args.slice(2)).toEqual(["--agent", "prq"]);
+              const ignored = await execa("git", ["check-ignore", path], { cwd: root });
+              expect(ignored.exitCode).toBe(0);
               const source = await readFile(path, "utf8");
               expect(source).toContain(
                 provider === "openrouter"

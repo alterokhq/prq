@@ -40,6 +40,7 @@ export interface RunOptions {
   model?: string;
   provider?: string;
   judgeModel?: string;
+  decisionMode?: string;
 }
 export class UsageIssue extends Error {}
 export async function repoRoot(): Promise<string> {
@@ -110,6 +111,10 @@ export async function runProof(
   const selection = resolveProvider(options, process.env);
   const model = createModel(selection);
   const judgeModel = createModel({ ...selection, model: selection.judgeModel });
+  const decisionOptions =
+    selection.decisionMode === "decisions"
+      ? { apiKey: selection.apiKey, model: selection.judgeModel }
+      : { languageModel: judgeModel };
   const usage: ModelUsage[] = [];
   const account = (stage: ModelUsage["stage"], name: string) => {
     const row = modelUsage({ stage, provider: selection.provider, model: name });
@@ -161,10 +166,17 @@ export async function runProof(
     );
     if (!previous) {
       try {
+        let recordClassification: ((receipt: ModelReceipt) => void) | undefined;
         claims = await classifyClaims(claims, {
-          languageModel: model,
+          ...(selection.decisionMode === "decisions" ? decisionOptions : { languageModel: model }),
           timeoutMs,
-          onUsage: account("classification", selection.model),
+          onRequest: () => {
+            recordClassification = account(
+              "classification",
+              selection.decisionMode === "decisions" ? selection.judgeModel : selection.model,
+            );
+          },
+          onUsage: (receipt) => recordClassification?.(receipt),
         });
       } catch {
         /* Extracted routes remain explicit; execution still determines evidence. */
@@ -204,16 +216,6 @@ export async function runProof(
         if (!routed.length) return;
         let output: Map<string, RunResult>;
         try {
-          if (runner.kind === "browser")
-            usage.push({
-              stage: "browser",
-              provider: selection.provider,
-              model: selection.model,
-              status: "external",
-              input_tokens: null,
-              output_tokens: null,
-              cost_usd: null,
-            });
           output = await runner.run(routed, {
             worktree: root,
             projectDir: root,
@@ -223,6 +225,16 @@ export async function runProof(
             cacheDir: join(root, ".e2e", "cache"),
             testFile: join(root, "tests", `prq-${shortHash(hash)}.e2e.ts`),
             onProgress: (id, message) => view.progress(id, message),
+            onBrowserStart: () =>
+              usage.push({
+                stage: "browser",
+                provider: selection.provider,
+                model: selection.model,
+                status: "external",
+                input_tokens: null,
+                output_tokens: null,
+                cost_usd: null,
+              }),
             ...(runner.kind === "browser"
               ? {
                   browserModel: {
@@ -269,7 +281,7 @@ export async function runProof(
     // when it actually requests an independent assessment.
     let recordJudge: ((receipt: ModelReceipt) => void) | undefined;
     const judgments = await judgeClaims(inputs, {
-      languageModel: judgeModel,
+      ...decisionOptions,
       timeoutMs,
       onUsage: (receipt) => recordJudge?.(receipt),
       onRequest: () => {
@@ -287,7 +299,7 @@ export async function runProof(
         input.claim,
         input.result,
         judgment,
-        `${selection.provider} ${selection.judgeModel}`,
+        `${selection.provider} ${selection.decisionMode} ${selection.judgeModel}`,
       );
       completed.set(row.id, row);
       view.resolve(row);
@@ -309,6 +321,7 @@ export async function runProof(
         provider: selection.provider,
         model: selection.model,
         judge_model: selection.judgeModel,
+        decision_mode: selection.decisionMode,
       },
       model_usage: usage,
       timing: { total_ms: Date.now() - started, ...runCost(usage) },

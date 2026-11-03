@@ -13,8 +13,9 @@ export default {
 `;
 const block = `<!-- prq:start -->
 ## Proof before done
-Before reporting a task as done, pipe your done message into \`prq --from-stdin --json\`.
+Before reporting a task as done, pipe your done message into \`prq --from-stdin --summary\`.
 Keep one claim per sentence. Include the saved report path in your final message.
+Inspect that file or run \`prq show --json\` when you need the full claims and evidence.
 If a claim is broken, fix the code and run \`prq rerun\`. Never edit, omit, or weaken a locked claim.
 <!-- prq:end -->`;
 const hookScript = `import { readFileSync } from 'node:fs';
@@ -61,8 +62,16 @@ export async function initProject(root: string, hasCodex: boolean): Promise<stri
   );
   const agentsPath = join(root, "AGENTS.md");
   const agents = (await readOptional(agentsPath)) ?? "";
-  if (!agents.includes("<!-- prq:start -->"))
+  if (/<!-- prq:start -->[\s\S]*?<!-- prq:end -->/.test(agents)) {
+    await writeFile(
+      agentsPath,
+      agents.replace(/<!-- prq:start -->[\s\S]*?<!-- prq:end -->/, () => block),
+    );
+  } else if (!agents.includes("<!-- prq:start -->")) {
     await writeFile(agentsPath, `${agents.trimEnd()}\n\n${block}\n`.trimStart());
+  } else {
+    notes.push("Incomplete prq instruction markers in AGENTS.md; repair them and rerun init.");
+  }
   const ignorePath = join(root, ".gitignore");
   const ignore = (await readOptional(ignorePath)) ?? "";
   const missing = [".pr/", ".e2e/", "tests/prq-*.e2e.ts", ".prq-*.config.mjs"].filter(
@@ -88,7 +97,21 @@ export async function initProject(root: string, hasCodex: boolean): Promise<stri
         group.success && group.data.hooks.some((hook) => hook.command?.includes("prq-stop.mjs"))
       );
     });
-    await writeMissing(join(root, ".codex", "hooks", "prq-stop.mjs"), hookScript);
+    const scriptPath = join(root, ".codex", "hooks", "prq-stop.mjs");
+    const installedScript = await readOptional(scriptPath);
+    const legacyScript = hookScript
+      .replace(
+        "['--from-stdin', '--summary', '--quiet']",
+        "['--from-stdin', '--json', '--quiet', '--no-open']",
+      )
+      .replace(
+        "Check provider credentials, model configuration and that prq is on PATH.",
+        "Check OPENAI_API_KEY and that prq is on PATH.",
+      );
+    if (installedScript === legacyScript) await writeFile(scriptPath, hookScript);
+    else if (installedScript === undefined) await writeMissing(scriptPath, hookScript);
+    else if (installedScript !== hookScript)
+      notes.push("Kept customized prq-stop.mjs. Use --summary there to keep agent output bounded.");
     if (!configured) {
       hooks.hooks.Stop = [
         ...existing,

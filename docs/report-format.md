@@ -30,12 +30,12 @@ If setup or extraction fails before a report exists, machine-readable output is 
 
 ## Models and cost
 
-`configuration` records the selected provider, model and judge model without credentials. `model_usage` records attempted model stages, selected provider/model, status, available input/output token counts and provider-reported `cost_usd`. A completed request means a response was received; it does not imply the claim held.
+`configuration` records the selected provider, model and judge model without credentials. `model_usage` records stages whose request or external browser process was started, selected provider/model, status, available input/output token counts and provider-reported `cost_usd`. A completed request means a response was received; it does not imply the claim held.
 
-OpenRouter costs are read from its response metadata. Direct OpenAI calls do not expose dollar costs in this implementation. Browser-runner accounting is currently unavailable and is recorded as `external`, with null counts and cost. No estimates or provider prices are silently substituted.
+OpenRouter costs are read from its response metadata. Decisions calls expose neither token nor cost accounting here. Direct OpenAI calls do not expose dollar costs in this implementation. Browser-runner accounting is currently unavailable and is recorded as `external`, with null counts and cost. No estimates or provider prices are silently substituted.
 
 `timing.cost_usd` is null unless accounting is complete for every recorded stage. `reported_cost_usd` is the known subtotal, or null when nothing is known; `cost_complete` makes the distinction explicit. A real zero is retained as zero. Reports show partial or unknown cost in the terminal as well.
 
 ## Historical evidence
 
-The independent format is defined in [SPEC.md](../SPEC.md). The [recorded six-claim search demo](../examples/search/README.md) and [external experiments](../bench/external/README.md) retain their original 0.1 artifacts, including historical HTML where present. These are evidence of their recorded builds, not live validation of 0.2 or its new provider adapters. The legacy renderer package remains for historical consumers and is no longer bundled into the CLI.
+The independent format is defined in [SPEC.md](../SPEC.md). The [recorded six-claim search demo](../examples/search/README.md) and [external experiments](../bench/external/README.md) retain their original 0.1 artifacts, including historical HTML where present. These are evidence of their recorded builds, not live validation of 0.2 or its new provider adapters. Saving a historical run archives its generated pages with `.pre-0.2` filenames; they no longer represent the current JSON. The legacy renderer package remains for historical consumers and is no longer bundled into the CLI.

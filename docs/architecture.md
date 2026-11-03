@@ -33,7 +33,7 @@ A run ID is distinct from the claim lock. `.pr/runs/<run-id>/` contains its lock
 
 `rerun` validates the previous lock, keeps its claim IDs and text, and writes a separate run. Browser assertions execute again. e2e may replay verified setup actions; the stored `cached` field describes setup replay, never permission to reuse an old verdict.
 
-Named signoff updates the selected latest run and latest-report alias. It records the person, decision, optional reason, and timestamp while preserving the claim text and its human classification.
+Named signoff updates the selected latest run and latest-report alias. Historical generated pages are archived with `.pre-0.2` filenames before writing current JSON. It records the person, decision, optional reason, and timestamp while preserving the claim text and its human classification.
 
 ## Execution contexts
 
@@ -60,6 +60,6 @@ A recorded contradiction can remain broken when the judge is unavailable. Missin
 
 `packages/core/src/schema.ts` is the zod source of truth. Keep `proof-request.schema.json` synchronized. New artifacts use format 0.2; the reader also accepts historical 0.1 files. The full JSON output retains every claim and evidence field. `--summary` is the optional bounded view, with explicit omissions and a full artifact path. `show` inspects a saved report without a provider key. New runs generate no HTML and open no browser.
 
-Provider selection is independent of the runner and consumer application. Extraction, classification and judgment use separate AI SDK calls with structured outputs. The browser runner creates a temporary configuration beside the target configuration, preserving app setup but supplying an independent agent and the selected model. It never writes credentials into that file. The legacy Decisions API client remains an internal compatibility path; the new CLI uses provider-independent structured calls. Recorded judge probabilities are model assessments, not calibrated accuracy estimates.
+Provider selection is independent of the runner and consumer application. Extraction uses the selected AI SDK provider. Direct OpenAI retains Decisions classification and judgment by default; OpenRouter and explicit `--decision-mode structured` use separate structured AI SDK calls. The browser runner creates a temporary configuration beside the target configuration, preserving app setup but supplying an independent agent and the selected model. It never writes credentials into that file. Decisions defaults to `gpt-6-luna`; structured judgment defaults to the selected main model. Changing decision modes can change verdicts and requires fresh evaluations. Recorded judge probabilities are model assessments, not calibrated accuracy estimates.
 
 Report accounting contains only allowlisted metadata. OpenRouter's returned costs are retained; missing cost, failed requests and unmeasured browser costs remain unknown. A known subtotal cannot become a complete total. Retries are disabled for extraction and independent decision calls. See [report format](report-format.md) for the output and accounting contracts.

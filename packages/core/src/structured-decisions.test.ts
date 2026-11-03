@@ -91,3 +91,24 @@ describe("provider-independent judgment", () => {
     expect(calls).toBe(1);
   });
 });
+
+it("does not account rejected decisions input as a sent request", async () => {
+  let sent = 0;
+  const question = { type: "predicate", name: "duplicate", instructions: "test" } as const;
+  await expect(
+    decide("test", [question, question], {
+      apiKey: "unused",
+      onRequest: () => {
+        sent++;
+      },
+    }),
+  ).rejects.toThrow("unique");
+  await expect(
+    decide("test", [question], {
+      onRequest: () => {
+        sent++;
+      },
+    }),
+  ).rejects.toThrow("OPENAI_API_KEY");
+  expect(sent).toBe(0);
+});

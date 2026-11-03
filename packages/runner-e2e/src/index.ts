@@ -47,8 +47,9 @@ export const e2eRunner: Runner = {
         await mkdir(reportDir, { recursive: true });
         for (const claim of claims) ctx.onProgress?.(claim.id, "checking the running application");
         const subprocessStarted = Date.now();
-        const run = await withModelConfig(ctx, (configArgs) =>
-          execa(
+        const run = await withModelConfig(ctx, (configArgs) => {
+          ctx.onBrowserStart?.();
+          return execa(
             process.execPath,
             [
               binary,
@@ -77,8 +78,8 @@ export const e2eRunner: Runner = {
               forceKillAfterDelay: 2000,
               maxBuffer: 2 * 1024 * 1024,
             },
-          ),
-        );
+          );
+        });
         const subprocessMs = Date.now() - subprocessStarted;
         if (run.timedOut)
           return pending("The browser runner timed out before completing its report.");

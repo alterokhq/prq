@@ -31,7 +31,17 @@ describe("agent output", () => {
   it("saves an inspectable JSON report without generated pages", async () => {
     const root = await mkdtemp(join(tmpdir(), "prq-json-storage-"));
     try {
+      const dir = join(root, ".pr", "runs", fixture.id);
+      await mkdir(dir, { recursive: true });
+      await writeFile(join(dir, "index.html"), "historical unsigned report");
+      await writeFile(join(dir, "card.html"), "historical card");
+      await writeFile(join(dir, "summary.md"), "historical summary");
       const path = await saveProof(root, fixture);
+      expect(await readFile(join(dir, "index.pre-0.2.html"), "utf8")).toBe(
+        "historical unsigned report",
+      );
+      expect(await readFile(join(dir, "summary.pre-0.2.md"), "utf8")).toBe("historical summary");
+      await saveProof(root, fixture);
       expect(path).toBe(join(root, ".pr", "runs", fixture.id, "proof-request.json"));
       expect(await readProof(path)).toEqual(fixture);
       await expect(readFile(join(root, ".pr", "runs", fixture.id, "index.html"))).rejects.toThrow();
@@ -86,7 +96,10 @@ describe("init", () => {
     try {
       await mkdir(join(root, ".codex"));
       await writeFile(join(root, "e2e.config.ts"), "existing config\n");
-      await writeFile(join(root, "AGENTS.md"), "Existing instructions\n");
+      await writeFile(
+        join(root, "AGENTS.md"),
+        "Existing instructions\n<!-- prq:start -->\nprq --from-stdin --json --no-open\n<!-- prq:end -->\nKeep this suffix\n",
+      );
       await writeFile(
         join(root, ".codex", "hooks.json"),
         JSON.stringify({
@@ -97,7 +110,12 @@ describe("init", () => {
       await initProject(root, true);
       await initProject(root, true);
       expect(await readFile(join(root, "e2e.config.ts"), "utf8")).toBe("existing config\n");
-      expect((await readFile(join(root, "AGENTS.md"), "utf8")).match(/prq:start/g)).toHaveLength(1);
+      const instructions = await readFile(join(root, "AGENTS.md"), "utf8");
+      expect(instructions.match(/prq:start/g)).toHaveLength(1);
+      expect(instructions).toContain("prq --from-stdin --summary");
+      expect(instructions).not.toContain("--json --no-open");
+      expect(instructions).toMatch(/^Existing instructions/);
+      expect(instructions).toMatch(/Keep this suffix\n$/);
       const hooks = JSON.parse(await readFile(join(root, ".codex", "hooks.json"), "utf8"));
       expect(hooks.description).toBe("keep");
       expect(hooks.hooks.Stop).toHaveLength(2);
@@ -117,4 +135,31 @@ describe("useful compact output", () => {
     expect(parsed.report).toBe(report);
     expect(parsed.omitted).toBe(0);
   });
+});
+
+it("upgrades only an unmodified legacy hook and preserves custom hooks", async () => {
+  const root = await mkdtemp(join(tmpdir(), "prq-hook-migration-"));
+  try {
+    await initProject(root, true);
+    const path = join(root, ".codex", "hooks", "prq-stop.mjs");
+    const current = await readFile(path, "utf8");
+    const legacy = current
+      .replace(
+        "['--from-stdin', '--summary', '--quiet']",
+        "['--from-stdin', '--json', '--quiet', '--no-open']",
+      )
+      .replace(
+        "Check provider credentials, model configuration and that prq is on PATH.",
+        "Check OPENAI_API_KEY and that prq is on PATH.",
+      );
+    await writeFile(path, legacy);
+    await initProject(root, true);
+    expect(await readFile(path, "utf8")).toBe(current);
+    const custom = `${legacy}\n// project-specific customization\n`;
+    await writeFile(path, custom);
+    expect((await initProject(root, true)).join("\n")).toContain("Kept customized");
+    expect(await readFile(path, "utf8")).toBe(custom);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });

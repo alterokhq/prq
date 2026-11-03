@@ -1,9 +1,29 @@
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
-import { rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { appendFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { RunContext } from "@prq/core";
+import { execa } from "execa";
+
+async function ignoreTemporaryConfig(root: string) {
+  const result = await execa("git", ["rev-parse", "--git-path", "info/exclude"], {
+    cwd: root,
+    reject: false,
+  });
+  if (result.exitCode !== 0) return;
+  const path = resolve(root, result.stdout.trim());
+  let existing = "";
+  try {
+    existing = await readFile(path, "utf8");
+  } catch (issue) {
+    if (!(issue instanceof Error && "code" in issue && issue.code === "ENOENT")) throw issue;
+  }
+  if (!existing.split("\n").includes(".prq-*.config.mjs")) {
+    await mkdir(dirname(path), { recursive: true });
+    await appendFile(path, "\n# prq temporary browser configuration\n.prq-*.config.mjs\n");
+  }
+}
 
 /** A separate agent prevents a project's author context or executor overriding verification. */
 export async function withModelConfig<T>(
@@ -29,6 +49,7 @@ export default {
   agents: { prq: { model: ${factory}({ apiKey: process.env.${keyName} })(${JSON.stringify(model)}), judgmentTimeout: ${Math.min(ctx.timeoutMs, 60000)} } },
 };
 `;
+  await ignoreTemporaryConfig(ctx.worktree);
   await writeFile(path, source, { flag: "wx" });
   try {
     return await run(["--config", path, "--agent", "prq"]);

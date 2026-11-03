@@ -18,7 +18,7 @@ Install the CLI once in your project:
 npm install --save-dev @alterok/prq
 ```
 
-Choose direct OpenAI with `OPENAI_API_KEY`, or set `PRQ_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, and `PRQ_MODEL` to your chosen OpenRouter model. Provider and model flags override environment settings. Models must support structured output; browser testing and screenshot judgment also need image input.
+Choose direct OpenAI with `OPENAI_API_KEY`, or set `PRQ_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, and `PRQ_MODEL` to your chosen OpenRouter model. Provider and model flags override environment settings. Direct OpenAI retains Decisions classification and judgment by default. OpenRouter uses structured model assessments; OpenAI can opt in with `--decision-mode structured`. Models must support structured output; browser testing and screenshot judgment also need image input.
 
 For browser checks, also prepare the project:
 

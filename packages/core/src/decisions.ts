@@ -102,12 +102,13 @@ export async function decide(
   if (questions.length > 400) throw new Error("A proof request supports at most 400 claims");
   if (new Set(questions.map((q) => q.name)).size !== questions.length)
     throw new Error("Question names must be unique");
-  opts.onRequest?.();
   let response: unknown;
   if (opts.languageModel) {
+    opts.onRequest?.();
     response = await structuredDecisions(input, questions, opts.languageModel, opts);
   } else {
     if (!opts.apiKey) throw new Error("OPENAI_API_KEY is not set");
+    opts.onRequest?.();
     const res = await (opts.fetchImpl ?? fetch)(
       `${opts.baseUrl ?? "https://api.openai.com"}/v1/decisions`,
       {
@@ -119,6 +120,7 @@ export async function decide(
     );
     if (!res.ok) throw new Error(`Decisions request unavailable (HTTP ${res.status})`);
     response = await res.json();
+    opts.onUsage?.({ usage: {} });
   }
   const parsed = Answers.safeParse(response);
   if (!parsed.success) throw new Error("Decisions returned an invalid answer format");

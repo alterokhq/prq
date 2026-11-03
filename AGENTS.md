@@ -40,7 +40,7 @@ The source fixture is `fixtures/demo-done.md`. The illustrative example contains
 
 A completed check with relevant evidence and probability at least 0.8 can be held. A contradicted check, or probability at most 0.3 with relevant completed evidence, is broken. Ambiguous evidence needs a human. Missing execution or evidence remains unverified. Human claims require named signoff.
 
-The Decisions client is `packages/core/src/decisions.ts`. Classification and judgment each batch questions into one call per Proof Request. The CLI uses the selected provider through structured AI SDK calls; the original Decisions endpoint remains an internal compatibility path. Validate responses at the boundary and match answers by unique question names.
+The Decisions client is `packages/core/src/decisions.ts`. Classification and judgment each batch questions into one call per Proof Request. Direct OpenAI retains the Decisions endpoint by default; OpenRouter and explicit structured mode use AI SDK calls. Validate responses at the boundary and match answers by unique question names.
 
 ## CLI contract
 
@@ -56,7 +56,7 @@ prq show [--json]
 prq init
 ```
 
-`init` preserves existing configuration, creates missing e2e configuration and `.pr/`, appends a scoped agent instruction block, and installs a stop hook only where supported. Check installed documentation before choosing a hook format.
+`init` preserves existing configuration, creates missing e2e configuration and `.pr/`, creates or updates its marked agent instruction block, and installs a stop hook only where supported. Check installed documentation before choosing a hook format.
 
 Rows resolve progressively with `✓ ✗ ? ○`, a braille spinner, red for broken, and green only on the held glyph. Broken rows show `- claimed` and `+ observed`. Finish with counts, elapsed time, and the lock hash.
 
@@ -64,7 +64,7 @@ Rows resolve progressively with `✓ ✗ ? ○`, a braille spinner, red for brok
 
 Generate one test per browser claim: open the path, perform setup, assert unchanged claim text. Validate report fields against `fixtures/e2e-report.sample.json`: `run.results[]`, `status`, `attempts[]`, `testId`, and `file`.
 
-Read installed e2e `cache.mdx` and `ci.mdx` before changing the runner. The generated configuration uses e2e 0.22, `@e2e-dev/web` 0.15, and the LLM executor with `gpt-6.1-sol`. Classification and independent judgment use the selected provider in separate contexts. Browser runs use an independent agent with that provider and model, without inheriting the project agent context. Use reporters `['list', 'markdown']`; JSON is written separately. Do not combine `json` and `list` reporters.
+Read installed e2e `cache.mdx` and `ci.mdx` before changing the runner. Compatibility tests invoke e2e 0.22's real model adapter with prq provider instances and stubbed transport. The generated configuration uses e2e 0.22, `@e2e-dev/web` 0.15, and the LLM executor with `gpt-6.1-sol`. Classification and independent judgment use the selected provider in separate contexts. Browser runs use an independent agent with that provider and model, without inheriting the project agent context. Use reporters `['list', 'markdown']`; JSON is written separately. Do not combine `json` and `list` reporters.
 
 Copy per-claim logs and screenshots into each run. Recorded artifacts include `.e2e/results/<slug>/trace.md`, `attempt-1/screenshots/`, and `screen-at-failure.txt`. App unavailability, blocked execution, and timeouts without a completed relevant assertion are unverified. Never manufacture HTTP evidence for a browser-only interaction.
 

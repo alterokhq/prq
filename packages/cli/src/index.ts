@@ -41,6 +41,7 @@ function flags(command: Command): Command {
     .option("--provider <provider>", "openai or openrouter (or PRQ_PROVIDER)")
     .option("--model <model>", "extraction, classification and browser model (or PRQ_MODEL)")
     .option("--judge-model <model>", "independent judge model (or PRQ_JUDGE_MODEL)")
+    .option("--decision-mode <mode>", "decisions or structured (or PRQ_DECISION_MODE)")
     .option("--app-url <url>", "URL of the already running application")
     .option("--timeout <ms>", "time limit per check", timeout);
 }
@@ -66,6 +67,13 @@ flags(
 ).action((_options: RunOptions, command: Command) =>
   execute(command.optsWithGlobals<RunOptions>(), true),
 );
+for (const name of ["open", "render"]) {
+  program.command(`${name} [json]`, { hidden: true }).action(() => {
+    throw new UsageIssue(
+      `prq ${name} was removed in 0.2. Use prq show [json], or prq show --json.`,
+    );
+  });
+}
 program
   .command("fix")
   .description("print a short prompt for the broken claims")

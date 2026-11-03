@@ -311,6 +311,13 @@
         },
         "judge_model": {
           "type": "string"
+        },
+        "decision_mode": {
+          "type": "string",
+          "enum": [
+            "decisions",
+            "structured"
+          ]
         }
       },
       "required": [

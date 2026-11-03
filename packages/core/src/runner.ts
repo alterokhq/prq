@@ -13,6 +13,8 @@ export interface RunContext {
   /** Caller checkout for resolving installed browser tooling. */
   projectDir?: string;
   onProgress?: (claimId: string, message: string) => void;
+  /** Called only when the external browser subprocess is about to launch. */
+  onBrowserStart?: () => void;
   /** Browser subprocess configuration. Contains no credentials. */
   browserModel?: { provider: ProviderName; model: string; modulePath: string };
 }

@@ -12,7 +12,7 @@ Install the CLI once in your project, then use `npx prq`:
 npm install --save-dev @alterok/prq
 ```
 
-Direct OpenAI uses `OPENAI_API_KEY` and defaults to `gpt-6.1-sol`. For OpenRouter set `PRQ_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, and `PRQ_MODEL` to a model available to your account. `--provider`, `--model`, and `--judge-model` override environment settings. The judge defaults to the selected model in a separate context.
+Direct OpenAI uses `OPENAI_API_KEY` and defaults to `gpt-6.1-sol`. For OpenRouter set `PRQ_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, and `PRQ_MODEL` to a model available to your account. `--provider`, `--model`, and `--judge-model` override environment settings. Direct OpenAI retains Decisions classification and judgment with `gpt-6-luna` by default. OpenRouter uses structured assessments with the selected model in a separate context; OpenAI can opt in with `--decision-mode structured`. Mode changes may change verdicts.
 
 For browser checks:
 

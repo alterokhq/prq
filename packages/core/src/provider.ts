@@ -12,6 +12,7 @@ export interface ProviderOptions {
   provider?: string;
   model?: string;
   judgeModel?: string;
+  decisionMode?: string;
 }
 
 /** Environment is supplied by the caller; core never reads deployment secrets. */
@@ -38,9 +39,25 @@ export function resolveProvider(options: ProviderOptions, env: Record<string, st
     throw new ProviderConfigurationIssue(
       "Set --model or PRQ_MODEL to a model available through the selected provider.",
     );
-  const judgeModel = (options.judgeModel ?? env.PRQ_JUDGE_MODEL ?? model).trim();
+  const mode = z
+    .enum(["decisions", "structured"])
+    .safeParse(
+      options.decisionMode ??
+        env.PRQ_DECISION_MODE ??
+        (provider === "openai" ? "decisions" : "structured"),
+    );
+  if (!mode.success || (provider === "openrouter" && mode.data === "decisions"))
+    throw new ProviderConfigurationIssue(
+      "Use --decision-mode structured for OpenRouter; OpenAI also supports decisions.",
+    );
+  const decisionMode = mode.data;
+  const judgeModel = (
+    options.judgeModel ??
+    env.PRQ_JUDGE_MODEL ??
+    (decisionMode === "decisions" ? "gpt-6-luna" : model)
+  ).trim();
   if (!judgeModel) throw new ProviderConfigurationIssue("The judge model must not be empty.");
-  return { provider, model, judgeModel, apiKey };
+  return { provider, model, judgeModel, decisionMode, apiKey };
 }
 
 export function createModel(options: {

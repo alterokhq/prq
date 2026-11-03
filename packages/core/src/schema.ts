@@ -95,6 +95,7 @@ export const ProofRequest = z.object({
       provider: z.enum(["openai", "openrouter"]),
       model: z.string(),
       judge_model: z.string(),
+      decision_mode: z.enum(["decisions", "structured"]).optional(),
     })
     .optional(),
   model_usage: z.array(ModelUsage).optional(),

@@ -89,3 +89,20 @@ it("reruns locked human claims with inherited JSON flags and a unique report", a
     await rm(root, { recursive: true, force: true });
   }
 });
+
+it.each(["open", "render"])(
+  "guides users of removed %s to show with an unavailable exit code",
+  (name) => {
+    const cli = fileURLToPath(new URL("../dist/index.js", import.meta.url));
+    const result = spawnSync(process.execPath, [cli, name, "old.json", "--json"], {
+      encoding: "utf8",
+      env: { PATH: process.env.PATH },
+    });
+    expect(result.status).toBe(2);
+    expect(JSON.parse(result.stdout)).toMatchObject({
+      format: "prq-error/v1",
+      status: "unverified",
+    });
+    expect(JSON.parse(result.stdout).reason).toContain("prq show");
+  },
+);
