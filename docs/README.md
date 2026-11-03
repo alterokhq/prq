@@ -10,3 +10,5 @@
 - [External repository checks](../bench/external/README.md)
 
 Contributors should also read [AGENTS.md](../AGENTS.md) for the product contract.
+
+[Continuous integration](ci.md) describes the automated checks and package smoke test.
