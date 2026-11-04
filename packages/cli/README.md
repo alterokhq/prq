@@ -41,3 +41,5 @@ Reports stay in `.pr/runs/`. Browser assertions run live; command checks cover c
 [User guide](https://github.com/alterokhq/prq/blob/main/docs/user-guide.md) · [Spec](https://github.com/alterokhq/prq/blob/main/SPEC.md) · [Source](https://github.com/alterokhq/prq) · [Apache-2.0](https://github.com/alterokhq/prq/blob/main/LICENSE)
 
 For an explicit before-PR workflow, use `--claims-json <file> --strict`, repair with `rerun --run <report>`, and require `gate <report> --claims-json <file>` to exit 0. Select a nested project with `--project <repo-relative-directory>`; custom commands belong in its `prq.config.json`. See the [agent workflow](https://github.com/alterokhq/prq/blob/main/docs/agent-workflow.md) for the JSON input and gate limitations.
+
+Test-suite claims require structured evidence. Configure `@alterok/prq/vitest` or `@alterok/prq/playwright` with a `{ "command": "...", "report": ".prq-results/tests.json" }` entry in `prq.config.json`. See [test evidence](https://github.com/alterokhq/prq/blob/main/docs/test-evidence.md) for setup, supported versions and the common contract for other frameworks. Exit zero alone does not verify tests.

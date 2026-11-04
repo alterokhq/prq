@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TestSummary } from "./test-results.js";
 
 export const ClaimKind = z.enum(["browser", "command", "human"]);
 export const Verdict = z.enum(["held", "broken", "needs_human", "unverified"]);
@@ -28,6 +29,7 @@ export const Evidence = z.object({
   exit_code: z.number().int().optional(),
   stdout: z.string().optional(),
   stderr: z.string().optional(),
+  test_summary: TestSummary.optional(),
 });
 
 export const Signoff = z.object({

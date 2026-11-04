@@ -93,7 +93,7 @@ for (const name of ["open", "render"]) {
 }
 program
   .command("fix")
-  .description("print a short prompt for the broken claims")
+  .description("print a short prompt for broken or human-rejected claims")
   .option("--run <json>", "saved Proof Request JSON")
   .option("--copy", "copy the prompt to the clipboard")
   .action(async (options: { run?: string; copy?: boolean }) => {
@@ -115,7 +115,7 @@ program
       if (copied?.exitCode !== 0)
         throw new UsageIssue("Clipboard unavailable. Copy the output of prq fix.");
     }
-    process.stdout.write(`${prompt || "nothing broken. nothing to fix."}\n`);
+    process.stdout.write(`${prompt || "no broken or human-rejected claims to repair."}\n`);
   });
 program
   .command("signoff <id>")

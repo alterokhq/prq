@@ -6,9 +6,9 @@ Each execution writes a separate directory under `.pr/runs/<run-id>/`. Version 0
 | --- | --- |
 | `proof-request.json` | Full claims, verdicts, evidence, original source, lock, subject, provider configuration and available accounting |
 | `claims.lock.json` | Claim IDs and exact text locked before checks run |
-| `evidence/` | Browser screenshots and step evidence, when collected |
+| `evidence/` | Browser screenshots, step evidence and structured test reports, when collected |
 
-Command output is captured in the JSON evidence. Evidence paths are relative to the run directory. Keep those files together when copying a run. `.pr/last.json` is a copy of the latest saved Proof Request used by `show`, `fix` and `rerun`.
+Command output is captured in the JSON evidence. Structured command evidence adds `test_summary` and a path to the retained test report; see [test evidence](test-evidence.md) for the contract and attachment paths. Evidence paths are relative to the run directory. Keep those files together when copying a run. `.pr/last.json` is a copy of the latest saved Proof Request used by `show`, `fix` and `rerun`.
 
 ```sh
 npx prq show

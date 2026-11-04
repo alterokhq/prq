@@ -47,7 +47,7 @@ npx prq rerun --run <report> --strict --summary
 npx prq gate <report> --claims-json .pr/claims.json --json
 ```
 
-`service` is an example project directory relative to the repository root. Omit `--project` to use your current directory. Follow the [agent workflow](docs/agent-workflow.md) for the handoff format, custom test commands and how to wire the gate into any agent's workflow. The gate is local and makes no model calls. It does not detect omitted requirements or replace CI and review.
+`service` is an example project directory relative to the repository root. Omit `--project` to use your current directory. Follow the [agent workflow](docs/agent-workflow.md) for the handoff format, custom test commands and how to wire the gate into any agent's workflow. Test-suite claims need [structured evidence](docs/test-evidence.md); Vitest and Playwright adapters are available. The gate is local and makes no model calls. It does not detect omitted requirements or replace CI and review.
 
 ## What you get
 
