@@ -1,9 +1,10 @@
-import { constants, existsSync } from "node:fs";
-import { cp, mkdtemp, rm } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdtemp, realpath, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { isAbsolute, join, relative, sep } from "node:path";
 import type { DraftClaim, RunContext, Runner, RunResult } from "@prq/core";
 import { execa } from "execa";
+import { copyDependencies } from "./dependencies.js";
 
 const tester = "shell / isolated HEAD worktree";
 
@@ -35,7 +36,11 @@ async function runClaim(claim: DraftClaim, ctx: RunContext): Promise<RunResult> 
   let created = false;
   let result: RunResult = unavailable("The command did not execute.", started);
   try {
-    const head = await execa("git", ["rev-parse", "HEAD"], { cwd: ctx.worktree });
+    const root = await realpath(ctx.worktree);
+    const project = relative(root, await realpath(ctx.projectDir ?? root));
+    if (project === ".." || project.startsWith(`..${sep}`) || isAbsolute(project))
+      return unavailable("The project directory is outside the repository.", started);
+    const head = await execa("git", ["rev-parse", ctx.head ?? "HEAD"], { cwd: root });
     temporary = await mkdtemp(join(tmpdir(), "prq-command-"));
     checkout = join(temporary, "checkout");
     await execa("git", ["worktree", "add", "--detach", checkout, head.stdout.trim()], {
@@ -43,17 +48,13 @@ async function runClaim(claim: DraftClaim, ctx: RunContext): Promise<RunResult> 
       timeout: ctx.timeoutMs,
     });
     created = true;
-    const dependencies = join(ctx.worktree, "node_modules");
-    if (existsSync(dependencies)) {
-      await cp(dependencies, join(checkout, "node_modules"), {
-        recursive: true,
-        verbatimSymlinks: true,
-        mode: constants.COPYFILE_FICLONE,
-      });
-    }
+    const workingDirectory = join(checkout, project);
+    if (!(await stat(workingDirectory)).isDirectory())
+      throw new Error("Project absent from committed source");
+    await copyDependencies(root, checkout, project);
     ctx.onProgress?.(claim.id, `running ${command}`);
     const execution = await execa(command, {
-      cwd: checkout,
+      cwd: workingDirectory,
       shell: true,
       reject: false,
       timeout: ctx.timeoutMs,
@@ -100,11 +101,11 @@ async function runClaim(claim: DraftClaim, ctx: RunContext): Promise<RunResult> 
     });
     result.evidence.push({
       type: "note",
-      text: `Executed committed HEAD ${head.stdout.trim()} in a fresh detached worktree. Installed dependencies were copied into this checkout; this is not an operating-system sandbox.`,
+      text: `Executed committed HEAD ${head.stdout.trim()}, project ${project || "."}, in a fresh detached worktree. Installed dependencies were copied into this checkout; this is not an operating-system sandbox.`,
     });
   } catch {
     result = unavailable(
-      "The isolated command runner could not start or collect its result.",
+      "The isolated command runner could not prepare the committed project or its workspace dependencies. Check the project path, installed dependencies and links; dependencies outside the repository are unsupported.",
       started,
     );
   } finally {

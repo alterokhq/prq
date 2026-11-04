@@ -4,7 +4,7 @@
 
 `prq` checks a coding agent's completion message, locks its claims, and saves evidence for each verdict. Inspect results in the terminal or consume the complete JSON report. Fix the application, then rerun the same claims. No report app or generated HTML is needed.
 
-Use Node.js 24.8+, npm, Git, and an OpenAI or OpenRouter key. Run inside your application's Git repository with a committed `HEAD` and installed dependencies. Models need structured output, and browser testing and screenshot judgment also need image input.
+Use Node.js 24.8+, npm, Git, and an OpenAI or OpenRouter key. Run inside your project's Git repository with a committed `HEAD` and installed dependencies. Models need structured output, and browser testing and screenshot judgment also need image input.
 
 Install the CLI once in your project, then use `npx prq`:
 
@@ -39,3 +39,5 @@ In 0.2, `--json` emits all claims and evidence. `--summary` selects the older co
 Reports stay in `.pr/runs/`. Browser assertions run live; command checks cover committed `HEAD` in a temporary checkout, not a security sandbox. Command-only checks can skip browser setup. Screenshots and interaction evidence go to model providers.
 
 [User guide](https://github.com/alterokhq/prq/blob/main/docs/user-guide.md) · [Spec](https://github.com/alterokhq/prq/blob/main/SPEC.md) · [Source](https://github.com/alterokhq/prq) · [Apache-2.0](https://github.com/alterokhq/prq/blob/main/LICENSE)
+
+For an explicit before-PR workflow, use `--claims-json <file> --strict`, repair with `rerun --run <report>`, and require `gate <report> --claims-json <file>` to exit 0. Select a nested project with `--project <repo-relative-directory>`; custom commands belong in its `prq.config.json`. See the [agent workflow](https://github.com/alterokhq/prq/blob/main/docs/agent-workflow.md) for the JSON input and gate limitations.

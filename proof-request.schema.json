@@ -36,6 +36,9 @@
         },
         "app_url": {
           "type": "string"
+        },
+        "project": {
+          "type": "string"
         }
       },
       "required": [
@@ -284,6 +287,29 @@
         "broken",
         "needs_human",
         "unverified"
+      ],
+      "additionalProperties": false
+    },
+    "handoff": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "const": "prq-claims/v1"
+        },
+        "task": {
+          "type": "string"
+        },
+        "unfinished": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "format",
+        "unfinished"
       ],
       "additionalProperties": false
     },

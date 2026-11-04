@@ -76,6 +76,7 @@ export const ProofRequest = z.object({
     head: z.string(),
     title: z.string().optional(),
     app_url: z.string().optional(),
+    project: z.string().optional(),
   }),
   source: z.object({
     kind: z.enum(["agent_message", "commit", "pr_body", "plan", "file"]),
@@ -89,6 +90,13 @@ export const ProofRequest = z.object({
     needs_human: z.number().int(),
     unverified: z.number().int(),
   }),
+  handoff: z
+    .object({
+      format: z.literal("prq-claims/v1"),
+      task: z.string().optional(),
+      unfinished: z.array(z.string()),
+    })
+    .optional(),
   code: z.object({ diff_url: z.string().optional() }).optional(),
   configuration: z
     .object({

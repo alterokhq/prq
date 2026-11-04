@@ -31,8 +31,9 @@ export async function withModelConfig<T>(
   run: (args: string[]) => Promise<T>,
 ): Promise<T> {
   if (!ctx.browserModel) return run([]);
+  const project = ctx.projectDir ?? ctx.worktree;
   const base = ["ts", "mts", "js", "mjs"]
-    .map((ext) => join(ctx.worktree, `e2e.config.${ext}`))
+    .map((ext) => join(project, `e2e.config.${ext}`))
     .find((path) => existsSync(path));
   if (!base) throw new Error("Run prq init to prepare the browser configuration.");
   const { provider, model, modulePath } = ctx.browserModel;
@@ -40,7 +41,7 @@ export async function withModelConfig<T>(
   const keyName = provider === "openrouter" ? "OPENROUTER_API_KEY" : "OPENAI_API_KEY";
   // e2e resolves the project root from the config's directory. Keep this next to the
   // original config, give it a unique name, and remove only the file we created.
-  const path = join(ctx.worktree, `.prq-${randomUUID()}.config.mjs`);
+  const path = join(project, `.prq-${randomUUID()}.config.mjs`);
   const source = `import base from ${JSON.stringify(pathToFileURL(base).href)};
 import { ${factory} } from ${JSON.stringify(pathToFileURL(modulePath).href)};
 export default {

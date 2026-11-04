@@ -20,9 +20,11 @@ The [JSON schema](../proof-request.schema.json) is the artifact contract; [schem
 
 The claim lock is SHA-256 over the ordered claim IDs and exact text. Reruns preserve it and save fresh evidence in a new directory. A source commit identifies the command checkout; a browser URL does not establish which commit the running app serves.
 
+`subject.project` records the selected directory relative to the repository root, using `/` separators and `.` for the root. Reports without this field are treated as root-project runs. Explicit builder input adds `handoff` with `format: "prq-claims/v1"`, optional `task`, and `unfinished`. Reruns retain those fields. See the [handoff contract](agent-workflow.md#submit-explicit-claims).
+
 ## Terminal JSON
 
-`--json` emits the entire report, plus a `report` path that locates its saved artifact. It includes every claim and evidence field without a token limit. This path is CLI metadata, not a field in the stored artifact schema. The original completion text remains in `source.text`.
+`--json` emits the entire report, plus an absolute `report` path that locates its saved artifact. It includes every claim and evidence field without a token limit. This path is CLI metadata, not a field in the stored artifact schema. The original completion text remains in `source.text`.
 
 `--summary` is the optional compact view: counts, broken rows, an omitted-row count and the report path within 300 tokens. It does not replace the full artifact. `--json` and `--summary` cannot be combined.
 

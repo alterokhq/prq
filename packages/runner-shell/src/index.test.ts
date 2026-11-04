@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execa } from "execa";
@@ -32,6 +32,115 @@ async function repository() {
 }
 
 describe("shell runner", () => {
+  it("executes in a nested project and rebases pnpm and sibling workspace links into the captured commit", async () => {
+    const root = await repository();
+    const project = join(root, "service");
+    const sibling = join(root, "packages", "helper");
+    await mkdir(project);
+    await mkdir(sibling, { recursive: true });
+    for (const dir of [root, project, sibling]) await writeFile(join(dir, "package.json"), "{}");
+    await writeFile(join(sibling, "value.txt"), "committed sibling");
+    await writeFile(
+      join(project, "check.cjs"),
+      `
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+assert.equal(fs.readFileSync('node_modules/helper/value.txt', 'utf8'), 'committed sibling');
+assert.equal(fs.readFileSync('node_modules/dependency/value.txt', 'utf8'), 'dependency');
+fs.writeFileSync('node_modules/helper/value.txt', 'changed by test');
+fs.writeFileSync('node_modules/dependency/value.txt', 'changed by test');
+console.log('nested workspace passed');
+`,
+    );
+    await execa("git", ["add", "."], { cwd: root });
+    await execa(
+      "git",
+      [
+        "-c",
+        "user.name=Test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "-qm",
+        "Nested project",
+      ],
+      { cwd: root },
+    );
+    const head = (await execa("git", ["rev-parse", "HEAD"], { cwd: root })).stdout;
+    await writeFile(join(sibling, "value.txt"), "later commit");
+    await execa("git", ["add", "."], { cwd: root });
+    await execa(
+      "git",
+      [
+        "-c",
+        "user.name=Test",
+        "-c",
+        "user.email=test@example.invalid",
+        "commit",
+        "-qm",
+        "Later source",
+      ],
+      { cwd: root },
+    );
+    const installed = join(
+      root,
+      "node_modules",
+      ".pnpm",
+      "dependency",
+      "node_modules",
+      "dependency",
+    );
+    await mkdir(installed, { recursive: true });
+    await writeFile(join(installed, "value.txt"), "dependency");
+    await mkdir(join(project, "node_modules"));
+    await symlink("../../packages/helper", join(project, "node_modules", "helper"));
+    await symlink(
+      "../../node_modules/.pnpm/dependency/node_modules/dependency",
+      join(project, "node_modules", "dependency"),
+    );
+    const results = await shellRunner.run(
+      [
+        {
+          id: "nested",
+          text: "The workspace check passes",
+          kind: "command",
+          check: { command: "node check.cjs" },
+        },
+      ],
+      { worktree: root, projectDir: project, head, runDir: root, appUrl: "", timeoutMs: 10000 },
+    );
+    expect(results.get("nested")?.passed).toBe(true);
+    expect(results.get("nested")?.evidence.find((e) => e.type === "command")?.stdout).toBe(
+      "nested workspace passed",
+    );
+    expect(await readFile(join(sibling, "value.txt"), "utf8")).toBe("later commit");
+    expect(await readFile(join(installed, "value.txt"), "utf8")).toBe("dependency");
+  });
+
+  it("leaves an uncommitted project unverified", async () => {
+    const root = await repository();
+    await mkdir(join(root, "new-project"));
+    const results = await shellRunner.run(
+      [
+        {
+          id: "missing",
+          text: "The check runs",
+          kind: "command",
+          check: { command: "echo should-not-run" },
+        },
+      ],
+      {
+        worktree: root,
+        projectDir: join(root, "new-project"),
+        runDir: root,
+        appUrl: "",
+        timeoutMs: 5000,
+      },
+    );
+    expect(results.get("missing")?.passed).toBeUndefined();
+    expect(results.get("missing")?.evidence.some((e) => e.type === "command")).toBe(false);
+  });
+
   it("checks committed HEAD, isolates writes, and removes the detached worktree", async () => {
     const root = await repository();
     await writeFile(join(root, "state.txt"), "uncommitted");

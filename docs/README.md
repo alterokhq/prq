@@ -2,6 +2,7 @@
 
 - [Quickstart](../README.md#try-it)
 - [User guide: setup, commands, automation and privacy](user-guide.md)
+- [Agent workflow: explicit claims, projects and the before-PR gate](agent-workflow.md)
 - [Proof Request format spec](../SPEC.md)
 - [Report files and JSON format](report-format.md)
 - [Architecture and evidence boundaries](architecture.md)

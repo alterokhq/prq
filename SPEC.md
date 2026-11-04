@@ -52,10 +52,11 @@ Required fields are marked with `*`. The schema is the authority where this tabl
 | `version`* | string | `"0.2"` for new reports; the reader also accepts historical `"0.1"`. |
 | `id`* | string | This run. A rerun gets a new id and keeps the same lock. |
 | `created_at`* | string | ISO 8601 timestamp. |
-| `subject`* | object | What was checked: `head`* (commit), and optionally `repo`, `base`, `title`, `app_url`. |
+| `subject`* | object | What was checked: `head`* (commit), and optionally `repo`, `base`, `title`, `app_url`, `project` (repository-relative directory). |
 | `source`* | object | Where the claims came from: `kind`* (`agent_message`, `commit`, `pr_body`, `plan`, `file`), `text`* (the original words), `hash`* (the claim lock). |
 | `claims`* | array | One entry per claim, below. |
 | `summary`* | object | Counts: `held`*, `broken`*, `needs_human`*, `unverified`*. |
+| `handoff` | object | Explicit builder input: `format` (`prq-claims/v1`), optional original `task`, and `unfinished` strings. Preserved on rerun. |
 | `code` | object | `diff_url`, if the reader wants the code. It is an appendix. |
 | `timing` | object | Optional integer `total_ms`; `cost_usd` is a complete total or null; `reported_cost_usd` is a known subtotal or null; `cost_complete` says whether every recorded stage has a cost. |
 | `configuration` | object | Selected `provider`, `model`, `judge_model` and optional `decision_mode`, without credentials. |
@@ -97,7 +98,7 @@ Read the claims first. A person should be able to decide from the rows alone: wh
 
 ## Versioning
 
-`version` is the format version, not the tool version. Version 0.2 adds provider accounting and explicit null costs. The shared reader accepts 0.1 and 0.2; new producers write 0.2 so older consumers can reject unsupported accounting semantics. The current JSON Schema rejects unknown properties and verdicts. Producers must target this version's schema; do not assume additive fields are accepted. Readers may reject unsupported files and must never treat an unknown verdict as `held`.
+`version` is the format version, not the tool version. Version 0.2 adds provider accounting, explicit null costs, project selection and optional builder handoff metadata. The shared reader accepts 0.1 and 0.2; new producers write 0.2 so older consumers can reject unsupported accounting semantics. The current JSON Schema rejects unknown properties and verdicts. Producers must target this version's schema; do not assume additive fields are accepted. Readers may reject unsupported files and must never treat an unknown verdict as `held`.
 
 ## License
 
