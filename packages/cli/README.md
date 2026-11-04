@@ -2,19 +2,17 @@
 
 **Your agent said it works. Prove it.**
 
-<img src="https://raw.githubusercontent.com/alterokhq/prq/main/docs/images/prq-run.png" alt="CLI output from a recorded six-claim seeded demo: four held, one broken, one needs a human." width="100%">
+`prq` checks a coding agent's completion message, locks its claims, and saves evidence for each verdict. Inspect results in the terminal or consume the complete JSON report. Fix the application, then rerun the same claims. No report app or generated HTML is needed.
 
-`prq` checks a coding agent's completion message, locks its claims, and saves evidence for each verdict. Fix the application, then rerun the same claims.
-
-CLI output replayed from a [deliberately seeded search demo](https://github.com/alterokhq/prq/tree/main/examples/search). The browser tester was inconclusive about case sensitivity; the separate judge marked the claim broken from recorded evidence. The saved artifact retains both outcomes.
-
-Use Node.js 24.8+, npm, Git, and an OpenAI key with access to `gpt-6.1-sol` and Decisions `gpt-6-luna`. Run inside your application's Git repository with a committed `HEAD` and installed dependencies.
+Use Node.js 24.8+, npm, Git, and an OpenAI or OpenRouter key. Run inside your application's Git repository with a committed `HEAD` and installed dependencies. Models need structured output, and browser testing and screenshot judgment also need image input.
 
 Install the CLI once in your project, then use `npx prq`:
 
 ```sh
 npm install --save-dev @alterok/prq
 ```
+
+Direct OpenAI uses `OPENAI_API_KEY` and defaults to `gpt-6.1-sol`. For OpenRouter set `PRQ_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, and `PRQ_MODEL` to a model available to your account. `--provider`, `--model`, and `--judge-model` override environment settings. Direct OpenAI retains Decisions classification and judgment with `gpt-6-luna` by default. OpenRouter uses structured assessments with the selected model in a separate context; OpenAI can opt in with `--decision-mode structured`. Mode changes may change verdicts.
 
 For browser checks:
 
@@ -32,7 +30,11 @@ npx prq --claims done.md --app-url http://localhost:3000
 npx prq fix
 # Apply the fix. Commit it before command checks.
 npx prq rerun
+npx prq show
+npx prq show --json
 ```
+
+In 0.2, `--json` emits all claims and evidence. `--summary` selects the older compact view. `open` and `render` are replaced by `show`; new runs save JSON and evidence without HTML. Reports include provider/model accounting. Missing costs are unknown, never zero; browser-runner costs are currently unavailable, so any reported subtotal is labeled incomplete. Old 0.1 reports remain readable.
 
 Reports stay in `.pr/runs/`. Browser assertions run live; command checks cover committed `HEAD` in a temporary checkout, not a security sandbox. Command-only checks can skip browser setup. Screenshots and interaction evidence go to model providers.
 

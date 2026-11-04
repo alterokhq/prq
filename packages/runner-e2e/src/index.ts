@@ -5,8 +5,8 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import type { DraftClaim, RunContext, Runner, RunResult } from "@prq/core";
 import { execa } from "execa";
+import { withModelConfig } from "./model-config.js";
 import { collectReport, unverified } from "./report.js";
-
 import { planTestFiles, withTestFiles } from "./test-files.js";
 
 export { collectReport, E2eReport } from "./report.js";
@@ -47,35 +47,39 @@ export const e2eRunner: Runner = {
         await mkdir(reportDir, { recursive: true });
         for (const claim of claims) ctx.onProgress?.(claim.id, "checking the running application");
         const subprocessStarted = Date.now();
-        const run = await execa(
-          process.execPath,
-          [
-            binary,
-            "run",
-            ...files.map((file) => file.relativePath),
-            "--output",
-            reportDir,
-            "--reporter",
-            "list,markdown",
-            "--trace",
-            "on",
-            "--retries",
-            "0",
-            "--workers",
-            "4",
-            "--max-duration",
-            String(ctx.timeoutMs),
-            ...(ctx.cacheDir ? ["--cache-dir", ctx.cacheDir] : []),
-          ],
-          {
-            cwd: ctx.worktree,
-            env: { PRQ_APP_URL: ctx.appUrl, E2E_TELEMETRY_DISABLED: "1", NO_COLOR: "1" },
-            reject: false,
-            timeout: ctx.timeoutMs + 30000,
-            forceKillAfterDelay: 2000,
-            maxBuffer: 2 * 1024 * 1024,
-          },
-        );
+        const run = await withModelConfig(ctx, (configArgs) => {
+          ctx.onBrowserStart?.();
+          return execa(
+            process.execPath,
+            [
+              binary,
+              "run",
+              ...configArgs,
+              ...files.map((file) => file.relativePath),
+              "--output",
+              reportDir,
+              "--reporter",
+              "list,markdown",
+              "--trace",
+              "on",
+              "--retries",
+              "0",
+              "--workers",
+              "4",
+              "--max-duration",
+              String(ctx.timeoutMs),
+              ...(ctx.cacheDir ? ["--cache-dir", ctx.cacheDir] : []),
+            ],
+            {
+              cwd: ctx.worktree,
+              env: { PRQ_APP_URL: ctx.appUrl, E2E_TELEMETRY_DISABLED: "1", NO_COLOR: "1" },
+              reject: false,
+              timeout: ctx.timeoutMs + 30000,
+              forceKillAfterDelay: 2000,
+              maxBuffer: 2 * 1024 * 1024,
+            },
+          );
+        });
         const subprocessMs = Date.now() - subprocessStarted;
         if (run.timedOut)
           return pending("The browser runner timed out before completing its report.");
@@ -89,11 +93,14 @@ export const e2eRunner: Runner = {
           testFiles: new Map(files.map((file) => [file.claimId, file.relativePath])),
         });
         const collectMs = Date.now() - collectStarted;
-        for (const result of results.values())
+        for (const result of results.values()) {
+          if (ctx.browserModel)
+            result.tester = `e2e / ${ctx.browserModel.provider} ${ctx.browserModel.model}`;
           result.evidence.unshift({
             type: "note",
             text: `Runner timing: browser subprocess ${subprocessMs}ms; evidence collection ${collectMs}ms. Availability only: GET ${ctx.appUrl} returned HTTP ${app.status} before browser checks. This does not verify the claim.`,
           });
+        }
         return results;
       });
     } catch {

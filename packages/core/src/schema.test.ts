@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 import { lockClaims, shortHash } from "./lock.js";
 import { ProofRequest, summarize } from "./schema.js";
 
@@ -19,4 +20,11 @@ describe("proof request schema", () => {
     expect(a).not.toBe(b);
     expect(shortHash(a)).toHaveLength(7);
   });
+});
+
+it("keeps the published JSON schema synchronized with the runtime contract", () => {
+  const published = JSON.parse(
+    readFileSync(new URL("../../../proof-request.schema.json", import.meta.url), "utf8"),
+  );
+  expect(published).toEqual(z.toJSONSchema(ProofRequest));
 });

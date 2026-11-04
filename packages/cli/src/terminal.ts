@@ -381,6 +381,22 @@ export function createTerminalView(
         drawnLines = 0;
       }
       const s = pr.summary;
+      const reported = pr.timing?.reported_cost_usd;
+      const cost = pr.timing?.cost_usd;
+      const costLine =
+        typeof cost === "number"
+          ? `cost $${cost.toFixed(6)}`
+          : typeof reported === "number"
+            ? `reported cost $${reported.toFixed(6)} · total unavailable`
+            : "cost unavailable";
+      const models = [
+        ...new Set((pr.model_usage ?? []).map((row) => `${row.provider}/${row.model}`)),
+      ];
+      if (!models.length && pr.configuration)
+        models.push(`${pr.configuration.provider}/${pr.configuration.model}`);
+      if (models.length)
+        write(`  ${wrap(`models ${models.join(" · ")}`, contentWidth).join("\n  ")}\n`);
+      write(`  ${costLine}\n`);
       if (live) {
         const duration =
           pr.timing?.total_ms === undefined ? "" : `${(pr.timing.total_ms / 1000).toFixed(1)}s`;

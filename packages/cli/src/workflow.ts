@@ -1,17 +1,24 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { basename, isAbsolute, join, relative, resolve } from "node:path";
 import {
   applyVerdict,
   type Claim,
   classifyClaims,
+  createModel,
   DraftClaim,
   extractClaims,
   judgeClaims,
   lockClaims,
+  type ModelReceipt,
+  type ModelUsage,
+  modelUsage,
   type ProofRequest,
   type Runner,
   type RunResult,
+  resolveProvider,
+  runCost,
   shortHash,
   summarize,
 } from "@prq/core";
@@ -25,11 +32,15 @@ export interface RunOptions {
   claims?: string;
   fromStdin?: boolean;
   json?: boolean;
+  summary?: boolean;
   quiet?: boolean;
   open?: boolean;
   appUrl?: string;
   timeout?: number;
   model?: string;
+  provider?: string;
+  judgeModel?: string;
+  decisionMode?: string;
 }
 export class UsageIssue extends Error {}
 export async function repoRoot(): Promise<string> {
@@ -97,9 +108,21 @@ export async function runProof(
   previous?: ProofRequest,
 ): Promise<{ pr: ProofRequest; reportPath: string }> {
   const started = Date.now();
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new UsageIssue("Set OPENAI_API_KEY before running verification.");
-  const view = createTerminalView({ quiet: options.quiet, json: options.json });
+  const selection = resolveProvider(options, process.env);
+  const model = createModel(selection);
+  const judgeModel = createModel({ ...selection, model: selection.judgeModel });
+  const decisionOptions =
+    selection.decisionMode === "decisions"
+      ? { apiKey: selection.apiKey, model: selection.judgeModel }
+      : { languageModel: judgeModel };
+  const usage: ModelUsage[] = [];
+  const account = (stage: ModelUsage["stage"], name: string) => {
+    const row = modelUsage({ stage, provider: selection.provider, model: name });
+    usage.push(row);
+    return (receipt: ModelReceipt) =>
+      Object.assign(row, modelUsage({ stage, provider: selection.provider, model: name, receipt }));
+  };
+  const view = createTerminalView({ quiet: options.quiet, json: options.json || options.summary });
   view.prepare();
   try {
     const timeoutMs = options.timeout ?? 120_000;
@@ -126,7 +149,8 @@ export async function runProof(
         );
     } else {
       claims = await extractClaims(source.text, {
-        apiKey,
+        model,
+        onUsage: account("extraction", selection.model),
         timeoutMs,
         commands: availableCommands,
       });
@@ -142,7 +166,18 @@ export async function runProof(
     );
     if (!previous) {
       try {
-        claims = await classifyClaims(claims, { apiKey, timeoutMs });
+        let recordClassification: ((receipt: ModelReceipt) => void) | undefined;
+        claims = await classifyClaims(claims, {
+          ...(selection.decisionMode === "decisions" ? decisionOptions : { languageModel: model }),
+          timeoutMs,
+          onRequest: () => {
+            recordClassification = account(
+              "classification",
+              selection.decisionMode === "decisions" ? selection.judgeModel : selection.model,
+            );
+          },
+          onUsage: (receipt) => recordClassification?.(receipt),
+        });
       } catch {
         /* Extracted routes remain explicit; execution still determines evidence. */
       }
@@ -190,6 +225,29 @@ export async function runProof(
             cacheDir: join(root, ".e2e", "cache"),
             testFile: join(root, "tests", `prq-${shortHash(hash)}.e2e.ts`),
             onProgress: (id, message) => view.progress(id, message),
+            onBrowserStart: () =>
+              usage.push({
+                stage: "browser",
+                provider: selection.provider,
+                model: selection.model,
+                status: "external",
+                input_tokens: null,
+                output_tokens: null,
+                cost_usd: null,
+              }),
+            ...(runner.kind === "browser"
+              ? {
+                  browserModel: {
+                    provider: selection.provider,
+                    model: selection.model,
+                    modulePath: createRequire(import.meta.url).resolve(
+                      selection.provider === "openrouter"
+                        ? "@openrouter/ai-sdk-provider"
+                        : "@ai-sdk/openai",
+                    ),
+                  },
+                }
+              : {}),
           });
         } catch {
           output = new Map();
@@ -219,7 +277,17 @@ export async function runProof(
           return { claim, result, screenshotDataUrls: await screenshots(result, runDir) };
         }),
     );
-    const judgments = await judgeClaims(inputs, { apiKey, timeoutMs });
+    // The judge can reject a result without calling a model. Add accounting only
+    // when it actually requests an independent assessment.
+    let recordJudge: ((receipt: ModelReceipt) => void) | undefined;
+    const judgments = await judgeClaims(inputs, {
+      ...decisionOptions,
+      timeoutMs,
+      onUsage: (receipt) => recordJudge?.(receipt),
+      onRequest: () => {
+        recordJudge = account("judge", selection.judgeModel);
+      },
+    });
     for (const input of inputs) {
       const judgment = judgments.get(input.claim.id) ?? { verdict: "unverified" as const };
       if (judgment.verdict === "unverified" && input.result.passed !== undefined)
@@ -227,7 +295,12 @@ export async function runProof(
           type: "note",
           text: "Independent judgment was unavailable or the evidence was insufficient.",
         });
-      const row = applyVerdict(input.claim, input.result, judgment);
+      const row = applyVerdict(
+        input.claim,
+        input.result,
+        judgment,
+        `${selection.provider} ${selection.decisionMode} ${selection.judgeModel}`,
+      );
       completed.set(row.id, row);
       view.resolve(row);
     }
@@ -237,14 +310,21 @@ export async function runProof(
         applyVerdict(c, unverified("No result recorded."), { verdict: "unverified" }),
     );
     const pr: ProofRequest = {
-      version: "0.1",
+      version: "0.2",
       id,
       created_at: new Date().toISOString(),
       subject,
       source: { kind: source.kind, text: source.text, hash },
       claims: rows,
       summary: summarize(rows),
-      timing: { total_ms: Date.now() - started },
+      configuration: {
+        provider: selection.provider,
+        model: selection.model,
+        judge_model: selection.judgeModel,
+        decision_mode: selection.decisionMode,
+      },
+      model_usage: usage,
+      timing: { total_ms: Date.now() - started, ...runCost(usage) },
     };
     const reportPath = await saveProof(root, pr);
     view.finish(pr, { reportPath });

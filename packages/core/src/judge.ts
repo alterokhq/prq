@@ -128,7 +128,7 @@ export function applyVerdict(
   claim: DraftClaim,
   result: RunResult,
   judgment: Judgment,
-  judge = "decisions gpt-6-luna",
+  judge = "independent judge",
 ): Claim {
   return {
     ...claim,

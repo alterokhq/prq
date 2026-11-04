@@ -13,8 +13,9 @@ export default {
 `;
 const block = `<!-- prq:start -->
 ## Proof before done
-Before reporting a task as done, pipe your done message into \`prq --from-stdin --json --no-open\`.
+Before reporting a task as done, pipe your done message into \`prq --from-stdin --summary\`.
 Keep one claim per sentence. Include the saved report path in your final message.
+Inspect that file or run \`prq show --json\` when you need the full claims and evidence.
 If a claim is broken, fix the code and run \`prq rerun\`. Never edit, omit, or weaken a locked claim.
 <!-- prq:end -->`;
 const hookScript = `import { readFileSync } from 'node:fs';
@@ -25,12 +26,12 @@ try {
   if (event.stop_hook_active || typeof event.last_assistant_message !== 'string' || !event.last_assistant_message.trim()) {
     process.stdout.write('{}');
   } else {
-    const run = spawnSync('prq', ['--from-stdin', '--json', '--quiet', '--no-open'], { cwd: resolve(import.meta.dirname, '../..'), input: event.last_assistant_message, encoding: 'utf8', timeout: 180000 });
+    const run = spawnSync('prq', ['--from-stdin', '--summary', '--quiet'], { cwd: resolve(import.meta.dirname, '../..'), input: event.last_assistant_message, encoding: 'utf8', timeout: 180000 });
     let report;
     try { report = JSON.parse(run.stdout); } catch {}
     const summary = report?.summary;
     if (summary?.broken > 0) process.stdout.write(JSON.stringify({ decision: 'block', reason: 'prq found broken claims. Run prq fix, fix the code, then prq rerun. Keep the original claims.' }));
-    else process.stdout.write(JSON.stringify({ systemMessage: summary ? 'prq: held ' + summary.held + ', broken ' + summary.broken + ', needs a human ' + summary.needs_human + ', unverified ' + summary.unverified + '. ' + report.report : 'prq could not run. Check OPENAI_API_KEY and that prq is on PATH.' }));
+    else process.stdout.write(JSON.stringify({ systemMessage: summary ? 'prq: held ' + summary.held + ', broken ' + summary.broken + ', needs a human ' + summary.needs_human + ', unverified ' + summary.unverified + '. ' + report.report : 'prq could not run. Check provider credentials, model configuration and that prq is on PATH.' }));
   }
 } catch { process.stdout.write(JSON.stringify({ systemMessage: 'prq hook could not read its input.' })); }
 `;
@@ -61,11 +62,19 @@ export async function initProject(root: string, hasCodex: boolean): Promise<stri
   );
   const agentsPath = join(root, "AGENTS.md");
   const agents = (await readOptional(agentsPath)) ?? "";
-  if (!agents.includes("<!-- prq:start -->"))
+  if (/<!-- prq:start -->[\s\S]*?<!-- prq:end -->/.test(agents)) {
+    await writeFile(
+      agentsPath,
+      agents.replace(/<!-- prq:start -->[\s\S]*?<!-- prq:end -->/, () => block),
+    );
+  } else if (!agents.includes("<!-- prq:start -->")) {
     await writeFile(agentsPath, `${agents.trimEnd()}\n\n${block}\n`.trimStart());
+  } else {
+    notes.push("Incomplete prq instruction markers in AGENTS.md; repair them and rerun init.");
+  }
   const ignorePath = join(root, ".gitignore");
   const ignore = (await readOptional(ignorePath)) ?? "";
-  const missing = [".pr/", ".e2e/", "tests/prq-*.e2e.ts"].filter(
+  const missing = [".pr/", ".e2e/", "tests/prq-*.e2e.ts", ".prq-*.config.mjs"].filter(
     (pattern) => !ignore.split("\n").includes(pattern),
   );
   if (missing.length)
@@ -88,7 +97,21 @@ export async function initProject(root: string, hasCodex: boolean): Promise<stri
         group.success && group.data.hooks.some((hook) => hook.command?.includes("prq-stop.mjs"))
       );
     });
-    await writeMissing(join(root, ".codex", "hooks", "prq-stop.mjs"), hookScript);
+    const scriptPath = join(root, ".codex", "hooks", "prq-stop.mjs");
+    const installedScript = await readOptional(scriptPath);
+    const legacyScript = hookScript
+      .replace(
+        "['--from-stdin', '--summary', '--quiet']",
+        "['--from-stdin', '--json', '--quiet', '--no-open']",
+      )
+      .replace(
+        "Check provider credentials, model configuration and that prq is on PATH.",
+        "Check OPENAI_API_KEY and that prq is on PATH.",
+      );
+    if (installedScript === legacyScript) await writeFile(scriptPath, hookScript);
+    else if (installedScript === undefined) await writeMissing(scriptPath, hookScript);
+    else if (installedScript !== hookScript)
+      notes.push("Kept customized prq-stop.mjs. Use --summary there to keep agent output bounded.");
     if (!configured) {
       hooks.hooks.Stop = [
         ...existing,
@@ -110,7 +133,7 @@ export async function initProject(root: string, hasCodex: boolean): Promise<stri
     );
   }
   notes.push(
-    "Set OPENAI_API_KEY and start your app. Browser checks require e2e, @e2e-dev/web, and @ai-sdk/openai in this project.",
+    "Set OPENAI_API_KEY, or OPENROUTER_API_KEY with PRQ_PROVIDER=openrouter and PRQ_MODEL. Start your app. Browser checks require e2e, @e2e-dev/web, and @ai-sdk/openai in this project; prq supplies its selected browser model independently.",
   );
   return notes;
 }
