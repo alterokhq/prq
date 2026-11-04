@@ -2,6 +2,7 @@ export * from "./classify.js";
 export * from "./decisions.js";
 export * from "./extract.js";
 export * from "./fix-prompt.js";
+export * from "./handoff.js";
 export * from "./judge.js";
 export * from "./lock.js";
 export * from "./provider.js";

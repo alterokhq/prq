@@ -4,7 +4,7 @@ Start with the [quickstart](../README.md#try-it). This guide covers configuratio
 
 ## Requirements
 
-Use Node.js 24.8 or newer, npm, and Git. Run prq inside the application repository with a committed `HEAD` and installed project dependencies. The npm package is `@alterok/prq`; the executable is `prq`.
+Use Node.js 24.8 or newer, npm, and Git. Run prq inside the project repository with a committed `HEAD` and installed project dependencies. The npm package is `@alterok/prq`; the executable is `prq`.
 
 Install it once in your project:
 
@@ -100,6 +100,10 @@ npx prq show .pr/runs/<run-id>/proof-request.json
 
 `fix` prints a prompt for the broken claims. `--copy` requires a supported clipboard tool. Reruns create separate run directories, retain the exact claim text and lock, and collect new evidence. Browser setup actions may replay from e2e's cache, but assertions execute live. Cached actions are never cached verdicts.
 
+Use `--claims-json` for a builder-authored handoff and `--strict` to block unsigned human claims or unfinished work. `rerun --run <report>` and `signoff --run <report>` select a particular run. The offline `gate` checks that report against the original handoff and current commit before PR creation. See the [agent workflow](agent-workflow.md).
+
+`--project service` selects a repository-relative project directory for command discovery, execution and browser configuration. With no flag, a new run uses the invocation directory; reruns keep their recorded project, or the repository root for old reports. Files passed to `--claims`, `--claims-json` and `--run` remain relative to the invocation directory. Environment files also load from the invocation directory. Artifacts stay at the repository root.
+
 ## Human decisions
 
 ```sh
@@ -124,6 +128,8 @@ npx prq --claims done.md --json --quiet
 | `2` | Verification is unavailable, or a claim is unverified and none is broken. |
 
 Inspect the verdicts and saved evidence rather than treating exit `0` as proof of every claim.
+
+The table above describes non-strict runs. Strict verification also blocks unsigned or rejected human decisions, empty claims and unfinished work. See [strict exit codes](agent-workflow.md#repair-rerun-and-hand-off).
 
 ## Global command and Codex hook
 

@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 import { existsSync } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import {
   ClaimExtractionIssue,
   fixPrompt,
   lockClaims,
   ProviderConfigurationIssue,
   summarize,
+  verificationExitCode,
 } from "@prq/core";
 import { Command, InvalidArgumentError, Option } from "commander";
 import { execa } from "execa";
 import { agentJson, clip, fullJson } from "./agent-output.js";
+import { checkHandoff } from "./gate.js";
+import { HandoffIssue } from "./handoff.js";
 import { initProject } from "./init.js";
+import { ProjectIssue, selectProject } from "./project.js";
 import { readProof, saveProof } from "./storage.js";
 import { createTerminalView } from "./terminal.js";
 import { type RunOptions, repoRoot, runProof, UsageIssue } from "./workflow.js";
@@ -32,6 +36,8 @@ function timeout(value: string): number {
 }
 function flags(command: Command): Command {
   return command
+    .option("--project <directory>", "project directory, relative to the repository root")
+    .option("--strict", "exit nonzero for unresolved claims or unfinished work")
     .option("--json", "complete machine-readable report")
     .option("--summary", "compact agent summary with the full report path")
     .option("--quiet", "hide live terminal output")
@@ -48,25 +54,36 @@ function flags(command: Command): Command {
 async function execute(options: RunOptions, rerun = false) {
   if (options.json && options.summary)
     throw new UsageIssue("Choose --json or --summary, not both.");
+  if ([options.claims, options.claimsJson, options.fromStdin].filter(Boolean).length > 1)
+    throw new UsageIssue("Choose one input: --claims, --claims-json, or --from-stdin.");
+  if (rerun && (options.claims || options.claimsJson || options.fromStdin))
+    throw new UsageIssue(
+      "Rerun uses the selected report's locked claims; do not supply replacement claims.",
+    );
+  if (!rerun && options.strict && !options.claimsJson)
+    throw new UsageIssue("Strict verification requires an explicit --claims-json handoff.");
   const root = await repoRoot();
-  const previous = rerun ? await readProof(join(root, ".pr", "last.json")) : undefined;
+  const previous = rerun
+    ? await readProof(options.run ? resolve(options.run) : join(root, ".pr", "last.json"))
+    : undefined;
   const { pr } = await runProof(root, options, previous);
-  const jsonPath = relative(root, join(root, ".pr", "runs", pr.id, "proof-request.json"));
+  const jsonPath = join(root, ".pr", "runs", pr.id, "proof-request.json");
   if (options.json) process.stdout.write(`${fullJson(pr, jsonPath)}\n`);
   else if (options.summary) process.stdout.write(`${agentJson(pr, jsonPath)}\n`);
-  process.exitCode = pr.summary.broken > 0 ? 1 : pr.summary.unverified > 0 ? 2 : 0;
+  process.exitCode = verificationExitCode(pr, options.strict);
 }
 flags(program)
+  .option("--claims-json <file>", "explicit builder handoff in prq-claims/v1 format")
   .option("--claims <file>", "file containing the agent's done message")
   .option("--from-stdin", "read the agent's done message from stdin")
   .action((_options: RunOptions, command: Command) =>
     execute(command.optsWithGlobals<RunOptions>()),
   );
-flags(
-  program.command("rerun").description("verify the same locked claims with fresh evidence"),
-).action((_options: RunOptions, command: Command) =>
-  execute(command.optsWithGlobals<RunOptions>(), true),
-);
+flags(program.command("rerun").description("verify the same locked claims with fresh evidence"))
+  .option("--run <json>", "specific saved report to rerun")
+  .action((_options: RunOptions, command: Command) =>
+    execute(command.optsWithGlobals<RunOptions>(), true),
+  );
 for (const name of ["open", "render"]) {
   program.command(`${name} [json]`, { hidden: true }).action(() => {
     throw new UsageIssue(
@@ -103,6 +120,7 @@ program
 program
   .command("signoff <id>")
   .description("record a named decision on a human claim")
+  .option("--run <json>", "specific saved report to sign off")
   .requiredOption("--by <name>")
   .option("--accept")
   .option("--reject")
@@ -110,13 +128,15 @@ program
   .action(
     async (
       id: string,
-      options: { by: string; accept?: boolean; reject?: boolean; reason?: string },
+      options: { by: string; accept?: boolean; reject?: boolean; reason?: string; run?: string },
     ) => {
       if (Boolean(options.accept) === Boolean(options.reject))
         throw new UsageIssue("Choose exactly one of --accept or --reject.");
       if (!options.by.trim()) throw new UsageIssue("Provide the person's name with --by.");
       const root = await repoRoot();
-      const pr = await readProof(join(root, ".pr", "last.json"));
+      const pr = await readProof(
+        options.run ? resolve(options.run) : join(root, ".pr", "last.json"),
+      );
       if (lockClaims(pr.claims) !== pr.source.hash)
         throw new UsageIssue("The saved claims do not match their lock.");
       const claim = pr.claims.find((row) => row.id === id);
@@ -173,10 +193,39 @@ program
 program
   .command("init")
   .description("prepare local config and agent instructions")
-  .action(async () => {
+  .option("--project <directory>", "project directory, relative to the repository root")
+  .action(async (_options: unknown, command: Command) => {
     const root = await repoRoot();
-    const notes = await initProject(root, existsSync(join(root, ".codex")));
+    const options = command.optsWithGlobals<RunOptions>();
+    const project = await selectProject(root, options.project);
+    const notes = await initProject(root, existsSync(join(root, ".codex")), project.directory);
     process.stdout.write(`${notes.join("\n")}\n`);
+  });
+program
+  .command("gate <json>")
+  .description("check this handoff's report before PR creation, without a model call")
+  .option("--claims-json <file>", "the builder's original claims handoff")
+  .option("--json", "machine-readable gate result")
+  .action(async (path: string, _options: unknown, command: Command) => {
+    const options = command.optsWithGlobals<{
+      claimsJson: string;
+      json?: boolean;
+      summary?: boolean;
+    }>();
+    if (!options.claimsJson)
+      throw new UsageIssue("Supply the original handoff with --claims-json <file>.");
+    const result = await checkHandoff(
+      await repoRoot(),
+      await readProof(resolve(path)),
+      resolve(options.claimsJson),
+    );
+    const { exitCode, ...output } = result;
+    process.stdout.write(
+      options.json || options.summary
+        ? `${JSON.stringify(output)}\n`
+        : `${result.ready ? "Ready for PR handoff." : result.issues.join("\n")}\n`,
+    );
+    process.exitCode = exitCode;
   });
 program.parseAsync().catch((issue: unknown) => {
   const status =
@@ -185,6 +234,8 @@ program.parseAsync().catch((issue: unknown) => {
       : undefined;
   const message =
     issue instanceof UsageIssue ||
+    issue instanceof ProjectIssue ||
+    issue instanceof HandoffIssue ||
     issue instanceof ClaimExtractionIssue ||
     issue instanceof ProviderConfigurationIssue
       ? issue.message

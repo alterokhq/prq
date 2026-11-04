@@ -26,10 +26,16 @@ import { e2eRunner } from "@prq/runner-e2e";
 import { shellRunner } from "@prq/runner-shell";
 import { execa } from "execa";
 import { isVerificationCommand, verificationCommands } from "./commands.js";
+import { readHandoff } from "./handoff.js";
+import { selectProject } from "./project.js";
 import { saveProof } from "./storage.js";
 import { createTerminalView } from "./terminal.js";
 export interface RunOptions {
   claims?: string;
+  claimsJson?: string;
+  project?: string;
+  run?: string;
+  strict?: boolean;
   fromStdin?: boolean;
   json?: boolean;
   summary?: boolean;
@@ -108,6 +114,14 @@ export async function runProof(
   previous?: ProofRequest,
 ): Promise<{ pr: ProofRequest; reportPath: string }> {
   const started = Date.now();
+  const project = await selectProject(
+    root,
+    options.project ?? (previous ? (previous.subject.project ?? ".") : undefined),
+  );
+  if (previous && project.path !== (previous.subject.project ?? "."))
+    throw new UsageIssue("Reruns must use the original report's project directory.");
+  const handoff = options.claimsJson ? await readHandoff(resolve(options.claimsJson)) : undefined;
+  const availableCommands = await verificationCommands(project.directory, root);
   const selection = resolveProvider(options, process.env);
   const model = createModel(selection);
   const judgeModel = createModel({ ...selection, model: selection.judgeModel });
@@ -138,8 +152,9 @@ export async function runProof(
       throw new UsageIssue("Use an http or https application URL.");
     }
     const head = (await execa("git", ["rev-parse", "HEAD"], { cwd: root })).stdout.trim();
-    const source = previous?.source ?? (await sourceFor(root, options));
-    const availableCommands = await verificationCommands(root);
+    const source =
+      previous?.source ??
+      (handoff ? { kind: "file" as const, text: handoff.source } : await sourceFor(root, options));
     let claims: DraftClaim[];
     if (previous) {
       claims = previous.claims.map((c) => DraftClaim.parse(c));
@@ -147,6 +162,8 @@ export async function runProof(
         throw new UsageIssue(
           "The saved claims do not match their lock. Restore the original run before rerunning.",
         );
+    } else if (handoff) {
+      claims = handoff.claims;
     } else {
       claims = await extractClaims(source.text, {
         model,
@@ -164,7 +181,7 @@ export async function runProof(
       `${JSON.stringify({ hash, claims }, null, 2)}\n`,
       { flag: "wx" },
     );
-    if (!previous) {
+    if (!previous && !handoff) {
       try {
         let recordClassification: ((receipt: ModelReceipt) => void) | undefined;
         claims = await classifyClaims(claims, {
@@ -188,6 +205,7 @@ export async function runProof(
       head,
       title: source.text.split("\n")[0]?.slice(0, 120),
       app_url: appUrl,
+      project: project.path,
     };
     view.start({ subject, claims, hash });
     const results = new Map<string, RunResult>();
@@ -218,12 +236,13 @@ export async function runProof(
         try {
           output = await runner.run(routed, {
             worktree: root,
-            projectDir: root,
+            projectDir: project.directory,
+            head,
             appUrl,
             runDir,
             timeoutMs,
-            cacheDir: join(root, ".e2e", "cache"),
-            testFile: join(root, "tests", `prq-${shortHash(hash)}.e2e.ts`),
+            cacheDir: join(project.directory, ".e2e", "cache"),
+            testFile: join(project.directory, "tests", `prq-${shortHash(hash)}.e2e.ts`),
             onProgress: (id, message) => view.progress(id, message),
             onBrowserStart: () =>
               usage.push({
@@ -315,6 +334,13 @@ export async function runProof(
       created_at: new Date().toISOString(),
       subject,
       source: { kind: source.kind, text: source.text, hash },
+      ...(handoff
+        ? {
+            handoff: { format: handoff.format, task: handoff.task, unfinished: handoff.unfinished },
+          }
+        : previous?.handoff
+          ? { handoff: previous.handoff }
+          : {}),
       claims: rows,
       summary: summarize(rows),
       configuration: {

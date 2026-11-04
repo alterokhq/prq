@@ -17,6 +17,7 @@ export const e2eRunner: Runner = {
   async run(claims: DraftClaim[], ctx: RunContext): Promise<Map<string, RunResult>> {
     if (!claims.length) return new Map();
     const started = Date.now();
+    const project = ctx.projectDir ?? ctx.worktree;
     const pending = (message: string) =>
       new Map(claims.map((claim) => [claim.id, unverified(message, Date.now() - started)]));
     const probeTimeout = Math.min(ctx.timeoutMs, 15000);
@@ -36,12 +37,12 @@ export const e2eRunner: Runner = {
         return pending(
           `The target application returned HTTP ${app.status}; browser assertions did not run.`,
         );
-      const require = createRequire(join(ctx.worktree, "package.json"));
+      const require = createRequire(join(project, "package.json"));
       const e2eEntry = require.resolve("e2e");
       const binary = join(dirname(e2eEntry), "cli", "bin.js");
       if (!existsSync(binary))
         return pending("Install e2e in the target project before checking browser claims.");
-      const files = planTestFiles(claims, ctx.worktree, ctx.testFile);
+      const files = planTestFiles(claims, project, ctx.testFile);
       return await withTestFiles(files, async () => {
         const reportDir = join(ctx.worktree, ".pr", "e2e", randomUUID());
         await mkdir(reportDir, { recursive: true });
@@ -71,7 +72,7 @@ export const e2eRunner: Runner = {
               ...(ctx.cacheDir ? ["--cache-dir", ctx.cacheDir] : []),
             ],
             {
-              cwd: ctx.worktree,
+              cwd: project,
               env: { PRQ_APP_URL: ctx.appUrl, E2E_TELEMETRY_DISABLED: "1", NO_COLOR: "1" },
               reject: false,
               timeout: ctx.timeoutMs + 30000,

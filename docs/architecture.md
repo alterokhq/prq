@@ -13,6 +13,8 @@ completion message
   → fix prompt → fresh rerun with the same claim lock
 ```
 
+Explicit `prq-claims/v1` input supplies claims and routes directly, skipping extraction and classification. The offline CLI gate compares a saved report with that handoff and the current checkout before a consumer creates a PR. See [agent workflow](agent-workflow.md).
+
 ## Package boundaries
 
 | Package | Responsibility | Boundary |
@@ -33,7 +35,7 @@ A run ID is distinct from the claim lock. `.pr/runs/<run-id>/` contains its lock
 
 `rerun` validates the previous lock, keeps its claim IDs and text, and writes a separate run. Browser assertions execute again. e2e may replay verified setup actions; the stored `cached` field describes setup replay, never permission to reuse an old verdict.
 
-Named signoff updates the selected latest run and latest-report alias. Historical generated pages are archived with `.pre-0.2` filenames before writing current JSON. It records the person, decision, optional reason, and timestamp while preserving the claim text and its human classification.
+Named signoff updates the selected run and latest-report alias. Historical generated pages are archived with `.pre-0.2` filenames before writing current JSON. It records the person, decision, optional reason, and timestamp while preserving the claim text and its human classification.
 
 ## Execution contexts
 

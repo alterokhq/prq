@@ -10,7 +10,7 @@
 
 ## Try it
 
-Use Node.js 24.8+, npm, Git, and an OpenAI or OpenRouter API key with [required model access](docs/user-guide.md#providers-and-models). Work inside your app's Git repository with a committed `HEAD` and installed dependencies.
+Use Node.js 24.8+, npm, Git, and an OpenAI or OpenRouter API key with [required model access](docs/user-guide.md#providers-and-models). Work inside your project's Git repository with a committed `HEAD` and installed dependencies.
 
 Install the CLI once in your project:
 
@@ -36,6 +36,18 @@ npx prq --claims done.md --app-url http://localhost:3000
 ```
 
 `prq` uses an already running app. Command-only checks can skip browser installation and `init`.
+
+## Before opening a PR
+
+The builder can supply exact claims in a versioned JSON handoff, then require a current report before creating the PR:
+
+```sh
+npx prq --project service --claims-json .pr/claims.json --strict --summary
+npx prq rerun --run <report> --strict --summary
+npx prq gate <report> --claims-json .pr/claims.json --json
+```
+
+`service` is an example project directory relative to the repository root. Omit `--project` to use your current directory. Follow the [agent workflow](docs/agent-workflow.md) for the handoff format, custom test commands and how to wire the gate into any agent's workflow. The gate is local and makes no model calls. It does not detect omitted requirements or replace CI and review.
 
 ## What you get
 

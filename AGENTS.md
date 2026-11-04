@@ -50,11 +50,15 @@ prq --from-stdin
 prq --claims done.md
 prq --json --quiet
 prq fix [--copy]
-prq rerun
-prq signoff <id> --by <name> --accept|--reject [--reason "..."]
+prq --project service --claims-json .pr/claims.json --strict --summary
+prq rerun [--run <json>]
+prq gate <json> --claims-json <file> [--json]
+prq signoff <id> [--run <json>] --by <name> --accept|--reject [--reason "..."]
 prq show [--json]
 prq init
 ```
+
+Explicit handoffs use `prq-claims/v1`; preserve their source, task, unfinished work and locked claims. `--project` is repository-relative; new runs default to the current directory and reruns keep the saved project. The local gate is a consumer workflow check, not an attestation or requirement-coverage proof. See [agent workflow](docs/agent-workflow.md).
 
 `init` preserves existing configuration, creates missing e2e configuration and `.pr/`, creates or updates its marked agent instruction block, and installs a stop hook only where supported. Check installed documentation before choosing a hook format.
 

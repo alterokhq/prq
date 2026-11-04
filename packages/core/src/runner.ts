@@ -2,15 +2,17 @@ import type { ProviderName } from "./provider.js";
 import type { DraftClaim, Evidence } from "./schema.js";
 
 export interface RunContext {
-  /** Absolute path of the checkout to verify (a worktree of HEAD). */
+  /** Absolute repository root. Command checks create a detached checkout from it. */
   worktree: string;
+  /** Fixed source revision captured by the caller. */
+  head?: string;
   appUrl: string;
   runDir: string;
   timeoutMs: number;
   /** Stable locations shared by executions with the same locked claims. */
   cacheDir?: string;
   testFile?: string;
-  /** Caller checkout for resolving installed browser tooling. */
+  /** Selected project directory in the caller checkout, used by every runner. */
   projectDir?: string;
   onProgress?: (claimId: string, message: string) => void;
   /** Called only when the external browser subprocess is about to launch. */
