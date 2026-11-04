@@ -18,12 +18,30 @@ try {
   const [packed] = JSON.parse(
     run("npm", ["pack", "--json", "--pack-destination", directory], join(root, "packages/cli")),
   );
-  assert.deepEqual(packed.files.map((file) => file.path).sort(), [
+  const files = packed.files.map((file) => file.path).sort();
+  for (const path of [
     "LICENSE",
     "README.md",
-    "dist/index.js",
     "package.json",
-  ]);
+    "dist/index.js",
+    "dist/vitest.js",
+    "dist/playwright.js",
+  ])
+    assert.ok(files.includes(path), `Missing package file: ${path}`);
+  assert.equal(files.length, 7);
+  assert.ok(
+    files.every(
+      (path) =>
+        [
+          "LICENSE",
+          "README.md",
+          "package.json",
+          "dist/index.js",
+          "dist/vitest.js",
+          "dist/playwright.js",
+        ].includes(path) || /^dist\/reporter-output-[A-Za-z0-9_-]+\.js$/.test(path),
+    ),
+  );
   run(
     "npm",
     ["install", "--ignore-scripts", "--no-audit", "--no-fund", join(directory, packed.filename)],
@@ -34,6 +52,16 @@ try {
   assert.equal(manifest.name, "@alterok/prq");
   assert.ok(
     Object.values(manifest.dependencies).every((version) => !version.startsWith("workspace:")),
+  );
+  // Reporters use type-only framework imports: consumers need no bundled test frameworks.
+  run(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      'await import("@alterok/prq/vitest"); await import("@alterok/prq/playwright");',
+    ],
+    directory,
   );
   const cli = join(installed, manifest.bin.prq);
   assert.equal(run(process.execPath, [cli, "--version"], directory).trim(), manifest.version);

@@ -7,7 +7,9 @@
     "access": "public"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./vitest": "./dist/vitest.js",
+    "./playwright": "./dist/playwright.js"
   },
   "files": [
     "dist"

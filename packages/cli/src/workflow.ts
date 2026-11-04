@@ -25,7 +25,7 @@ import {
 import { e2eRunner } from "@prq/runner-e2e";
 import { shellRunner } from "@prq/runner-shell";
 import { execa } from "execa";
-import { isVerificationCommand, verificationCommands } from "./commands.js";
+import { isVerificationCommand, verificationSetup } from "./commands.js";
 import { readHandoff } from "./handoff.js";
 import { selectProject } from "./project.js";
 import { saveProof } from "./storage.js";
@@ -121,7 +121,10 @@ export async function runProof(
   if (previous && project.path !== (previous.subject.project ?? "."))
     throw new UsageIssue("Reruns must use the original report's project directory.");
   const handoff = options.claimsJson ? await readHandoff(resolve(options.claimsJson)) : undefined;
-  const availableCommands = await verificationCommands(project.directory, root);
+  const { commands: availableCommands, testReports } = await verificationSetup(
+    project.directory,
+    root,
+  );
   const selection = resolveProvider(options, process.env);
   const model = createModel(selection);
   const judgeModel = createModel({ ...selection, model: selection.judgeModel });
@@ -238,6 +241,7 @@ export async function runProof(
             worktree: root,
             projectDir: project.directory,
             head,
+            testReports,
             appUrl,
             runDir,
             timeoutMs,

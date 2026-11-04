@@ -98,7 +98,7 @@ npx prq show --json
 npx prq show .pr/runs/<run-id>/proof-request.json
 ```
 
-`fix` prints a prompt for the broken claims. `--copy` requires a supported clipboard tool. Reruns create separate run directories, retain the exact claim text and lock, and collect new evidence. Browser setup actions may replay from e2e's cache, but assertions execute live. Cached actions are never cached verdicts.
+`fix` prints a prompt for broken claims and rejected human signoffs, preserving reviewer feedback and pointing to a targeted rerun. `--copy` requires a supported clipboard tool. Reruns create separate run directories, retain the exact claim text and lock, and collect new evidence. Browser setup actions may replay from e2e's cache, but assertions execute live. Cached actions are never cached verdicts.
 
 Use `--claims-json` for a builder-authored handoff and `--strict` to block unsigned human claims or unfinished work. `rerun --run <report>` and `signoff --run <report>` select a particular run. The offline `gate` checks that report against the original handoff and current commit before PR creation. See the [agent workflow](agent-workflow.md).
 
@@ -131,6 +131,8 @@ Inspect the verdicts and saved evidence rather than treating exit `0` as proof o
 
 The table above describes non-strict runs. Strict verification also blocks unsigned or rejected human decisions, empty claims and unfinished work. See [strict exit codes](agent-workflow.md#repair-rerun-and-hand-off).
 
+Test-suite claims require a fresh [structured test report](test-evidence.md). Exit zero and console summaries alone no longer establish that a suite passed. Vitest and Playwright reporters preserve skipped tests, retries and setup failures.
+
 ## Global command and Codex hook
 
 After project installation, use `npx prq`. Install globally if you want the bare `prq` command, commands copied from reports, or the optional Codex Stop hook:
@@ -144,7 +146,7 @@ When `.codex/` exists, `init` creates or preserves `.codex/hooks/prq-stop.mjs` a
 
 ## Privacy and execution boundaries
 
-Browser screenshots and bounded interaction evidence are sent to the configured model providers. Command judgment receives exit status and recognized numeric test summaries; captured command output stays in the local artifact. The judge is not given source files. Browser execution uses TesterArmy e2e. Extraction uses the selected provider through the Vercel AI SDK. OpenAI classification and judgment retain the Decisions endpoint by default. OpenRouter and explicit OpenAI structured mode use separate AI SDK calls with validated structured output. Structured-mode judge probabilities are model assessments, not calibrated accuracy measurements. Their unchanged verdict cutoffs have not been compared with Decisions in live evaluations; changing mode may change verdicts.
+Browser screenshots and bounded interaction evidence are sent to the configured model providers. Command judgment receives exit status and structured numeric test summaries; captured command output stays in the local artifact. The judge is not given source files. Browser execution uses TesterArmy e2e. Extraction uses the selected provider through the Vercel AI SDK. OpenAI classification and judgment retain the Decisions endpoint by default. OpenRouter and explicit OpenAI structured mode use separate AI SDK calls with validated structured output. Structured-mode judge probabilities are model assessments, not calibrated accuracy measurements. Their unchanged verdict cutoffs have not been compared with Decisions in live evaluations; changing mode may change verdicts.
 
 Command checks run in a temporary checkout of committed `HEAD` with copied installed dependencies. They exclude uncommitted edits. The checkout is not an operating-system sandbox; repository commands still execute on your machine.
 

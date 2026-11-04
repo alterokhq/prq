@@ -8,7 +8,7 @@ Your agent said it works. Prove it.
 
 - Author, tester, and judge use separate contexts. The tester receives the claim and running app, never the author's reasoning. The judge receives the claim and evidence, never source code.
 - Preserve exact claim text. Lock the canonical claim list with SHA-256 before checks run. Never edit, drop, normalize, or weaken a claim to obtain a different verdict.
-- Model output is not ground truth. Collect actual assertions, exit codes, HTTP responses, logs, and screenshots. A claim without a completed runnable check is never held. Infrastructure problems are unverified.
+- Model output is not ground truth. Collect actual assertions, exit codes, HTTP responses, logs, and screenshots. A claim without a completed runnable check is never held. Infrastructure problems are unverified. Test-suite command claims require fresh structured evidence; zero tests, skips, retries and incomplete execution cannot be held. See `docs/test-evidence.md`.
 - v0.2 is a standalone local CLI. No consumer-product dependency, GitHub integration, daemon, server, database, account, generated HTML or automatic browser opening. Select OpenAI or OpenRouter with environment credentials. `PRQ_APP_URL` may override the target application URL.
 - `--json` emits the full report without truncation. `--summary` is the optional summary plus broken rows within 300 tokens, with explicit omissions and a full artifact path. Unknown costs remain null; incomplete subtotals are labeled.
 - Product terms are held, broken, needs a human, and unverified. Say "the agent". Preserve original source text and raw evidence even when they use other terms.
@@ -74,6 +74,6 @@ Copy per-claim logs and screenshots into each run. Recorded artifacts include `.
 
 ## Contribution conventions
 
-Use isolated worktrees and clear ownership boundaries. Integrate contract changes before dependent work. Biome formats and lints, vitest tests, and tsdown builds packages. The CLI should bundle to one entry file. Run checks appropriate to the change and report only checks executed. Never commit secrets, environment files, run artifacts, or personal data. Commit messages are imperative, one line, and describe the user-visible change.
+Use isolated worktrees and clear ownership boundaries. Integrate contract changes before dependent work. Biome formats and lints, vitest tests, and tsdown builds packages. The executable bundles to one entry file; framework reporters have separate exports and a shared output helper, with no runtime framework dependencies. Run checks appropriate to the change and report only checks executed. Never commit secrets, environment files, run artifacts, or personal data. Commit messages are imperative, one line, and describe the user-visible change.
 
 See `docs/README.md` for contributor documentation and `bench/SEEDS.md` for the benchmark method.

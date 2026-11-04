@@ -5,6 +5,7 @@ import { isAbsolute, join, relative, sep } from "node:path";
 import type { DraftClaim, RunContext, Runner, RunResult } from "@prq/core";
 import { execa } from "execa";
 import { copyDependencies } from "./dependencies.js";
+import { collectTestReport, prepareTestReport } from "./test-report.js";
 
 const tester = "shell / isolated HEAD worktree";
 
@@ -52,6 +53,18 @@ async function runClaim(claim: DraftClaim, ctx: RunContext): Promise<RunResult> 
     if (!(await stat(workingDirectory)).isDirectory())
       throw new Error("Project absent from committed source");
     await copyDependencies(root, checkout, project);
+    const reportPath = ctx.testReports?.get(command);
+    let report: Awaited<ReturnType<typeof prepareTestReport>> | undefined;
+    if (reportPath) {
+      try {
+        report = await prepareTestReport(workingDirectory, reportPath);
+      } catch {
+        return unavailable(
+          "Could not prepare a fresh JSON report path. Use an untracked file inside the project, outside Git metadata and dependencies.",
+          started,
+        );
+      }
+    }
     ctx.onProgress?.(claim.id, `running ${command}`);
     const execution = await execa(command, {
       cwd: workingDirectory,
@@ -60,7 +73,10 @@ async function runClaim(claim: DraftClaim, ctx: RunContext): Promise<RunResult> 
       timeout: ctx.timeoutMs,
       forceKillAfterDelay: 1000,
       maxBuffer: 1024 * 1024,
-      env: commandEnvironment(),
+      env: {
+        ...commandEnvironment(),
+        ...(report ? { PRQ_TEST_REPORT: report.target, PRQ_RUN_TOKEN: report.token } : {}),
+      },
       extendEnv: false,
     });
     const stdout = execution.stdout.slice(-8000);
@@ -99,6 +115,28 @@ async function runClaim(claim: DraftClaim, ctx: RunContext): Promise<RunResult> 
       stdout,
       stderr,
     });
+    if (report) {
+      try {
+        const collected = await collectTestReport({
+          project: workingDirectory,
+          target: report.target,
+          token: report.token,
+          runDir: ctx.runDir,
+          claimId: claim.id,
+        });
+        const commandEvidence = result.evidence.find((e) => e.type === "command");
+        if (commandEvidence) {
+          commandEvidence.test_summary = collected.summary;
+          commandEvidence.path = collected.path;
+        }
+        for (const note of collected.notes) result.evidence.push({ type: "note", text: note });
+      } catch {
+        result.passed = undefined;
+        result.observed =
+          "The configured test report is missing, malformed, oversized or not from this execution. Check the PRQ reporter setup.";
+        result.evidence.push({ type: "note", text: result.observed });
+      }
+    }
     result.evidence.push({
       type: "note",
       text: `Executed committed HEAD ${head.stdout.trim()}, project ${project || "."}, in a fresh detached worktree. Installed dependencies were copied into this checkout; this is not an operating-system sandbox.`,

@@ -1,7 +1,13 @@
-import { commandLabel, isExitStatusClaim, testCounts } from "./command-summary.js";
+import {
+  commandLabel,
+  isExitStatusClaim,
+  isTestSuiteClaim,
+  testCounts,
+} from "./command-summary.js";
 import { type DecisionsOptions, decide, type InputPart } from "./decisions.js";
 import type { RunResult } from "./runner.js";
 import type { Claim, DraftClaim, Verdict } from "./schema.js";
+import { testEvidenceIssue } from "./test-results.js";
 export interface JudgeInput {
   claim: DraftClaim;
   result: RunResult;
@@ -19,9 +25,8 @@ function relevant(input: JudgeInput): boolean {
       (e) =>
         e.type === "command" &&
         typeof e.exit_code === "number" &&
-        (input.result.passed === false ||
-          isExitStatusClaim(input.claim.text) ||
-          (/\btests?\b/i.test(input.claim.text) && testCounts(e.stdout, e.stderr).length > 0)),
+        (isExitStatusClaim(input.claim.text) ||
+          (isTestSuiteClaim(input.claim.text) && Boolean(e.test_summary))),
     );
   const assertion =
     input.result.completed === true ||
@@ -48,6 +53,7 @@ function describe(result: RunResult): string {
               command: commandLabel(e.command),
               exit_code: e.exit_code,
               test_counts: testCounts(e.stdout, e.stderr),
+              test_summary: e.test_summary,
             }
           : e,
       ),
@@ -60,6 +66,35 @@ export async function judgeClaims(
   const out = new Map<string, Judgment>();
   const runnable: JudgeInput[] = [];
   for (const input of inputs) {
+    if (input.claim.kind === "command" && !isExitStatusClaim(input.claim.text)) {
+      const evidence = input.result.evidence.find((e) => e.type === "command");
+      const summary = evidence?.test_summary;
+      if (!isTestSuiteClaim(input.claim.text) || !summary) {
+        out.set(input.claim.id, {
+          verdict: "unverified",
+          diagnostic:
+            "This command needs relevant structured test evidence. Configure a PRQ reporter for test-suite claims; exit status or console counts alone cannot establish application behavior.",
+        });
+        continue;
+      }
+      // A completed assertion contradicts a passing-suite claim even alongside skipped tests.
+      // Never manufacture a contradiction from a generic nonzero exit or a setup error.
+      if (summary.failed > 0 && typeof evidence?.exit_code === "number") {
+        out.set(input.claim.id, {
+          verdict: "broken",
+          diagnostic: "The structured report records a failed test assertion.",
+        });
+        continue;
+      }
+      const issue = testEvidenceIssue(summary);
+      if (issue || evidence?.exit_code !== 0 || input.result.passed !== true) {
+        out.set(input.claim.id, {
+          verdict: "unverified",
+          diagnostic: issue ?? "The test command did not finish successfully.",
+        });
+        continue;
+      }
+    }
     if (input.claim.kind === "human") out.set(input.claim.id, { verdict: "needs_human" });
     else if (
       (input.result.passed === undefined && input.result.completed !== true) ||
@@ -77,7 +112,7 @@ export async function judgeClaims(
         const parts: InputPart[] = [
           {
             type: "input_text",
-            text: `Claim: ${JSON.stringify(i.claim.text)}\nEvidence: ${describe(i.result)}\nDoes this evidence show the claim is true? For command claims, evaluate the exit status and recorded test_counts together. Exit zero alone does not prove tests ran or none were skipped. Treat absent counters as unknown, not zero. Numeric counts come from recognized reporter summary lines; no source code is included. For browser claims, evaluate the running application.`,
+            text: `Claim: ${JSON.stringify(i.claim.text)}\nEvidence: ${describe(i.result)}\nDoes this evidence show the claim is true? For command claims, evaluate the exit status and recorded test_counts together. Exit zero alone does not prove tests ran or none were skipped. Treat absent counters as unknown, not zero. Structured test_summary is authoritative for execution completeness. Console test_counts are supplementary only; no source code is included. For browser claims, evaluate the running application.`,
           },
         ];
         const screenshots = [
@@ -134,7 +169,7 @@ export function applyVerdict(
     ...claim,
     verdict: judgment.verdict,
     probability: judgment.probability,
-    observed: result.observed,
+    observed: [result.observed, judgment.diagnostic].filter(Boolean).join(" ") || undefined,
     evidence: judgment.diagnostic
       ? [...result.evidence, { type: "note", text: judgment.diagnostic }]
       : result.evidence,

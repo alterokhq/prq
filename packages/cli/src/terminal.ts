@@ -423,9 +423,9 @@ export function createTerminalView(
             .map((line) => `  ${line}`)
             .join("\n")}\n`,
         );
-        if (s.broken)
+        if (s.broken || pr.claims.some((claim) => claim.signoff?.decision === "rejected"))
           write(
-            `${wrapCells("→ prq fix  hand the broken claims back to the agent", contentWidth)
+            `${wrapCells("→ prq fix  hand the repair items back to the agent", contentWidth)
               .map((line) => `  ${line}`)
               .join("\n")}\n`,
           );
@@ -442,8 +442,8 @@ export function createTerminalView(
           .map((line) => `  ${line}`)
           .join("\n")}\n`,
       );
-      if (s.broken)
-        write(`  ${muted("→")} prq fix  ${muted("hand the broken claims back to the agent")}\n`);
+      if (s.broken || pr.claims.some((claim) => claim.signoff?.decision === "rejected"))
+        write(`  ${muted("→")} prq fix  ${muted("hand the repair items back to the agent")}\n`);
       write("\n");
     },
     stop,

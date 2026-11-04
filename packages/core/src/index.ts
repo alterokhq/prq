@@ -8,4 +8,5 @@ export * from "./lock.js";
 export * from "./provider.js";
 export * from "./runner.js";
 export * from "./schema.js";
+export * from "./test-results.js";
 export * from "./tokens.js";

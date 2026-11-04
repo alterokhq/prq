@@ -14,6 +14,8 @@ export interface RunContext {
   testFile?: string;
   /** Selected project directory in the caller checkout, used by every runner. */
   projectDir?: string;
+  /** Command to fresh PRQ test-report path, relative to the selected project. */
+  testReports?: ReadonlyMap<string, string>;
   onProgress?: (claimId: string, message: string) => void;
   /** Called only when the external browser subprocess is about to launch. */
   onBrowserStart?: () => void;

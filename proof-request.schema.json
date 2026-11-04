@@ -184,6 +184,100 @@
                 },
                 "stderr": {
                   "type": "string"
+                },
+                "test_summary": {
+                  "type": "object",
+                  "properties": {
+                    "format": {
+                      "type": "string",
+                      "const": "prq-test-results/v1"
+                    },
+                    "framework": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9][a-z0-9_.-]{0,99}$"
+                    },
+                    "complete": {
+                      "type": "boolean"
+                    },
+                    "errors": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "executed": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "passed": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "failed": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "skipped": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "todo": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "flaky": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "interrupted": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "error": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "unknown": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "expected_failed": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "format",
+                    "framework",
+                    "complete",
+                    "errors",
+                    "total",
+                    "executed",
+                    "passed",
+                    "failed",
+                    "skipped",
+                    "todo",
+                    "flaky",
+                    "interrupted",
+                    "error",
+                    "unknown",
+                    "expected_failed"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [

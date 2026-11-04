@@ -16,7 +16,7 @@ PRQ discovers verification scripts in the selected directory's `package.json`, i
 }
 ```
 
-These are examples; list commands that actually work in your project. This explicit list replaces package-script discovery. A claim's `check.command` must match an entry exactly. Review commands as executable repository code. PRQ does not install tools or provide an operating-system sandbox.
+These are execution examples; list commands that actually work in your project. Test-suite claims require [structured test evidence](test-evidence.md); plain pytest or Go output alone remains unverified. This explicit list replaces package-script discovery. A claim's `check.command` must match an entry exactly. Review commands as executable repository code. PRQ does not install tools or provide an operating-system sandbox.
 
 Command checks run from the selected directory in a fresh checkout of the captured commit. Root and tracked workspace packages' installed `node_modules` are copied, and their internal symlinks point into the disposable checkout. Dependencies linked outside the repository are unsupported. Untracked build output, virtual environments, services and arbitrary environment variables are not copied. Prepare those through your commands or existing tooling. Missing setup leaves checks unverified.
 

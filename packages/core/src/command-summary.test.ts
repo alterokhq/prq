@@ -25,16 +25,15 @@ describe("recognized test counts", () => {
   it("rejects a summary with arbitrary trailing content", () => {
     expect(testCounts("Tests: 12 passed; const secret = 1")).toEqual([]);
   });
-  it("keeps the judge informed when exit zero hides skipped tests", async () => {
-    let request = "";
-    const stdout = "0 tests run, 12 skipped\n  12 | const privateSource = true;";
+  it("does not promote console counts to structured evidence", async () => {
+    let called = false;
     const out = await judgeClaims(
       [
         {
           claim,
           result: {
             passed: true,
-            evidence: [{ type: "command", command: "npm run test", exit_code: 0, stdout }],
+            evidence: [{ type: "command", exit_code: 0, stdout: "12 tests run, 0 skipped" }],
             tester: "shell",
             duration_ms: 1,
           },
@@ -42,23 +41,14 @@ describe("recognized test counts", () => {
       ],
       {
         apiKey: "fixture",
-        fetchImpl: async (_url, init) => {
-          request = String(init?.body);
-          // The independent judge sees the contradiction in recorded counts.
-          const hasCounts =
-            request.includes('\\"metric\\":\\"executed\\",\\"count\\":0') &&
-            request.includes('\\"metric\\":\\"skipped\\",\\"count\\":12');
-          return new Response(
-            JSON.stringify({
-              answers: [{ type: "predicate", name: "c1", probability: hasCounts ? 0 : 1 }],
-            }),
-          );
+        fetchImpl: async () => {
+          called = true;
+          return new Response("{}");
         },
       },
     );
-    expect(out.get("c1")?.verdict).toBe("broken");
-    expect(request).not.toContain("privateSource");
-    expect(request).not.toContain('"stdout"');
+    expect(out.get("c1")?.verdict).toBe("unverified");
+    expect(called).toBe(false);
   });
   it("leaves a count claim unverified when only exit status is available", async () => {
     let called = false;

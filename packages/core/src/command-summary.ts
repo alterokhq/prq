@@ -90,7 +90,7 @@ export function testCounts(stdout = "", stderr = ""): TestCount[] {
 /** Exit status alone supports only narrowly stated completion/status claims. */
 export function isExitStatusClaim(text: string): boolean {
   return (
-    /^(?:(?:all|the)\s+)?(?:production\s+)?(?:tests?|test suite|checks?|build|lint|typecheck|type check)\s+(?:pass(?:es|ed)?|succeed(?:s|ed)?|complete(?:s|d)?(?:\s+(?:successfully|cleanly))?)[.!]?$/i.test(
+    /^(?:(?:all|the)\s+)?(?:production\s+)?(?:build|lint|typecheck|type check)\s+(?:pass(?:es|ed)?|succeed(?:s|ed)?|complete(?:s|d)?(?:\s+(?:successfully|cleanly))?)[.!]?$/i.test(
       text.trim(),
     ) ||
     /^(?:there are\s+)?no\s+(?:lint|typescript|typecheck|type-check)\s+(?:errors|issues)[.!]?$/i.test(
@@ -107,4 +107,11 @@ export function commandLabel(command: string | undefined): string {
   return command && /^(?:npm|pnpm|yarn|bun) (?:run )?[A-Za-z0-9:_-]+$/.test(command)
     ? command
     : "command recorded in artifact";
+}
+
+/** Counts establish suite outcomes, not arbitrary application behavior. */
+export function isTestSuiteClaim(text: string): boolean {
+  return /^(?:(?:all|the)\s+)?(?:(?:\d+)\s+)?(?:tests?|test suite)\s+(?:pass(?:es|ed)?|succeed(?:s|ed)?)(?:\s+(?:with\s+)?(?:none|no tests)\s+skipped)?[.!]?$/i.test(
+    text.trim(),
+  );
 }

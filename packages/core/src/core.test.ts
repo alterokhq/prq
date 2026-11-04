@@ -100,7 +100,7 @@ describe("independent observations", () => {
     const out = await judgeClaims(
       [
         {
-          claim: { ...claim, text: "All tests pass.", kind: "command" },
+          claim: { ...claim, text: "The command exits 0.", kind: "command" },
           result: {
             ...checked,
             evidence: [

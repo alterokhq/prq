@@ -176,3 +176,58 @@ it("does not execute a builder command outside the selected project's allowlist"
     await rm(root, { recursive: true, force: true });
   }
 });
+
+it.each([
+  [[], 2, "unverified"],
+  [[{ name: "real assertion", status: "failed", attempts: 1 }], 1, "broken"],
+] as const)(
+  "carries structured test outcomes into the CLI gate: %j",
+  async (tests, exit, verdict) => {
+    const root = await mkdtemp(join(tmpdir(), "prq-structured-flow-"));
+    try {
+      git(root, ["init", "-q"]);
+      await writeFile(join(root, ".gitignore"), ".pr/\n");
+      await writeFile(
+        join(root, "prq.config.json"),
+        JSON.stringify({ commands: [{ command: "node check.cjs", report: "results/test.json" }] }),
+      );
+      await writeFile(
+        join(root, "check.cjs"),
+        `const fs = require('node:fs'); fs.writeFileSync(process.env.PRQ_TEST_REPORT, JSON.stringify({ format: 'prq-test-results/v1', framework: 'fixture', run_token: process.env.PRQ_RUN_TOKEN, complete: true, errors: 0, tests: ${JSON.stringify(tests)} }));`,
+      );
+      commit(root);
+      await mkdir(join(root, ".pr"));
+      const input = join(root, ".pr/claims.json");
+      await writeFile(
+        input,
+        JSON.stringify({
+          ...handoff,
+          source: "All tests pass.",
+          claims: [
+            {
+              id: "suite",
+              text: "All tests pass.",
+              kind: "command",
+              check: { command: "node check.cjs" },
+            },
+          ],
+        }),
+      );
+      const execution = run(root, ["--claims-json", input, "--strict", "--json"], true);
+      expect(execution.status, execution.stderr).toBe(exit);
+      const output = JSON.parse(execution.stdout);
+      expect(output.claims[0].verdict).toBe(verdict);
+      expect(
+        output.claims[0].evidence.find((e: { type: string }) => e.type === "command").test_summary
+          .total,
+      ).toBe(tests.length);
+      expect(output.model_usage).toEqual([]);
+      expect(run(root, ["gate", output.report, "--claims-json", input, "--json"]).status).toBe(
+        exit,
+      );
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  },
+  15000,
+);
