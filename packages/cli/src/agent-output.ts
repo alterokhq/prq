@@ -1,4 +1,4 @@
-import { type ProofRequest, tokenCount, tokenExcerpt } from "@prq/core";
+import { coverageSummary, type ProofRequest, tokenCount, tokenExcerpt } from "@prq/core";
 
 const bytes = (value: string) => new TextEncoder().encode(value).length;
 export function clip(value: string, maxBytes: number): string {
@@ -19,10 +19,17 @@ export function agentJson(pr: ProofRequest, reportPath: string): string {
   const broken = pr.claims.filter((c) => c.verdict === "broken");
   const output: {
     summary: ProofRequest["summary"];
+    coverage?: string;
     broken: CompactRow[];
     omitted: number;
     report: string;
-  } = { summary: pr.summary, broken: [], omitted: broken.length, report: reportPath };
+  } = {
+    summary: pr.summary,
+    broken: [],
+    omitted: broken.length,
+    report: reportPath,
+    ...(pr.handoff?.task?.trim() ? { coverage: coverageSummary(pr) } : {}),
+  };
   for (const claim of broken) {
     output.broken.push({
       id: claim.id,

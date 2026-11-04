@@ -156,7 +156,7 @@ describe("terminal presentation", () => {
     view.resolve(row);
     view.finish(source, { reportPath: "proof-request.json" });
     expect(writes.join("")).toBe(
-      "\n  prq  proof request  #aaaaaaa\n       fixture · abc1234\n       1 claims locked before checking\n\n  ? The helper is readable.\n    needs human\n\n  cost unavailable\n  held 0 · broken 0 · needs a human 1\n  2.5s · locked #aaaaaaa\n\n  → proof-request.json\n\n",
+      "\n  prq  proof request  #aaaaaaa\n       fixture · abc1234\n       1 claims locked before checking\n\n  ? The helper is readable.\n    needs human\n\n  Task coverage: not requested (no task supplied).\n  cost unavailable\n  held 0 · broken 0 · needs a human 1\n  2.5s · locked #aaaaaaa\n\n  → proof-request.json\n\n",
     );
   });
 

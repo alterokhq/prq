@@ -79,6 +79,11 @@ try {
     );
     assert.equal(report.claims.length, 6);
   }
+  const evaluation = JSON.parse(run(process.execPath, [cli, "eval", "--json"], directory));
+  assert.equal(evaluation.format, "prq-eval/v1");
+  assert.equal(evaluation.summary.total, 9);
+  assert.equal(evaluation.summary.matched, 9);
+  assert.equal(evaluation.summary.cost_usd, 0);
   console.log("Packed CLI installs and runs outside the workspace without provider credentials.");
 } finally {
   await rm(directory, { recursive: true, force: true });

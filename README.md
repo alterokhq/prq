@@ -47,7 +47,7 @@ npx prq rerun --run <report> --strict --summary
 npx prq gate <report> --claims-json .pr/claims.json --json
 ```
 
-`service` is an example project directory relative to the repository root. Omit `--project` to use your current directory. Follow the [agent workflow](docs/agent-workflow.md) for the handoff format, custom test commands and how to wire the gate into any agent's workflow. Test-suite claims need [structured evidence](docs/test-evidence.md); Vitest and Playwright adapters are available. The gate is local and makes no model calls. It does not detect omitted requirements or replace CI and review.
+`service` is an example project directory relative to the repository root. Omit `--project` to use your current directory. Follow the [agent workflow](docs/agent-workflow.md) for the handoff format, custom test commands and how to wire the gate into any agent's workflow. Test-suite claims need [structured evidence](docs/test-evidence.md); Vitest and Playwright adapters are available. The gate is local and makes no model calls. When the handoff includes the original task, PRQ assesses [missing requirements](docs/task-coverage.md) and independently selects checks. This assessment can still miss omissions and does not replace CI and review.
 
 ## What you get
 
@@ -84,3 +84,5 @@ Version 0.2 changes `--json` from a compact summary to the full report; use `--s
 [User guide](docs/user-guide.md) · [Spec](SPEC.md) · [Benchmarks](bench/external/README.md) · [Contributing](docs/contributing.md)
 
 [Apache-2.0](LICENSE).
+
+Run `prq eval` to check the deterministic safeguards without a key. [Evaluation docs](docs/evaluations.md) describe fixed cases, JSON output and explicit paid provider judgment.

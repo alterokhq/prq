@@ -1,4 +1,4 @@
-import { lockClaims, type ProofRequest, verificationExitCode } from "@prq/core";
+import { coverageIssues, lockClaims, type ProofRequest, verificationExitCode } from "@prq/core";
 import { execa } from "execa";
 import { readHandoff } from "./handoff.js";
 import { selectProject } from "./project.js";
@@ -27,6 +27,7 @@ export async function checkHandoff(root: string, pr: ProofRequest, claimsPath: s
     issues.push(
       "The working tree has changes not covered by the committed source. Commit the changes and rerun.",
     );
+  issues.push(...coverageIssues(pr));
   const outcome = verificationExitCode(pr, true);
   if (outcome !== 0)
     issues.push(

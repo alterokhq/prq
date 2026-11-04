@@ -56,9 +56,10 @@ prq gate <json> --claims-json <file> [--json]
 prq signoff <id> [--run <json>] --by <name> --accept|--reject [--reason "..."]
 prq show [--json]
 prq init
+prq eval [--json] [--live] [--case <ids>]
 ```
 
-Explicit handoffs use `prq-claims/v1`; preserve their source, task, unfinished work and locked claims. `--project` is repository-relative; new runs default to the current directory and reruns keep the saved project. The local gate is a consumer workflow check, not an attestation or requirement-coverage proof. See [agent workflow](docs/agent-workflow.md).
+Explicit handoffs use `prq-claims/v1`; preserve their source, task, unfinished work and locked claims. `--project` is repository-relative; new runs default to the current directory and reruns keep the saved project. A nonempty task triggers separate requirement extraction and independent check selection. Strict handoff requires a matching completed coverage assessment; it is model-assessed, not proof of complete requirements or implementation. The local gate is a consumer workflow check, not an attestation. See [agent workflow](docs/agent-workflow.md).
 
 `init` preserves existing configuration, creates missing e2e configuration and `.pr/`, creates or updates its marked agent instruction block, and installs a stop hook only where supported. Check installed documentation before choosing a hook format.
 
@@ -77,3 +78,5 @@ Copy per-claim logs and screenshots into each run. Recorded artifacts include `.
 Use isolated worktrees and clear ownership boundaries. Integrate contract changes before dependent work. Biome formats and lints, vitest tests, and tsdown builds packages. The executable bundles to one entry file; framework reporters have separate exports and a shared output helper, with no runtime framework dependencies. Run checks appropriate to the change and report only checks executed. Never commit secrets, environment files, run artifacts, or personal data. Commit messages are imperative, one line, and describe the user-visible change.
 
 See `docs/README.md` for contributor documentation and `bench/SEEDS.md` for the benchmark method.
+
+For task coverage and evaluations, read `docs/task-coverage.md` and `docs/evaluations.md`. Preserve fixed expected outcomes independently of model replies. Deterministic cases must make no network calls; paid provider evaluation requires explicit `--live`. Never describe synthetic evidence as a live application run.

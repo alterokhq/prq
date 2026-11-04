@@ -20,3 +20,5 @@ node scripts/smoke-package.mjs
 The package check installs production dependencies with lifecycle scripts disabled, checks the published file list and runs the installed command without model credentials. On CLI versions with `show`, it also reads a historical report as full JSON.
 
 These checks do not evaluate live models, run an application browser journey, publish npm packages or deploy anything. Paid evaluations and releases need separate, explicit workflows. A green CI run establishes the checks above, not that every claim about a change is true.
+
+`pnpm test` includes the fixed core-loop evaluation cases and the built `prq eval` CLI flow. These run with intercepted synthetic model responses and no provider keys. Paid `--live` evaluation is explicit and is not part of CI.

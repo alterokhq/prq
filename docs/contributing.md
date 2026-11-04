@@ -10,6 +10,7 @@ Use an isolated worktree. Coordinate shared interfaces, schemas, manifests, and 
 pnpm install --frozen-lockfile
 pnpm build
 pnpm test
+node packages/cli/dist/index.js eval --json
 pnpm typecheck
 pnpm lint
 node packages/cli/dist/index.js --help
@@ -47,3 +48,5 @@ A fixture's expected counts, a generated card, or a compiled CLI is not proof th
 Do not commit API keys, `.env`, run artifacts, personal paths, or organization-specific integration plans. Public setup instructions must work from a checkout without private documents. Preserve genuine dependency and asset attribution.
 
 Use Biome for formatting and linting, vitest for tests, and tsdown for builds. Keep commits small enough to review, with an imperative one-line message describing the user-visible change. A handoff should include the commit, behavior changed, checks actually run, and remaining limitations.
+
+For coverage changes, test missing/uncertain requirements, invalid references, independent check selection, fresh reruns and provider failure. Preserve the distinction between a model assessment and observed implementation evidence. [Evaluation cases](evaluations.md) keep expected outcomes separate from judgments.

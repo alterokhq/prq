@@ -9,7 +9,8 @@ import { expect, it } from "vitest";
 const cli = fileURLToPath(new URL("../dist/index.js", import.meta.url));
 const handoff = {
   format: "prq-claims/v1",
-  task: "Make the help text readable.",
+  // Taskless compatibility path; task-bearing runs are exercised with intercepted providers.
+  task: undefined,
   source: "The help text is readable.",
   unfinished: [],
   claims: [{ id: "help", text: "The help text is readable.", kind: "human" }],
