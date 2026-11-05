@@ -12,6 +12,7 @@ import {
 import { Command, InvalidArgumentError, Option } from "commander";
 import { execa } from "execa";
 import { agentJson, clip, fullJson } from "./agent-output.js";
+import { EvaluationIssue, evaluate } from "./evaluate.js";
 import { checkHandoff } from "./gate.js";
 import { HandoffIssue } from "./handoff.js";
 import { initProject } from "./init.js";
@@ -227,6 +228,40 @@ program
     );
     process.exitCode = exitCode;
   });
+program
+  .command("eval")
+  .description("evaluate fixed cases offline, or explicitly call a provider with --live")
+  .option("--live", "paid provider judgment of synthetic evidence and task coverage")
+  .option("--case <ids>", "comma-separated case IDs, or all", "all")
+  .option("--out <file>", "write a new JSON artifact without overwriting a previous run")
+  .option("--json", "complete machine-readable evaluation report")
+  .option("--provider <provider>", "openai or openrouter")
+  .option("--model <model>", "task coverage model")
+  .option("--judge-model <model>", "claim judge model")
+  .option("--decision-mode <mode>", "decisions or structured")
+  .option("--timeout <ms>", "timeout per model request", timeout)
+  .action(async (_options: unknown, command: Command) => {
+    const options = command.optsWithGlobals<Parameters<typeof evaluate>[0] & { json?: boolean }>();
+    const report = await evaluate(options);
+    if (options.json) process.stdout.write(`${JSON.stringify(report)}\n`);
+    else {
+      process.stdout.write(`PRQ evaluations (${report.mode})\n${report.scope}\n`);
+      for (const row of report.cases)
+        process.stdout.write(
+          `${row.matched ? "PASS" : "FAIL"} ${row.id}: expected ${row.expected}, actual ${row.actual} [${row.execution}]\n`,
+        );
+      process.stdout.write(
+        `${report.summary.matched}/${report.summary.total} matched; ${report.summary.false_passes} false passes; ${report.summary.false_alarms} false alarms; ${report.summary.duration_ms} ms\n`,
+      );
+      process.stdout.write(
+        report.summary.cost_complete
+          ? `cost $${report.summary.cost_usd}\n`
+          : `reported cost ${report.summary.reported_cost_usd ?? "unavailable"}; total unavailable\n`,
+      );
+      if (options.out) process.stdout.write(`Report: ${resolve(options.out)}\n`);
+    }
+    process.exitCode = report.summary.mismatched ? 1 : 0;
+  });
 program.parseAsync().catch((issue: unknown) => {
   const status =
     issue instanceof Error && "statusCode" in issue && typeof issue.statusCode === "number"
@@ -234,6 +269,7 @@ program.parseAsync().catch((issue: unknown) => {
       : undefined;
   const message =
     issue instanceof UsageIssue ||
+    issue instanceof EvaluationIssue ||
     issue instanceof ProjectIssue ||
     issue instanceof HandoffIssue ||
     issue instanceof ClaimExtractionIssue ||

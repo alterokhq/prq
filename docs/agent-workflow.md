@@ -43,9 +43,9 @@ After implementing and committing the change, the builder writes `.pr/claims.jso
 }
 ```
 
-Use unique, stable IDs and exact wording from `source`. PRQ rejects empty claim lists, duplicate IDs, non-verbatim text and supplied verdicts. `kind` is `command`, `browser` or `human`. Command checks use `check.command`; browser checks can use `check.path` and `check.setup`. The original task is optional context saved for inspection. `unfinished` defaults to an empty array; list known unfinished work explicitly.
+Use unique, stable IDs and exact wording from `source`. PRQ rejects empty claim lists, duplicate IDs, non-verbatim text and supplied verdicts. `kind` is `command`, `browser` or `human`. Command checks use `check.command`; browser checks can use `check.path` and `check.setup`. The original task is optional. When supplied, it enables [task coverage and independent check selection](task-coverage.md), including two additional model requests. `unfinished` defaults to an empty array; list known unfinished work explicitly.
 
-This input skips model extraction and classification. The builder's routes and commands are proposals; command execution still uses the project's allowlist, and completed evidence receives independent judgment. Model credentials are required for verification. The full source and task stay in the report; the tester and judge do not receive the builder's reasoning.
+Explicit input skips claim extraction. With a nonempty task, PRQ extracts requirements separately and selects checks without seeing the builder's proposed routes or recipes. Without a task, the supplied routes are used. Command execution still uses the project's allowlist, and completed evidence receives independent judgment. Model credentials are required for verification. The source and task stay in the report. The task also goes to the coverage model; the evidence judge does not receive it or the builder's reasoning.
 
 From the repository root:
 
@@ -81,7 +81,7 @@ Before creating the PR, run:
 prq gate <report> --claims-json .pr/claims.json --json
 ```
 
-The gate makes no model calls and needs no API key. It requires the exact supplied claims and handoff, current commit, a clean working tree, no unfinished work, and every claim either held or explicitly accepted by a named reviewer. It reads claim rows rather than trusting summary counters. Ignored files, including `.pr/`, do not make the working tree dirty.
+The gate makes no model calls and needs no API key. It requires the exact supplied claims and handoff, current commit, a clean working tree, no unfinished work, matching complete task coverage when a task is supplied, and every claim either held or explicitly accepted by a named reviewer. It reads claim rows rather than trusting summary counters. Ignored files, including `.pr/`, do not make the working tree dirty.
 
 | Exit | Strict verification and gate |
 | --- | --- |
@@ -100,3 +100,5 @@ Command evidence covers the recorded commit. Browser evidence covers the supplie
 If unfinished work or task scope changes, create a new explicit handoff and run while retaining the earlier report. A rerun cannot silently clear unfinished work or weaken the original promises.
 
 The optional Stop hook remains an informal completion-message check. It is separate from this explicit before-PR workflow.
+
+Coverage is model-assessed and can miss requirements. A handoff without the original task cannot establish whether work was omitted. Consumers should supply the original task independently and keep CI/review enabled. See [coverage compatibility and repair](task-coverage.md).

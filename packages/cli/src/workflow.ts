@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import { basename, isAbsolute, join, relative, resolve } from "node:path";
 import {
   applyVerdict,
+  assessTaskCoverage,
   type Claim,
   classifyClaims,
   createModel,
@@ -15,6 +16,7 @@ import {
   type ModelUsage,
   modelUsage,
   type ProofRequest,
+  plannedClaims,
   type Runner,
   type RunResult,
   resolveProvider,
@@ -202,6 +204,31 @@ export async function runProof(
         /* Extracted routes remain explicit; execution still determines evidence. */
       }
     }
+    const task = handoff?.task ?? previous?.handoff?.task;
+    const coverageReceipts = new Map<string, (receipt: ModelReceipt) => void>();
+    const coverage = await assessTaskCoverage(
+      { task, claims, commands: availableCommands, previous: previous?.coverage },
+      {
+        model,
+        timeoutMs,
+        onRequest: (stage) => {
+          coverageReceipts.set(stage, account(stage, selection.model));
+        },
+        onUsage: (stage, receipt) => coverageReceipts.get(stage)?.(receipt),
+      },
+    );
+    claims = plannedClaims(claims, coverage);
+    const blockedChecks = new Map<string, string>();
+    if (coverage.status === "unavailable")
+      for (const claim of claims) blockedChecks.set(claim.id, coverage.reason);
+    if (coverage.status === "assessed")
+      for (const plan of coverage.checks) {
+        if (plan.kind === null)
+          blockedChecks.set(
+            plan.claim_id,
+            `No independent check could be selected. ${plan.reason}`,
+          );
+      }
     if (lockClaims(claims) !== hash) throw new UsageIssue("Claim text changed after locking.");
     const subject = {
       repo: basename(root),
@@ -213,7 +240,16 @@ export async function runProof(
     view.start({ subject, claims, hash });
     const results = new Map<string, RunResult>();
     const completed = new Map<string, Claim>();
-    for (const claim of claims.filter((c) => c.kind === "human")) {
+    for (const claim of claims.filter((c) => blockedChecks.has(c.id))) {
+      const row = applyVerdict(
+        claim,
+        unverified(blockedChecks.get(claim.id) ?? "Independent check planning unavailable."),
+        { verdict: "unverified" },
+      );
+      completed.set(claim.id, row);
+      view.resolve(row);
+    }
+    for (const claim of claims.filter((c) => c.kind === "human" && !blockedChecks.has(c.id))) {
       const human: Claim = { ...claim, verdict: "needs_human", assignee: null, signoff: null };
       completed.set(claim.id, human);
       view.resolve(human);
@@ -221,7 +257,7 @@ export async function runProof(
     const runners: Runner[] = [e2eRunner, shellRunner];
     await Promise.all(
       runners.map(async (runner) => {
-        const candidates = claims.filter((c) => c.kind === runner.kind);
+        const candidates = claims.filter((c) => c.kind === runner.kind && !blockedChecks.has(c.id));
         const routed = candidates.filter((c) => {
           if (c.kind !== "command" || isVerificationCommand(c.check?.command, availableCommands))
             return true;
@@ -294,7 +330,7 @@ export async function runProof(
     );
     const inputs = await Promise.all(
       claims
-        .filter((c) => c.kind !== "human")
+        .filter((c) => c.kind !== "human" && !blockedChecks.has(c.id))
         .map(async (claim) => {
           const result = results.get(claim.id) ?? unverified("No runnable check was produced.");
           return { claim, result, screenshotDataUrls: await screenshots(result, runDir) };
@@ -346,6 +382,7 @@ export async function runProof(
           ? { handoff: previous.handoff }
           : {}),
       claims: rows,
+      coverage,
       summary: summarize(rows),
       configuration: {
         provider: selection.provider,

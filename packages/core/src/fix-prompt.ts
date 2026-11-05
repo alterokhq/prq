@@ -1,3 +1,4 @@
+import { coverageIssues } from "./coverage.js";
 import type { ProofRequest } from "./schema.js";
 import { tokenCount } from "./tokens.js";
 /** Full claims stay in the artifact. Omit whole rows rather than weakening their wording. */
@@ -5,9 +6,10 @@ export function fixPrompt(pr: ProofRequest): string {
   const broken = pr.claims.filter(
     (c) => c.verdict === "broken" || c.signoff?.decision === "rejected",
   );
-  if (!broken.length) return "";
-  const header = `Fix the code. Keep the claims locked at ${pr.source.hash.slice(7, 14)}.\n`;
-  const footer = `\nFull evidence: .pr/runs/${pr.id}/proof-request.json\nThen run from the repository root:\nprq rerun --run .pr/runs/${pr.id}/proof-request.json`;
+  const gaps = coverageIssues(pr);
+  if (!broken.length && !gaps.length) return "";
+  const header = `Fix the code. Keep the claims locked at ${pr.source.hash.slice(7, 14)}.\n${gaps.length ? "Task coverage is unresolved. Inspect the requirements and selected checks in the report. Rerun assessment failures; add omitted promises in a NEW handoff and run, never by editing the old lock.\n" : ""}`;
+  const footer = `\nFull evidence: .pr/runs/${pr.id}/proof-request.json\n${gaps.length ? "For unchanged claims, rerun from the repository root:" : "Then run from the repository root:"}\nprq rerun --run .pr/runs/${pr.id}/proof-request.json`;
   let body = "";
   let included = 0;
   for (const claim of broken) {

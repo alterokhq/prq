@@ -13,7 +13,7 @@ completion message
   → fix prompt → fresh rerun with the same claim lock
 ```
 
-Explicit `prq-claims/v1` input supplies claims and routes directly, skipping extraction and classification. The offline CLI gate compares a saved report with that handoff and the current checkout before a consumer creates a PR. See [agent workflow](agent-workflow.md).
+Explicit `prq-claims/v1` input supplies claims directly, skipping claim extraction. When it includes a task, a separate assessment extracts verbatim requirements, maps them to locked claims and independently selects checks without seeing the builder's proposed routes. Without a task, the supplied routes are used. The offline CLI gate compares a saved report with that handoff and the current checkout before a consumer creates a PR. See [agent workflow](agent-workflow.md).
 
 ## Package boundaries
 
@@ -39,7 +39,7 @@ Named signoff updates the selected run and latest-report alias. Historical gener
 
 ## Execution contexts
 
-The author supplies completion text. Extraction turns it into explicit claims and candidate checks. Each browser assertion receives the claim, a fresh browser test context, and any generated setup; it does not receive the author's reasoning. The judge receives the claim, bounded interaction evidence, and the first and final recorded screenshots where available. Command judgment receives exit status and recognized numeric test summaries; raw command output is retained in the artifact. It is not given source files.
+The author supplies completion text. Extraction turns it into explicit claims and candidate checks. Each browser assertion receives the claim, a fresh browser test context, and any generated setup; it does not receive the author's reasoning. The judge receives the claim, bounded interaction evidence, and the first and final recorded screenshots where available. Command judgment receives exit status and structured numeric test summaries; raw command output is retained in the artifact. It is not given source files.
 
 Browser checks operate on an already running HTTP(S) URL. The report records that URL and the checkout's commit, but their correspondence is not established. The availability request only proves that the URL answered before checking. It must not be presented as evidence of a UI claim.
 
@@ -65,3 +65,5 @@ A recorded contradiction can remain broken when the judge is unavailable. Missin
 Provider selection is independent of the runner and consumer application. Extraction uses the selected AI SDK provider. Direct OpenAI retains Decisions classification and judgment by default; OpenRouter and explicit `--decision-mode structured` use separate structured AI SDK calls. The browser runner creates a temporary configuration beside the target configuration, preserving app setup but supplying an independent agent and the selected model. It never writes credentials into that file. Decisions defaults to `gpt-6-luna`; structured judgment defaults to the selected main model. Changing decision modes can change verdicts and requires fresh evaluations. Recorded judge probabilities are model assessments, not calibrated accuracy estimates.
 
 Report accounting contains only allowlisted metadata. OpenRouter's returned costs are retained; missing cost, failed requests and unmeasured browser costs remain unknown. A known subtotal cannot become a complete total. Retries are disabled for extraction and independent decision calls. See [report format](report-format.md) for the output and accounting contracts.
+
+Task coverage lives alongside claim verdicts. Strict completion and the offline gate require a matching completed assessment when a task is supplied. Coverage is a model assessment of promises, not proof of implementation or complete extraction. The [evaluation command](evaluations.md) compares fixed expectations with production policy and optional live judgment; it does not execute a consumer application.

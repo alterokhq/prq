@@ -1,5 +1,11 @@
 import { stripVTControlCharacters } from "node:util";
-import type { Claim, DraftClaim, ProofRequest } from "@prq/core";
+import {
+  type Claim,
+  coverageIssues,
+  coverageSummary,
+  type DraftClaim,
+  type ProofRequest,
+} from "@prq/core";
 import stringWidth from "string-width";
 
 export interface TerminalStream {
@@ -380,6 +386,12 @@ export function createTerminalView(
         } else draw();
         drawnLines = 0;
       }
+      const coverageProblems = coverageIssues(pr);
+      const coverageLines = [coverageSummary(pr), ...coverageProblems.slice(0, 5)];
+      if (coverageProblems.length > 5)
+        coverageLines.push("More coverage issues are in the full report.");
+      for (const line of coverageLines)
+        write(`  ${wrapCells(plain(line), contentWidth).join("\n  ")}\n`);
       const s = pr.summary;
       const reported = pr.timing?.reported_cost_usd;
       const cost = pr.timing?.cost_usd;

@@ -22,6 +22,10 @@ The claim lock is SHA-256 over the ordered claim IDs and exact text. Reruns pres
 
 `subject.project` records the selected directory relative to the repository root, using `/` separators and `.` for the root. Reports without this field are treated as root-project runs. Explicit builder input adds `handoff` with `format: "prq-claims/v1"`, optional `task`, and `unfinished`. Reruns retain those fields. See the [handoff contract](agent-workflow.md#submit-explicit-claims).
 
+## Task coverage
+
+The optional `coverage` field records `not_requested`, `unavailable` or `assessed`. Assessed coverage contains task/claim hashes, verbatim requirements with claim references and status, and independently selected check plans. It does not change the claim lock or the four verdict counts. See [task coverage](task-coverage.md). Old artifacts remain readable; an old task-bearing report needs a fresh assessment before strict handoff.
+
 ## Terminal JSON
 
 `--json` emits the entire report, plus an absolute `report` path that locates its saved artifact. It includes every claim and evidence field without a token limit. This path is CLI metadata, not a field in the stored artifact schema. The original completion text remains in `source.text`.
@@ -32,7 +36,7 @@ If setup or extraction fails before a report exists, machine-readable output is 
 
 ## Models and cost
 
-`configuration` records the selected provider, model and judge model without credentials. `model_usage` records stages whose request or external browser process was started, selected provider/model, status, available input/output token counts and provider-reported `cost_usd`. A completed request means a response was received; it does not imply the claim held.
+`configuration` records the selected provider, model and judge model without credentials. `model_usage` records stages, including `requirements` and `coverage`, whose request or external browser process was started, selected provider/model, status, available input/output token counts and provider-reported `cost_usd`. A completed request means a response was received; it does not imply the claim held.
 
 OpenRouter costs are read from its response metadata. Decisions calls expose neither token nor cost accounting here. Direct OpenAI calls do not expose dollar costs in this implementation. Browser-runner accounting is currently unavailable and is recorded as `external`, with null counts and cost. No estimates or provider prices are silently substituted.
 

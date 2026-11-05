@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { TaskCoverage } from "./coverage-schema.js";
 import { TestSummary } from "./test-results.js";
 
 export const ClaimKind = z.enum(["browser", "command", "human"]);
 export const Verdict = z.enum(["held", "broken", "needs_human", "unverified"]);
 
 export const ModelUsage = z.object({
-  stage: z.enum(["extraction", "classification", "judge", "browser"]),
+  stage: z.enum(["extraction", "classification", "requirements", "coverage", "judge", "browser"]),
   provider: z.enum(["openai", "openrouter"]),
   model: z.string(),
   status: z.enum(["completed", "unavailable", "external"]),
@@ -86,6 +87,7 @@ export const ProofRequest = z.object({
     hash: z.string(),
   }),
   claims: z.array(Claim),
+  coverage: TaskCoverage.optional(),
   summary: z.object({
     held: z.number().int(),
     broken: z.number().int(),

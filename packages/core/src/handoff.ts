@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { coverageIssues } from "./coverage.js";
 import { DraftClaim, type ProofRequest } from "./schema.js";
 
 export const ClaimsHandoff = z
@@ -34,6 +35,7 @@ export function verificationExitCode(pr: ProofRequest, strict = false): 0 | 1 | 
   if (
     strict &&
     (!pr.claims.length ||
+      coverageIssues(pr).length > 0 ||
       pr.handoff?.unfinished.length ||
       pr.claims.some(
         (c) =>

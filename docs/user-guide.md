@@ -133,6 +133,10 @@ The table above describes non-strict runs. Strict verification also blocks unsig
 
 Test-suite claims require a fresh [structured test report](test-evidence.md). Exit zero and console summaries alone no longer establish that a suite passed. Vitest and Playwright reporters preserve skipped tests, retries and setup failures.
 
+A handoff with a nonempty task also gets [task coverage and independent check selection](task-coverage.md). Missing or uncertain coverage blocks strict handoff without rewriting claims. This sends the task to the selected main model and adds up to two requests per run.
+
+Run `prq eval` for no-key safeguard regressions, or explicitly opt into paid judgment with `prq eval --live`. See [evaluations](evaluations.md) for scope, case selection and JSON results.
+
 ## Global command and Codex hook
 
 After project installation, use `npx prq`. Install globally if you want the bare `prq` command, commands copied from reports, or the optional Codex Stop hook:
