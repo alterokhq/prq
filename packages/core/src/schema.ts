@@ -73,6 +73,13 @@ export const ProofRequest = z.object({
     .max(80)
     .regex(/^[A-Za-z0-9_-]+$/),
   created_at: z.iso.datetime(),
+  execution: z
+    .object({
+      location: z.enum(["local", "ci"]),
+      executor: z.enum(["cli", "dagger", "github_actions"]),
+      application_revision: z.literal("unknown"),
+    })
+    .optional(),
   subject: z.object({
     repo: z.string().optional(),
     base: z.string().optional(),

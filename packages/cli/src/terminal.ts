@@ -409,6 +409,10 @@ export function createTerminalView(
       if (models.length)
         write(`  ${wrap(`models ${models.join(" · ")}`, contentWidth).join("\n  ")}\n`);
       write(`  ${costLine}\n`);
+      if (pr.execution)
+        write(
+          `  ${pr.execution.location} · ${pr.execution.executor} · commit ${plain(pr.subject.head)} · application revision unknown\n`,
+        );
       if (live) {
         const duration =
           pr.timing?.total_ms === undefined ? "" : `${(pr.timing.total_ms / 1000).toFixed(1)}s`;

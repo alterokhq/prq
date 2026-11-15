@@ -1,0 +1,71 @@
+"""
+Run PRQ in a caller-prepared environment. PRQ owns claims and verdict policy.
+"""
+type Prq {
+  let environment: Container!
+  let report: File!
+  let adapters: Directory!
+  let cli: String!
+  let head: String!
+  let nonce: String!
+  let location: String!
+
+  new(
+    environment: Container!,
+    report: File!,
+    adapters: Directory!,
+    cli: String!,
+    head: String!,
+    nonce: String!,
+    location: String! = "local",
+  ) {
+    self.environment = environment
+    self.report = report
+    self.adapters = adapters
+    self.cli = cli
+    self.head = head
+    self.nonce = nonce
+    self.location = location
+    self
+  }
+
+  # The caller supplies a fresh nonce on EVERY invocation. It invalidates the
+  # execution layer, not just Dagger's function cache. Setup remains cacheable.
+  let executed: Container! {
+    environment
+      .withDirectory("/prq-adapters", adapters)
+      .withFile("/prq-input/report.json", report)
+      .withEnvVariable("PRQ_EXECUTION_NONCE", nonce)
+      .withExec([
+        "node", "/prq-adapters/portable-run.mjs", "--cli", cli,
+        "--report", "/prq-input/report.json", "--head", head,
+        "--location", location, "--executor", "dagger",
+        "--output", "/prq-output", "--collect",
+      ], disableDaggerInDagger: true)
+  }
+
+  """
+  Native Dagger check. Reuse PRQ's strict exit code without rejudging evidence.
+  """
+  pub verification: Void @check {
+    executed.withExec([
+      "node", "-e",
+      "process.exit(JSON.parse(require('node:fs').readFileSync('/prq-output/execution.json')).exit_code)",
+    ], disableDaggerInDagger: true).sync
+    null
+  }
+
+  """
+  Export even when verification fails. Includes full report and transport outcome.
+  """
+  pub reports: Directory! {
+    executed.directory("/prq-output")
+  }
+
+  """
+  All original evidence and logs, preserved independently of the check outcome.
+  """
+  pub evidence: Directory! {
+    executed.directory(".pr/runs")
+  }
+}
