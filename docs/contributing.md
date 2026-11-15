@@ -50,3 +50,18 @@ Do not commit API keys, `.env`, run artifacts, personal paths, or organization-s
 Use Biome for formatting and linting, vitest for tests, and tsdown for builds. Keep commits small enough to review, with an imperative one-line message describing the user-visible change. A handoff should include the commit, behavior changed, checks actually run, and remaining limitations.
 
 For coverage changes, test missing/uncertain requirements, invalid references, independent check selection, fresh reruns and provider failure. Preserve the distinction between a model assessment and observed implementation evidence. [Evaluation cases](evaluations.md) keep expected outcomes separate from judgments.
+
+## Pull requests
+
+Write for a contributor who has the repository but none of your conversation or planning history. The title should name the concrete fix or capability. The description should explain the problem, the resulting behavior and why the change matters without requiring another document. Public issues and evidence can supply supporting detail.
+
+Use the [PR template](../.github/PULL_REQUEST_TEMPLATE.md) as a starting point:
+
+- **Summary:** explain what failed or was missing and what happens after this change. Include a short before/after example when it helps. Describe the final change rather than listing edited files or narrating how it was built.
+- **Verification:** describe the behavior you actually exercised and what you observed. Link relevant CI or artifacts rather than repeating every check and test count. Distinguish fixtures and simulated provider responses from live application runs. State meaningful gaps, including checks you could not run and why.
+
+Add compatibility changes, migration steps and limitations when they affect users or review. Update user documentation when behavior changes. Two short paragraphs are enough for a small fix; remove empty sections rather than filling them with boilerplate. For documentation changes, check examples, commands and links as appropriate and report those checks.
+
+Keep private planning links, internal project identifiers, unrelated product names, personal machine paths and agent work history out of titles, descriptions and review replies. Explain a bug discovered in another application with a portable reproduction or example. Preserve relevant dependency attribution and name integrations when they are part of the change.
+
+Before opening or updating a PR, read its description on its own: can a new contributor understand the change, its evidence and its limits? Update the description when the implementation changes, and distinguish pending checks from completed results. These conventions apply equally to human and agent authors; the template is a writing aid, not proof that its statements are true.
