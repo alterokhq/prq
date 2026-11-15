@@ -10,7 +10,7 @@ it("reruns locked human claims with inherited JSON flags and a unique report", a
   const root = await mkdtemp(join(tmpdir(), "prq-cli-rerun-"));
   try {
     const git = (args: string[]) => {
-      const result = spawnSync("git", args, { cwd: root, encoding: "utf8" });
+      const result = spawnSync("git", args, { cwd: root, encoding: "utf8", timeout: 10_000 });
       if (result.status !== 0) throw new Error(result.stderr);
     };
     git(["init"]);
@@ -42,6 +42,7 @@ it("reruns locked human claims with inherited JSON flags and a unique report", a
     const result = spawnSync(process.execPath, [cli, "rerun", "--json", "--quiet", "--no-open"], {
       cwd: root,
       encoding: "utf8",
+      timeout: 10_000,
       env: { ...process.env, OPENAI_API_KEY: "fixture-only-unused" },
     });
     expect(result.status).toBe(0);
@@ -61,6 +62,7 @@ it("reruns locked human claims with inherited JSON flags and a unique report", a
     const shown = spawnSync(process.execPath, [cli, "show", "--json"], {
       cwd: root,
       encoding: "utf8",
+      timeout: 10_000,
       env: { PATH: process.env.PATH },
     });
     expect(shown.status).toBe(0);
@@ -74,6 +76,7 @@ it("reruns locked human claims with inherited JSON flags and a unique report", a
       {
         cwd: root,
         encoding: "utf8",
+        timeout: 10_000,
         env: { PATH: process.env.PATH },
       },
     );
@@ -88,7 +91,8 @@ it("reruns locked human claims with inherited JSON flags and a unique report", a
   } finally {
     await rm(root, { recursive: true, force: true });
   }
-});
+  // Three CLI startups plus Git setup share this budget on slower CI hosts.
+}, 30_000);
 
 it.each(["open", "render"])(
   "guides users of removed %s to show with an unavailable exit code",
