@@ -5,6 +5,7 @@
 - [Agent workflow: explicit claims, projects and the before-PR gate](agent-workflow.md)
 - [Task coverage and independent check selection](task-coverage.md)
 - [Repeatable CLI evaluations](evaluations.md)
+- [Portable execution prototype: CI and Dagger](portable-execution.md)
 - [Structured test evidence and framework reporters](test-evidence.md)
 - [Proof Request format spec](../SPEC.md)
 - [Report files and JSON format](report-format.md)

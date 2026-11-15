@@ -45,3 +45,12 @@ OpenRouter costs are read from its response metadata. Decisions calls expose nei
 ## Historical evidence
 
 The independent format is defined in [SPEC.md](../SPEC.md). The [recorded six-claim search demo](../examples/search/README.md) and [external experiments](../bench/external/README.md) retain their original 0.1 artifacts, including historical HTML where present. These are evidence of their recorded builds, not live validation of 0.2 or its new provider adapters. Saving a historical run archives its generated pages with `.pre-0.2` filenames; they no longer represent the current JSON. The legacy renderer package remains for historical consumers and is no longer bundled into the CLI.
+
+## Execution context
+
+New reports optionally include `execution.location` (`local` or `ci`),
+`execution.executor` (`cli`, `dagger` or `github_actions`), and
+`execution.application_revision` (`unknown`). The checked source commit remains
+`subject.head`. These fields describe the reporting process, not an attestation
+that the externally running app serves that commit. Historical reports without
+these fields have unknown execution context. See [portable execution](portable-execution.md).

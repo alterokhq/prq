@@ -1,0 +1,27 @@
+name: Rerun PRQ claims
+description: Rerun locked promises against an explicitly selected commit using the prepared runner environment.
+inputs:
+  cli:
+    description: Path to the built PRQ CLI entry file, relative to working-directory or absolute.
+    required: true
+  report:
+    description: Original PRQ JSON report containing the locked claims.
+    required: true
+  head:
+    description: Full pull request head SHA. The checkout must match exactly.
+    required: true
+  working-directory:
+    description: Repository checkout, relative to GITHUB_WORKSPACE.
+    default: .
+outputs:
+  exit-code:
+    description: PRQ strict exit code, 0 complete, 1 broken, 2 unresolved.
+  report:
+    description: Fresh full report path, empty if execution did not produce one.
+  evidence-directory:
+    description: Directory to retain with always() even when verification fails.
+  execution-directory:
+    description: Transport outcome and a copy of the fresh report, when available.
+runs:
+  using: node24
+  main: scripts/github-action.mjs

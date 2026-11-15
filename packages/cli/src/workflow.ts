@@ -28,6 +28,7 @@ import { e2eRunner } from "@prq/runner-e2e";
 import { shellRunner } from "@prq/runner-shell";
 import { execa } from "execa";
 import { isVerificationCommand, verificationSetup } from "./commands.js";
+import { executionContext } from "./execution.js";
 import { readHandoff } from "./handoff.js";
 import { selectProject } from "./project.js";
 import { saveProof } from "./storage.js";
@@ -116,6 +117,7 @@ export async function runProof(
   previous?: ProofRequest,
 ): Promise<{ pr: ProofRequest; reportPath: string }> {
   const started = Date.now();
+  const execution = executionContext();
   const project = await selectProject(
     root,
     options.project ?? (previous ? (previous.subject.project ?? ".") : undefined),
@@ -372,6 +374,7 @@ export async function runProof(
       version: "0.2",
       id,
       created_at: new Date().toISOString(),
+      execution,
       subject,
       source: { kind: source.kind, text: source.text, hash },
       ...(handoff
