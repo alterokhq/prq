@@ -75,6 +75,8 @@ Copy per-claim logs and screenshots into each run. Recorded artifacts include `.
 
 ## Contribution conventions
 
+Follow [the pull request guidance](docs/contributing.md#pull-requests) and [PR template](.github/PULL_REQUEST_TEMPLATE.md) when opening or updating a PR. Write a self-contained problem, resulting behavior and observed verification for a public contributor. Keep private planning references, internal product names, personal paths and agent work history out of PR descriptions and review replies. Link evidence, distinguish simulated checks from live runs, and state relevant validation gaps. Keep the description current with the final implementation.
+
 Use isolated worktrees and clear ownership boundaries. Integrate contract changes before dependent work. Biome formats and lints, vitest tests, and tsdown builds packages. The executable bundles to one entry file; framework reporters have separate exports and a shared output helper, with no runtime framework dependencies. Run checks appropriate to the change and report only checks executed. Never commit secrets, environment files, run artifacts, or personal data. Commit messages are imperative, one line, and describe the user-visible change.
 
 See `docs/README.md` for contributor documentation and `bench/SEEDS.md` for the benchmark method.
