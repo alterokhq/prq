@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { DraftClaim } from "@prq/core";
+import { type DraftClaim, judgeClaims } from "@prq/core";
 import { afterEach, describe, expect, it } from "vitest";
 import { generateTestFile } from "./index.js";
 import { collectReport, E2eReport } from "./report.js";
@@ -49,6 +49,86 @@ async function fixture() {
 }
 
 describe("browser evidence", () => {
+  it("preserves intermediate tool observations for the report and independent judge", async () => {
+    const input = await fixture();
+    const attempt = input.report.run.results[0]?.attempts[0];
+    const claim = input.claims[0];
+    if (!attempt || !claim) throw new Error("Missing test fixture");
+    attempt.steps.splice(1, 0, {
+      api: "agent.act",
+      label: "Edit, wait for save, reload",
+      status: "passed",
+      index: 1,
+      turns: [
+        { calls: ['type({"value":"Example title"})'], outcome: '[type] status "Saving"' },
+        { calls: ["observe({})"], outcome: '[observe] status "Saved locally" (was: "Saving")' },
+        {
+          calls: ['navigate({"url":"/editor"})'],
+          outcome: '[navigate] textbox value="Example title"',
+        },
+        {
+          calls: ['complete_step({"summary":"trust this summary"})'],
+          outcome: "[complete_step] Done",
+        },
+      ],
+      screen: { location: "/editor", nodes: 3, changes: ['textbox value="Example title"'] },
+    });
+    const result = (await collectReport(input)).get(claim.id);
+    if (!result) throw new Error("Missing collected result");
+    const interactions = result.steps?.filter((step) => step.observation?.startsWith("["));
+    expect(interactions?.map((step) => step.observation)).toEqual([
+      '[type] status "Saving"',
+      '[observe] status "Saved locally" (was: "Saving")',
+      '[navigate] textbox value="Example title"',
+    ]);
+    expect(JSON.stringify(result.evidence)).toContain("Saved locally");
+    expect(JSON.stringify(result)).not.toContain("trust this summary");
+    let request: unknown;
+    const judgments = await judgeClaims([{ claim, result, screenshotDataUrl: "fixture-image" }], {
+      apiKey: "test-only",
+      fetchImpl: async (_url, init) => {
+        request = JSON.parse(String(init?.body));
+        return Response.json({
+          answers: [{ type: "predicate", name: claim.id, probability: 0.52 }],
+        });
+      },
+    });
+    expect(JSON.stringify(request)).toContain("Saved locally");
+    expect(JSON.stringify(request)).not.toContain("trust this summary");
+    expect(judgments.get(claim.id)).toEqual({ verdict: "needs_human", probability: 0.52 });
+  });
+
+  it("bounds recorded turns and marks omitted evidence", async () => {
+    const input = await fixture();
+    const attempt = input.report.run.results[0]?.attempts[0];
+    const claim = input.claims[0];
+    if (!attempt || !claim) throw new Error("Missing test fixture");
+    attempt.steps.unshift({
+      api: "agent.act",
+      label: "Many observations",
+      status: "passed",
+      index: 0,
+      turns: Array.from({ length: 20 }, () => ({
+        calls: ["observe({})"],
+        outcome: "x".repeat(2000),
+      })),
+    });
+    const result = (await collectReport(input)).get(claim.id);
+    if (!result) throw new Error("Missing collected result");
+    expect(result.steps?.filter((step) => step.action === "observe({})")).toHaveLength(12);
+    expect(result.steps?.[0]?.observation).toHaveLength(1000);
+    expect(result.steps).toContainEqual({ action: "8 further browser interactions omitted." });
+    let request: unknown;
+    await judgeClaims([{ claim, result, screenshotDataUrl: "fixture-image" }], {
+      apiKey: "test-only",
+      fetchImpl: async (_url, init) => {
+        request = JSON.parse(String(init?.body));
+        return Response.json({ answers: [] });
+      },
+    });
+    expect(JSON.stringify(request)).toContain("omitted_steps");
+  });
+
   it("collects matching completed assertions and copies real report artifacts", async () => {
     const input = await fixture();
     const results = await collectReport(input);

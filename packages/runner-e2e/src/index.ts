@@ -44,7 +44,9 @@ export const e2eRunner: Runner = {
         return pending("Install e2e in the target project before checking browser claims.");
       const files = planTestFiles(claims, project, ctx.testFile);
       return await withTestFiles(files, async () => {
-        const reportDir = join(ctx.worktree, ".pr", "e2e", randomUUID());
+        // e2e requires its output to stay inside the selected project, including
+        // when that project is a subdirectory of the repository.
+        const reportDir = join(project, ".pr", "e2e", randomUUID());
         await mkdir(reportDir, { recursive: true });
         for (const claim of claims) ctx.onProgress?.(claim.id, "checking the running application");
         const subprocessStarted = Date.now();

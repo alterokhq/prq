@@ -21,6 +21,7 @@ const Step = z.object({
   events: z
     .array(z.object({ kind: z.string(), status: z.string(), detail: z.string().optional() }))
     .optional(),
+  turns: z.array(z.object({ calls: z.array(z.string()), outcome: z.string() })).optional(),
   explanation: z.string().optional(),
   error: ErrorDetail.optional(),
   cache: z.object({ mode: z.string(), replayedActions: z.number().optional() }).optional(),
@@ -140,6 +141,24 @@ export async function collectReport({
         (step) => step.api === "agent.act" && (step.cache?.replayedActions ?? 0) > 0,
       );
       for (const step of attempt.steps) {
+        // Step-end screen diffs can miss transient states seen between actions.
+        // Forward recorded tool results, never the agent's complete_step summary.
+        const turns = (step.turns ?? []).filter(
+          (turn) =>
+            turn.calls.length > 0 && !turn.calls.some((call) => /^complete_step\(/.test(call)),
+        );
+        for (const turn of turns.slice(0, 12)) {
+          const action = turn.calls.join("; ").slice(0, 300);
+          const observation = turn.outcome.slice(0, 1000);
+          steps.push({ action, observation });
+          evidence.push({
+            type: "note",
+            text: `Recorded browser interaction: ${action}\n${observation}`,
+            step: step.index,
+          });
+        }
+        if (turns.length > 12)
+          steps.push({ action: `${turns.length - 12} further browser interactions omitted.` });
         const actions = (step.events ?? [])
           .filter(
             (event) =>
@@ -237,7 +256,10 @@ export async function collectReport({
           ? { completed: true }
           : {}
         : { passed }),
-      steps: steps.slice(-30),
+      steps:
+        steps.length > 30
+          ? [{ action: `${steps.length - 29} earlier browser steps omitted.` }, ...steps.slice(-29)]
+          : steps,
       observed,
       evidence,
       tester: "e2e / independent browser",
