@@ -44,6 +44,9 @@ function describe(result: RunResult): string {
       action: step.action.slice(0, 300),
       observation: step.observation?.slice(0, 1000),
     })),
+    ...((result.steps?.length ?? 0) > 12
+      ? { omitted_steps: (result.steps?.length ?? 0) - 12 }
+      : {}),
     evidence: result.evidence
       .filter((e) => e.type === "assertion" || e.type === "http" || e.type === "command")
       .map((e) =>
